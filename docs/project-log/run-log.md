@@ -33,3 +33,8 @@
 - Vite dev server: running at `http://127.0.0.1:5173/`.
 - HTTP smoke: `/`, `/src/main.tsx`, `/data/rail-lines.json`, and `/data/trips-weekend.json` returned 200.
 - Browser visual: not completed because Pencil browser connector was unavailable.
+
+### R-008: Git record status
+- Branch: `feature/mini-hong-kong-mvp`
+- Commit: `2f82255 feat: scaffold mini hong kong mvp`
+- Remote: none configured, so push and PR creation are pending external repository setup.

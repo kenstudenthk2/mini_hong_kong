@@ -8,11 +8,11 @@
 - Desktop and mobile visual check for the map, directory menu, and controls — not completed because the integrated Pencil browser connector was unavailable.
 
 ## PR Controls
-- Work must be committed on a feature branch.
-- PR targets `main`.
-- Code Reviewer reviews diff.
-- Reality Checker verifies evidence.
-- Senior Project Manager confirms pass/fail state.
+- Work must be committed on a feature branch — done on `feature/mini-hong-kong-mvp`.
+- PR targets `main` — pending because no Git remote is configured.
+- Code Reviewer reviews diff — completed; blocking findings fixed before final gates.
+- Reality Checker verifies evidence — partially completed through command output and HTTP smoke; browser screenshot pending.
+- Senior Project Manager confirms pass/fail state — conditional pass for local MVP scaffold.
 
 ## Senior PM Disposition
 - Status: Conditional pass for local MVP scaffold.
