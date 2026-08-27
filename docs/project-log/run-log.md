@@ -38,3 +38,7 @@
 - Branch: `feature/mini-hong-kong-mvp`
 - Commit: `2f82255 feat: scaffold mini hong kong mvp`
 - Remote: none configured, so push and PR creation are pending external repository setup.
+
+### R-009: OSM source update
+- Added OpenStreetMap API and Develop documentation links to the Hong Kong data-source notes.
+- Clarified that future geometry ETL should use read-oriented OSM paths such as Overpass/extracts, not the core editing API.

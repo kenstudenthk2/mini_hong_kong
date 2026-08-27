@@ -21,3 +21,8 @@
 - Decision: Every task completion must leave a compact note and clear stale context before the next task begins.
 - Votes: User override, Senior PM pass.
 - Reason: Long multi-agent work needs traceable handoffs without accumulating unnecessary context.
+
+### D-005: OpenStreetMap API usage
+- Decision: Treat OSM as a geometry reference source, but do not use the core OSM editing API for bulk read-only ETL.
+- Votes: Data Engineer pass, GIS pass, Architect pass.
+- Reason: The OSM API documentation identifies the API as editing-oriented and recommends read-only alternatives such as Overpass API for this type of use.
