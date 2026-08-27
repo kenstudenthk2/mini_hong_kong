@@ -1,0 +1,22 @@
+[
+  { "id": "kennedy-town", "nameEn": "Kennedy Town", "nameZh": "堅尼地城", "namePt": "Kennedy Town", "coordinates": [114.1281, 22.2810], "lineIds": ["island"] },
+  { "id": "central", "nameEn": "Central", "nameZh": "中環", "namePt": "Central", "coordinates": [114.1581, 22.2819], "lineIds": ["island", "tsuen-wan"] },
+  { "id": "admiralty", "nameEn": "Admiralty", "nameZh": "金鐘", "namePt": "Admiralty", "coordinates": [114.1646, 22.2796], "lineIds": ["island", "tsuen-wan"] },
+  { "id": "causeway-bay", "nameEn": "Causeway Bay", "nameZh": "銅鑼灣", "namePt": "Causeway Bay", "coordinates": [114.1869, 22.2803], "lineIds": ["island"] },
+  { "id": "quarry-bay", "nameEn": "Quarry Bay", "nameZh": "鰂魚涌", "namePt": "Quarry Bay", "coordinates": [114.2124, 22.2887], "lineIds": ["island"] },
+  { "id": "chai-wan", "nameEn": "Chai Wan", "nameZh": "柴灣", "namePt": "Chai Wan", "coordinates": [114.2371, 22.2647], "lineIds": ["island"] },
+  { "id": "tsim-sha-tsui", "nameEn": "Tsim Sha Tsui", "nameZh": "尖沙咀", "namePt": "Tsim Sha Tsui", "coordinates": [114.1722, 22.2973], "lineIds": ["tsuen-wan"] },
+  { "id": "mong-kok", "nameEn": "Mong Kok", "nameZh": "旺角", "namePt": "Mong Kok", "coordinates": [114.1694, 22.3193], "lineIds": ["tsuen-wan"] },
+  { "id": "lai-king", "nameEn": "Lai King", "nameZh": "荔景", "namePt": "Lai King", "coordinates": [114.1266, 22.3481], "lineIds": ["tsuen-wan"] },
+  { "id": "tsuen-wan", "nameEn": "Tsuen Wan", "nameZh": "荃灣", "namePt": "Tsuen Wan", "coordinates": [114.1161, 22.3730], "lineIds": ["tsuen-wan"] },
+  { "id": "wu-kai-sha", "nameEn": "Wu Kai Sha", "nameZh": "烏溪沙", "namePt": "Wu Kai Sha", "coordinates": [114.2435, 22.4292], "lineIds": ["tuen-ma"] },
+  { "id": "sha-tin", "nameEn": "Sha Tin", "nameZh": "沙田", "namePt": "Sha Tin", "coordinates": [114.1915, 22.3828], "lineIds": ["tuen-ma"] },
+  { "id": "hung-hom", "nameEn": "Hung Hom", "nameZh": "紅磡", "namePt": "Hung Hom", "coordinates": [114.1822, 22.3032], "lineIds": ["tuen-ma"] },
+  { "id": "east-tsim-sha-tsui", "nameEn": "East Tsim Sha Tsui", "nameZh": "尖東", "namePt": "East Tsim Sha Tsui", "coordinates": [114.1750, 22.2959], "lineIds": ["tuen-ma"] },
+  { "id": "yuen-long", "nameEn": "Yuen Long", "nameZh": "元朗", "namePt": "Yuen Long", "coordinates": [114.0349, 22.4460], "lineIds": ["tuen-ma", "light-rail-610"] },
+  { "id": "tuen-mun", "nameEn": "Tuen Mun", "nameZh": "屯門", "namePt": "Tuen Mun", "coordinates": [113.9739, 22.3953], "lineIds": ["tuen-ma"] },
+  { "id": "tuen-mun-ferry-pier", "nameEn": "Tuen Mun Ferry Pier", "nameZh": "屯門碼頭", "namePt": "Cais de Ferry de Tuen Mun", "coordinates": [113.9663, 22.3718], "lineIds": ["light-rail-610"] },
+  { "id": "town-centre", "nameEn": "Town Centre", "nameZh": "市中心", "namePt": "Centro da Cidade", "coordinates": [113.9766, 22.3934], "lineIds": ["light-rail-610"] },
+  { "id": "siu-hong", "nameEn": "Siu Hong", "nameZh": "兆康", "namePt": "Siu Hong", "coordinates": [113.9788, 22.4119], "lineIds": ["light-rail-610"] },
+  { "id": "tin-shui-wai", "nameEn": "Tin Shui Wai", "nameZh": "天水圍", "namePt": "Tin Shui Wai", "coordinates": [114.0016, 22.4605], "lineIds": ["light-rail-610"] }
+]

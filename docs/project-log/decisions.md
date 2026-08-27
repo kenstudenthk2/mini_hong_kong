@@ -1,0 +1,23 @@
+# Decision Log
+
+## 2026-08-27
+
+### D-001: App language
+- Decision: Use TypeScript for the app and Python only for future ETL.
+- Votes: Senior PM pass, Architect pass, Frontend pass, Data pass, QA pass.
+- Reason: React/Vite/MapLibre patterns match Mini Macau, Mini Taiwan, and Mini Tokyo-style browser simulation.
+
+### D-002: MVP scope
+- Decision: Ship MTR + Light Rail first; keep buses, ferries, trams, and HKG flights as follow-up PRs.
+- Votes: Senior PM pass, Architect pass, Frontend pass, Data pass, GIS pass, QA pass.
+- Reason: Full Hong Kong coverage is too large for one reliable implementation slice.
+
+### D-003: Agent context isolation
+- Decision: Store small context packs in `docs/agent-context/` and avoid asking agents to read the whole repo by default.
+- Votes: Senior PM pass, Orchestrator pass, Architect pass, QA pass.
+- Reason: The source brief is very large and agent work needs narrow, traceable context.
+
+### D-004: Task completion compaction
+- Decision: Every task completion must leave a compact note and clear stale context before the next task begins.
+- Votes: User override, Senior PM pass.
+- Reason: Long multi-agent work needs traceable handoffs without accumulating unnecessary context.

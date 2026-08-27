@@ -1,0 +1,73 @@
+[
+  {
+    "id": "island",
+    "mode": "mtr",
+    "nameEn": "Island Line",
+    "nameZh": "港島綫",
+    "namePt": "Linha da Ilha",
+    "color": "#007dc5",
+    "operator": "MTR",
+    "stationIds": ["kennedy-town", "central", "admiralty", "causeway-bay", "quarry-bay", "chai-wan"],
+    "geometry": [
+      [114.1281, 22.2810],
+      [114.1581, 22.2819],
+      [114.1646, 22.2796],
+      [114.1869, 22.2803],
+      [114.2124, 22.2887],
+      [114.2371, 22.2647]
+    ]
+  },
+  {
+    "id": "tsuen-wan",
+    "mode": "mtr",
+    "nameEn": "Tsuen Wan Line",
+    "nameZh": "荃灣綫",
+    "namePt": "Linha Tsuen Wan",
+    "color": "#e2231a",
+    "operator": "MTR",
+    "stationIds": ["central", "admiralty", "tsim-sha-tsui", "mong-kok", "lai-king", "tsuen-wan"],
+    "geometry": [
+      [114.1581, 22.2819],
+      [114.1646, 22.2796],
+      [114.1722, 22.2973],
+      [114.1694, 22.3193],
+      [114.1266, 22.3481],
+      [114.1161, 22.3730]
+    ]
+  },
+  {
+    "id": "tuen-ma",
+    "mode": "mtr",
+    "nameEn": "Tuen Ma Line",
+    "nameZh": "屯馬綫",
+    "namePt": "Linha Tuen Ma",
+    "color": "#9a3b26",
+    "operator": "MTR",
+    "stationIds": ["wu-kai-sha", "sha-tin", "hung-hom", "east-tsim-sha-tsui", "yuen-long", "tuen-mun"],
+    "geometry": [
+      [114.2435, 22.4292],
+      [114.1915, 22.3828],
+      [114.1822, 22.3032],
+      [114.1750, 22.2959],
+      [114.0349, 22.4460],
+      [113.9739, 22.3953]
+    ]
+  },
+  {
+    "id": "light-rail-610",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 610",
+    "nameZh": "輕鐵 610",
+    "namePt": "Metro Ligeiro 610",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": ["tuen-mun-ferry-pier", "town-centre", "siu-hong", "tin-shui-wai", "yuen-long"],
+    "geometry": [
+      [113.9663, 22.3718],
+      [113.9766, 22.3934],
+      [113.9788, 22.4119],
+      [114.0016, 22.4605],
+      [114.0349, 22.4460]
+    ]
+  }
+]

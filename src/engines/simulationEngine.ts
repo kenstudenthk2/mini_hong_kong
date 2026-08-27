@@ -1,0 +1,154 @@
+import type { RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
+import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
+import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
+
+function wrapServiceEnd(endMinutes: number): number {
+  return endMinutes < 1440 ? endMinutes : endMinutes
+}
+
+function activeStarts(trip: Trip, nowMinutes: number): number[] {
+  const starts: number[] = []
+  const end = wrapServiceEnd(trip.endMinutes)
+  for (let start = trip.startMinutes; start <= end; start += trip.headwayMinutes) {
+    const normalizedNow = nowMinutes < trip.startMinutes && end >= 1440 ? nowMinutes + 1440 : nowMinutes
+    if (normalizedNow >= start && normalizedNow <= start + trip.durationMinutes) {
+      starts.push(start)
+    }
+  }
+  return starts
+}
+
+interface TripPosition {
+  coordinates: [number, number]
+  bearing: number
+  progress: number
+  nextStopId: string | null
+}
+
+function orientedLine(line: RailLine, trip: Trip): { stationIds: string[]; geometry: RailLine['geometry'] } {
+  if (trip.direction === 'inbound') {
+    return { stationIds: [...line.stationIds].reverse(), geometry: [...line.geometry].reverse() }
+  }
+  return { stationIds: line.stationIds, geometry: line.geometry }
+}
+
+function stationIndex(stationIds: string[], stopId: string): number {
+  return stationIds.findIndex(id => id === stopId)
+}
+
+function stationPoint(line: ReturnType<typeof orientedLine>, stopId: string): [number, number] | null {
+  const index = stationIndex(line.stationIds, stopId)
+  return index >= 0 ? line.geometry[index] : null
+}
+
+function segmentGeometry(line: ReturnType<typeof orientedLine>, fromStopId: string, toStopId: string): [number, number][] {
+  const from = stationIndex(line.stationIds, fromStopId)
+  const to = stationIndex(line.stationIds, toStopId)
+  if (from < 0 || to < 0) return []
+  const start = Math.min(from, to)
+  const end = Math.max(from, to)
+  const slice = line.geometry.slice(start, end + 1)
+  return from <= to ? slice : slice.reverse()
+}
+
+function positionFromElapsed(line: ReturnType<typeof orientedLine>, trip: Trip, elapsed: number): TripPosition {
+  if (trip.stopIds.length <= 1) {
+    const coordinates = stationPoint(line, trip.stopIds[0]) ?? line.geometry[0] ?? [0, 0]
+    return { coordinates, bearing: 0, progress: 0, nextStopId: trip.stopIds[0] ?? null }
+  }
+  const segmentCount = trip.stopIds.length - 1
+  const dwellTotal = trip.dwellMinutes * trip.stopIds.length
+  const travelTotal = Math.max(1, trip.durationMinutes - dwellTotal)
+  const segmentTravel = travelTotal / segmentCount
+  let cursor = 0
+
+  for (let stopIndex = 0; stopIndex < trip.stopIds.length; stopIndex += 1) {
+    const stopId = trip.stopIds[stopIndex]
+    const dwellEnd = cursor + trip.dwellMinutes
+    if (elapsed <= dwellEnd) {
+      const coordinates = stationPoint(line, stopId) ?? line.geometry[0] ?? [0, 0]
+      const nextStopId = trip.stopIds[Math.min(stopIndex + 1, trip.stopIds.length - 1)] ?? null
+      const nextPoint = nextStopId ? stationPoint(line, nextStopId) : null
+      return {
+        coordinates,
+        bearing: nextPoint ? bearing(coordinates, nextPoint) : 0,
+        progress: cumulativeProgressAtIndex(line.geometry, stationIndex(line.stationIds, stopId)),
+        nextStopId,
+      }
+    }
+    cursor = dwellEnd
+    if (stopIndex < segmentCount) {
+      const travelEnd = cursor + segmentTravel
+      if (elapsed <= travelEnd) {
+        const segmentRatio = (elapsed - cursor) / segmentTravel
+        const fromStopId = trip.stopIds[stopIndex]
+        const toStopId = trip.stopIds[stopIndex + 1]
+        const segment = segmentGeometry(line, fromStopId, toStopId)
+        const position = interpolateOnLine(segment, segmentRatio)
+        const fromIndex = stationIndex(line.stationIds, fromStopId)
+        const toIndex = stationIndex(line.stationIds, toStopId)
+        const fromProgress = cumulativeProgressAtIndex(line.geometry, fromIndex)
+        const toProgress = cumulativeProgressAtIndex(line.geometry, toIndex)
+        return {
+          ...position,
+          progress: fromProgress + (toProgress - fromProgress) * segmentRatio,
+          nextStopId: toStopId ?? null,
+        }
+      }
+      cursor = travelEnd
+    }
+  }
+
+  const finalStop = trip.stopIds[trip.stopIds.length - 1]
+  const coordinates = stationPoint(line, finalStop) ?? line.geometry[line.geometry.length - 1] ?? [0, 0]
+  return { coordinates, bearing: 0, progress: 1, nextStopId: null }
+}
+
+function destinationForTrip(trip: Trip): string | null {
+  return trip.stopIds[trip.stopIds.length - 1] ?? null
+}
+
+function stationById(stations: Station[]): Map<string, Station> {
+  return new Map(stations.map(station => [station.id, station]))
+}
+
+export function computeVehiclePositions(transitData: TransitData, time: Date): VehiclePosition[] {
+  const scheduleType = getOperationalScheduleType(time)
+  const nowMinutes = hongKongMinutesOfDay(time)
+  const lines = new Map(transitData.railLines.map(line => [line.id, line]))
+  const stations = stationById(transitData.stations)
+  const vehicles: VehiclePosition[] = []
+
+  for (const trip of transitData.trips) {
+    if (trip.scheduleType !== scheduleType) continue
+    const line = lines.get(trip.lineId)
+    if (!line) continue
+    for (const start of activeStarts(trip, nowMinutes)) {
+      const adjustedNow = nowMinutes < trip.startMinutes && trip.endMinutes >= 1440 ? nowMinutes + 1440 : nowMinutes
+      const elapsed = adjustedNow - start
+      const tripLine = orientedLine(line, trip)
+      const tripPosition = positionFromElapsed(tripLine, trip, elapsed)
+      const destinationId = destinationForTrip(trip)
+      const destination = destinationId ? stations.get(destinationId) : undefined
+      vehicles.push({
+        id: `${trip.id}-${start}`,
+        type: line.mode,
+        lineId: line.id,
+        tripId: trip.id,
+        color: line.color,
+        coordinates: tripPosition.coordinates,
+        bearing: tripPosition.bearing,
+        progress: tripPosition.progress,
+        labelEn: line.nameEn,
+        labelZh: line.nameZh,
+        labelPt: line.namePt || line.nameEn,
+        nextStopId: tripPosition.nextStopId,
+        destinationId: destination?.id ?? null,
+      })
+    }
+  }
+
+  return vehicles
+}
+
+export { getScheduleType, hongKongMinutesOfDay }
