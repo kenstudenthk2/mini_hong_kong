@@ -15,6 +15,27 @@ interface Props {
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
+const HONG_KONG_BOUNDS = {
+  minLng: 113.93,
+  maxLng: 114.28,
+  minLat: 22.23,
+  maxLat: 22.49,
+}
+
+function project([lng, lat]: [number, number]): { x: number; y: number } {
+  const x = ((lng - HONG_KONG_BOUNDS.minLng) / (HONG_KONG_BOUNDS.maxLng - HONG_KONG_BOUNDS.minLng)) * 1000
+  const y = (1 - (lat - HONG_KONG_BOUNDS.minLat) / (HONG_KONG_BOUNDS.maxLat - HONG_KONG_BOUNDS.minLat)) * 1000
+  return { x, y }
+}
+
+function pathForLine(line: RailLine): string {
+  return line.geometry
+    .map((coord, index) => {
+      const point = project(coord)
+      return `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+    })
+    .join(' ')
+}
 
 function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollection) {
   const source = map.getSource(id) as GeoJSONSource | undefined
@@ -26,6 +47,9 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
+  const linesRef = useRef(lines)
+  const stationsRef = useRef(stations)
+  const selectedLineIdsRef = useRef(selectedLineIds)
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
@@ -36,6 +60,12 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
   useEffect(() => {
     vehiclesRef.current = visibleVehicles
   }, [visibleVehicles])
+
+  useEffect(() => {
+    linesRef.current = lines
+    stationsRef.current = stations
+    selectedLineIdsRef.current = selectedLineIds
+  }, [lines, selectedLineIds, stations])
 
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
@@ -164,6 +194,10 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
       })
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
+      updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
+      updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
+      updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
+      updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
     })
     mapRef.current = map
     return () => {
@@ -174,7 +208,7 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map?.isStyleLoaded()) return
+    if (!map?.getSource('rail-lines')) return
     updateSource(map, 'rail-lines', linesToGeoJson(lines, selectedLineIds))
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
@@ -183,7 +217,7 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map?.isStyleLoaded()) return
+    if (!map) return
     if (map.getLayer('stations-label')) {
       map.setLayoutProperty('stations-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : lang === 'pt' ? 'namePt' : 'nameEn'])
     }
@@ -198,5 +232,61 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
     map.easeTo({ pitch: pitchEnabled ? 58 : 0, bearing: pitchEnabled ? -18 : 0, duration: 450 })
   }, [pitchEnabled])
 
-  return <div className="map-view" ref={mapNode} />
+  return (
+    <div className="map-frame">
+      <div className="map-view" ref={mapNode} />
+      <svg className="schematic-overlay" viewBox="0 0 1000 1000" role="img" aria-label="Hong Kong rail schematic">
+        <defs>
+          <pattern id="harbour-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(148, 163, 184, 0.08)" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="1000" height="1000" fill="url(#harbour-grid)" />
+        <path
+          d="M 80 680 C 220 590 390 630 500 560 C 650 470 760 500 900 430"
+          fill="none"
+          stroke="rgba(14, 165, 233, 0.16)"
+          strokeWidth="72"
+          strokeLinecap="round"
+        />
+        {lines.map(line => (
+          <g key={line.id} opacity={selectedLineIds.has(line.id) ? 1 : 0.18}>
+            <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
+            <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        ))}
+        {stations.map(station => {
+          const point = project(station.coordinates)
+          return (
+            <circle
+              key={station.id}
+              cx={point.x}
+              cy={point.y}
+              r="7"
+              fill="#f8fafc"
+              stroke="#0f172a"
+              strokeWidth="2"
+            />
+          )
+        })}
+        {visibleVehicles.map(vehicle => {
+          const point = project(vehicle.coordinates)
+          return (
+            <circle
+              key={vehicle.id}
+              className="vehicle-hotspot"
+              cx={point.x}
+              cy={point.y}
+              r="8"
+              fill="#f8fafc"
+              stroke={vehicle.color}
+              strokeWidth="4"
+              onClick={() => onSelectVehicle(vehicle)}
+              aria-label={vehicle.labelEn}
+            />
+          )
+        })}
+      </svg>
+    </div>
+  )
 }

@@ -144,9 +144,25 @@ input {
   min-height: 0;
 }
 
+.map-frame,
 .map-view {
   position: absolute;
   inset: 0;
+}
+
+.schematic-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.vehicle-hotspot {
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 0 8px rgba(248, 250, 252, 0.5));
 }
 
 .control-panel,

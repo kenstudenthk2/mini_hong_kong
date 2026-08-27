@@ -42,3 +42,9 @@
 ### R-009: OSM source update
 - Added OpenStreetMap API and Develop documentation links to the Hong Kong data-source notes.
 - Clarified that future geometry ETL should use read-oriented OSM paths such as Overpass/extracts, not the core editing API.
+
+### R-010: Visual verification
+- Browser path: Pencil connector unavailable, so Playwright CLI was used.
+- Screenshots: desktop `C:\Users\02007572\AppData\Local\Temp\mini-hk-desktop-verified.png`; mobile `C:\Users\02007572\AppData\Local\Temp\mini-hk-mobile-verified.png`.
+- Result: Desktop and mobile passed after adding the SVG schematic overlay.
+- Verified visible elements: directory menu, Rail/Light Rail sections, planned future transport sections, controls, route lines, station markers, and moving vehicle hotspots.

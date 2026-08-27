@@ -44,3 +44,15 @@
   - 1: failed on unavailable connector
 - Approver for attempts 4-5: not needed
 - Next action: Run browser screenshot verification when Pencil or another browser connector is available.
+
+### F-005: Blank MapLibre canvas in Playwright screenshot
+- Task: Task 003 / visual smoke
+- Command: Playwright screenshot at `http://127.0.0.1:5175/`
+- Result: App data and menus rendered, but the map canvas area was visually blank.
+- Resolution: Added a data-driven SVG schematic overlay that renders rail lines, stations, and clickable vehicle hotspots independently of external raster tile drawing.
+- Attempts:
+  - 1: screenshot showed blank map surface
+  - 2: source update guard patched, screenshot still blank
+  - 3: schematic overlay added, desktop and mobile screenshots passed
+- Approver for attempts 4-5: not needed
+- Next action: Keep MapLibre base enabled and revisit native layer visibility when a full browser/WebGL environment is available.

@@ -26,3 +26,8 @@
 - Decision: Treat OSM as a geometry reference source, but do not use the core OSM editing API for bulk read-only ETL.
 - Votes: Data Engineer pass, GIS pass, Architect pass.
 - Reason: The OSM API documentation identifies the API as editing-oriented and recommends read-only alternatives such as Overpass API for this type of use.
+
+### D-006: Schematic overlay for visual resilience
+- Decision: Render a lightweight SVG rail schematic above MapLibre using the same line, station, and vehicle data.
+- Votes: Frontend pass, GIS pass, QA pass, Senior PM pass.
+- Reason: Playwright visual verification showed the MapLibre canvas could be visually blank in this environment while app data loaded; the overlay keeps the MVP inspectable without replacing MapLibre as the base map.
