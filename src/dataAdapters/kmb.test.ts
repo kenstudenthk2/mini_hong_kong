@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeKmbRoutes } from './kmb'
+import { normalizeKmbEta, normalizeKmbRoutes } from './kmb'
+
+describe('normalizeKmbEta', () => {
+  it('normalizes live ETA records and preserves source timestamps', () => {
+    const result = normalizeKmbEta({
+      generated_timestamp: '2026-08-28T09:55:34+08:00',
+      data: [{
+        co: 'KMB', route: '1', dir: 'O', service_type: 1, seq: 1,
+        dest_tc: '尖沙咀碼頭', dest_en: 'STAR FERRY', eta_seq: 1,
+        eta: '2026-08-28T09:59:00+08:00', rmk_en: 'Scheduled Bus',
+        data_timestamp: '2026-08-28T09:55:24+08:00',
+      }],
+    })
+
+    expect(result).toEqual([{
+      id: 'kmb-1-o-1-eta-1-1',
+      routeId: 'kmb-1-o-1',
+      stopSequence: 1,
+      destinationEn: 'STAR FERRY',
+      destinationZh: '尖沙咀碼頭',
+      eta: '2026-08-28T09:59:00+08:00',
+      remarkEn: 'Scheduled Bus',
+      dataTimestamp: '2026-08-28T09:55:24+08:00',
+    }])
+  })
+
+  it('rejects ETA records with invalid timestamps', () => {
+    expect(() => normalizeKmbEta({
+      generated_timestamp: 'not-a-date',
+      data: [],
+    })).toThrow()
+  })
+})
 
 describe('normalizeKmbRoutes', () => {
   it('normalizes route direction, ordered stops, and API coordinates', () => {

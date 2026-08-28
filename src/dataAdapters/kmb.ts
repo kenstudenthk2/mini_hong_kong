@@ -26,6 +26,20 @@ const KmbStopSchema = z.object({
   long: z.coerce.number(),
 })
 
+const KmbEtaRecordSchema = z.object({
+  co: z.string(),
+  route: z.string(),
+  dir: z.enum(['O', 'I']),
+  service_type: z.coerce.number().int().positive(),
+  seq: z.coerce.number().int().positive(),
+  dest_tc: z.string(),
+  dest_en: z.string(),
+  eta_seq: z.coerce.number().int().positive(),
+  eta: z.string().datetime({ offset: true }),
+  rmk_en: z.string().optional(),
+  data_timestamp: z.string().datetime({ offset: true }),
+})
+
 const KmbEnvelope = <T extends z.ZodType>(item: T) => z.object({
   type: z.string(),
   version: z.string(),
@@ -51,6 +65,38 @@ export const kmbReplaySchedules: BusSchedule[] = [{
   durationMinutes: 90,
   dwellMinutes: 1,
 }]
+
+export interface KmbArrival {
+  id: string
+  routeId: string
+  stopSequence: number
+  destinationEn: string
+  destinationZh: string
+  eta: string
+  remarkEn: string
+  dataTimestamp: string
+}
+
+export function normalizeKmbEta(raw: unknown): KmbArrival[] {
+  const envelope = z.object({
+    generated_timestamp: z.string().datetime({ offset: true }),
+    data: z.array(KmbEtaRecordSchema),
+  }).parse(raw)
+
+  return envelope.data.map(record => {
+    const routeId = `kmb-${record.route}-${record.dir}-${record.service_type}`.toLowerCase()
+    return {
+      id: `${routeId}-eta-${record.seq}-${record.eta_seq}`,
+      routeId,
+      stopSequence: record.seq,
+      destinationEn: record.dest_en,
+      destinationZh: record.dest_tc,
+      eta: record.eta,
+      remarkEn: record.rmk_en ?? '',
+      dataTimestamp: record.data_timestamp,
+    }
+  })
+}
 
 export function normalizeKmbRoutes(snapshot: KmbRouteSnapshot) {
   const routes = KmbEnvelope(KmbRouteSchema).parse({

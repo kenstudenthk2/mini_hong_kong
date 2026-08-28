@@ -34,6 +34,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Normalizer: `src/dataAdapters/kmb.ts` converts a validated snapshot into route-direction records and uses stop `long`/`lat` for geometry.
 - Staleness: the snapshot timestamp is retained as adapter input; UI stale labeling and generated output are pending the next approved task.
 
+## Compact handoff: KMB ETA parser
+- Complete: `normalizeKmbEta` validates and normalizes live ETA records, including route ID, stop sequence, destination, ETA, remark, and source timestamp.
+- Source behavior: ETA data is published per stop/route and the DATA.GOV.HK dataset states a one-minute update cadence.
+- Evidence: parser tests cover a valid record and invalid envelope timestamp; ETA-to-vehicle placement remains the next task.
+
 ## Compact handoff: bus geometry utility
 - Complete: `busRoutesToGeoJson` converts normalized KMB routes to MapLibre `LineString` features with route metadata.
 - Evidence: `src/layers/vehicleShapes.test.ts` passes; map wiring and bus vehicle simulation remain separate tasks.
