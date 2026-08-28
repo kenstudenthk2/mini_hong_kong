@@ -133,3 +133,10 @@
 - MapLibre remains the single visible renderer for OSM basemap, 3D buildings, transit routes, vehicles, facilities, and trails.
 - Evidence: 25 test files and 96 tests pass, lint passes, production build passes, and `git diff --check` passes.
 - Browser limitation: live WebGL visual confirmation remains unavailable because the browser runtime fails before tab creation.
+
+### R-026: Flights tool visibility contract (2026-08-28)
+- Fixed Flights OFF so it hides aircraft, HKIA facility, runway, terminal, and gate layers together.
+- Disabling Flights also clears stale aircraft and airport-context selections from the information panel.
+- Applied the same visibility rule during initial map population and asynchronous source refreshes.
+- Evidence: 25 test files and 97 tests pass, lint, build, and diff checks pass.
+- Browser limitation: live interaction remains unverified because the browser runtime fails before tab creation.

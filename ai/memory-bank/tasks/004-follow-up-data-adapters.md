@@ -752,3 +752,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: the legacy SVG schematic overlay and its projection helpers were removed; the MapLibre OSM-backed map and data layers are the sole renderer.
 - Evidence: 25 test files and 96 tests pass, lint, build, and diff checks pass.
 - Known limitation: browser visual QA remains blocked by the runtime failing before tab creation.
+
+## Compact handoff: Flights OFF visibility
+- Complete: the Flights tool now controls the complete aviation layer group: aircraft, HKIA facility, runways, terminals, and gates.
+- Selection rule: turning Flights OFF clears selected aircraft and airport-context objects so the information panel cannot retain hidden data.
+- Async rule: the same `airportLayersVisible` contract is applied during initial map load and later source updates.
+- Evidence: `MapView.test.ts` covers the Flights visibility contract; full suite has 97 passing tests, lint/build/diff checks pass.
+- Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
