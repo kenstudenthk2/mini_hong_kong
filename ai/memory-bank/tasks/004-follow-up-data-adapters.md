@@ -684,3 +684,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: the toggle defaults ON to preserve prior behavior; OFF leaves selection and playback active while allowing independent map panning.
 - Evidence: focused control/map tests, full suite of 88 tests, lint, and build pass. Commit: `674f116`.
 - Known limitation: real MapLibre camera interaction, touch behavior, and responsive control layout remain unverified because the Pencil browser connector is unavailable.
+
+## Compact handoff: transport OFF consistency
+- Complete: Rail and Light Rail lines are now removed from both MapLibre and SVG rendering when their transport-level `OFF` switch is active, matching the behavior of buses, ferries, trams, and flights.
+- Scope: source filtering only; individual line toggles and transport simulation remain unchanged.
+- Evidence: full suite of 88 tests, lint, build, and diff checks pass. Commit: `751dfb6`.
+- Known limitation: browser click interaction and visual confirmation remain unavailable because the integrated Pencil desktop connector cannot connect.
