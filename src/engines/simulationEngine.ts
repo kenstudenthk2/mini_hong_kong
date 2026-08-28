@@ -1,4 +1,4 @@
-import type { RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
+import type { BusRoute, BusSchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
 import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
 import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
 
@@ -6,7 +6,7 @@ function wrapServiceEnd(endMinutes: number): number {
   return endMinutes < 1440 ? endMinutes : endMinutes
 }
 
-function activeStarts(trip: Trip, nowMinutes: number): number[] {
+function activeStarts(trip: Pick<Trip, 'startMinutes' | 'endMinutes' | 'headwayMinutes' | 'durationMinutes'>, nowMinutes: number): number[] {
   const starts: number[] = []
   const end = wrapServiceEnd(trip.endMinutes)
   for (let start = trip.startMinutes; start <= end; start += trip.headwayMinutes) {
@@ -144,6 +144,91 @@ export function computeVehiclePositions(transitData: TransitData, time: Date): V
         labelPt: line.namePt || line.nameEn,
         nextStopId: tripPosition.nextStopId,
         destinationId: destination?.id ?? null,
+      })
+    }
+  }
+
+  return vehicles
+}
+
+function busPositionFromElapsed(route: BusRoute, schedule: BusSchedule, elapsed: number): TripPosition {
+  const stopCount = route.stopIds.length
+  if (stopCount <= 1) {
+    return { coordinates: route.geometry[0] ?? [0, 0], bearing: 0, progress: 0, nextStopId: route.stopIds[0] ?? null }
+  }
+
+  const dwellTotal = schedule.dwellMinutes * stopCount
+  const travelTotal = Math.max(1, schedule.durationMinutes - dwellTotal)
+  const segmentTravel = travelTotal / (stopCount - 1)
+  let cursor = 0
+
+  for (let stopIndex = 0; stopIndex < stopCount; stopIndex += 1) {
+    const dwellEnd = cursor + schedule.dwellMinutes
+    if (elapsed <= dwellEnd) {
+      const coordinates = route.geometry[stopIndex] ?? route.geometry[0] ?? [0, 0]
+      const nextStopId = route.stopIds[Math.min(stopIndex + 1, stopCount - 1)] ?? null
+      const nextPoint = route.geometry[stopIndex + 1]
+      return {
+        coordinates,
+        bearing: nextPoint ? bearing(coordinates, nextPoint) : 0,
+        progress: stopIndex / (stopCount - 1),
+        nextStopId,
+      }
+    }
+    cursor = dwellEnd
+    if (stopIndex < stopCount - 1) {
+      const travelEnd = cursor + segmentTravel
+      if (elapsed <= travelEnd) {
+        const ratio = (elapsed - cursor) / segmentTravel
+        const segment = route.geometry.slice(stopIndex, stopIndex + 2)
+        const position = interpolateOnLine(segment, ratio)
+        return {
+          ...position,
+          progress: (stopIndex + ratio) / (stopCount - 1),
+          nextStopId: route.stopIds[stopIndex + 1] ?? null,
+        }
+      }
+      cursor = travelEnd
+    }
+  }
+
+  return {
+    coordinates: route.geometry[route.geometry.length - 1] ?? [0, 0],
+    bearing: 0,
+    progress: 1,
+    nextStopId: null,
+  }
+}
+
+export function computeBusVehiclePositions(routes: BusRoute[], schedules: BusSchedule[], time: Date): VehiclePosition[] {
+  const scheduleType = getOperationalScheduleType(time)
+  const nowMinutes = hongKongMinutesOfDay(time)
+  const routeById = new Map(routes.map(route => [route.id, route]))
+  const vehicles: VehiclePosition[] = []
+
+  for (const schedule of schedules) {
+    if (schedule.scheduleType !== scheduleType) continue
+    const route = routeById.get(schedule.routeId)
+    if (!route) continue
+    for (const start of activeStarts(schedule, nowMinutes)) {
+      const adjustedNow = nowMinutes < schedule.startMinutes && schedule.endMinutes >= 1440
+        ? nowMinutes + 1440
+        : nowMinutes
+      const position = busPositionFromElapsed(route, schedule, adjustedNow - start)
+      vehicles.push({
+        id: `${schedule.id}-${start}`,
+        type: 'bus',
+        lineId: route.id,
+        tripId: schedule.id,
+        color: route.color,
+        coordinates: position.coordinates,
+        bearing: position.bearing,
+        progress: position.progress,
+        labelEn: route.nameEn,
+        labelZh: route.nameZh,
+        labelPt: route.namePt || route.nameEn,
+        nextStopId: position.nextStopId,
+        destinationId: route.stopIds[route.stopIds.length - 1] ?? null,
       })
     }
   }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { TransitData } from '../types'
-import { computeVehiclePositions, getScheduleType } from './simulationEngine'
+import type { BusRoute, BusSchedule, TransitData } from '../types'
+import { computeBusVehiclePositions, computeVehiclePositions, getScheduleType } from './simulationEngine'
 import { hongKongWallToInstant } from './hongKongTime'
 import { interpolateOnLine } from './geometry'
 
@@ -33,6 +33,28 @@ const fixture: TransitData = {
     dwellMinutes: 1,
     stopIds: ['a', 'b', 'c'],
   }],
+}
+
+const busRoute: BusRoute = {
+  id: 'kmb-1-o-1',
+  operator: 'KMB/LWB',
+  routeNumber: '1',
+  nameEn: 'CHUK YUEN ESTATE - STAR FERRY',
+  nameZh: '竹園邨 - 尖沙咀碼頭',
+  color: '#0f766e',
+  stopIds: ['a', 'b', 'c'],
+  geometry: [[114, 22], [114.1, 22], [114.2, 22]],
+}
+
+const busSchedule: BusSchedule = {
+  id: 'kmb-1-o-1-schedule',
+  routeId: busRoute.id,
+  scheduleType: 'weekday',
+  startMinutes: 360,
+  endMinutes: 420,
+  headwayMinutes: 10,
+  durationMinutes: 20,
+  dwellMinutes: 1,
 }
 
 describe('Hong Kong schedule type', () => {
@@ -85,5 +107,22 @@ describe('computeVehiclePositions', () => {
     }
     const vehicles = computeVehiclePositions(overnightFixture, hongKongWallToInstant(2026, 7, 25, 0, 30))
     expect(vehicles.length).toBeGreaterThan(0)
+  })
+})
+
+describe('computeBusVehiclePositions', () => {
+  it('creates headway-based vehicles and interpolates along the bus route', () => {
+    const vehicles = computeBusVehiclePositions([busRoute], [busSchedule], hongKongWallToInstant(2026, 7, 24, 6, 10))
+
+    expect(vehicles).toHaveLength(2)
+    expect(vehicles[0].type).toBe('bus')
+    expect(vehicles[0].coordinates[0]).toBeCloseTo(114.1)
+    expect(vehicles[0].nextStopId).toBe('c')
+    expect(vehicles[0].destinationId).toBe('c')
+  })
+
+  it('does not start a weekday schedule on a weekend', () => {
+    const vehicles = computeBusVehiclePositions([busRoute], [busSchedule], hongKongWallToInstant(2026, 7, 23, 6, 10))
+    expect(vehicles).toHaveLength(0)
   })
 })

@@ -47,6 +47,17 @@ export interface BusRoute extends LocalizedName {
   geometry: Coordinate[]
 }
 
+export interface BusSchedule {
+  id: string
+  routeId: string
+  scheduleType: ScheduleType
+  startMinutes: number
+  endMinutes: number
+  headwayMinutes: number
+  durationMinutes: number
+  dwellMinutes: number
+}
+
 export interface TransitData {
   railLines: RailLine[]
   stations: Station[]
@@ -59,7 +70,7 @@ export interface TransitData {
 
 export interface VehiclePosition {
   id: string
-  type: TransitMode
+  type: TransitMode | 'bus'
   lineId: string
   tripId: string
   color: string
