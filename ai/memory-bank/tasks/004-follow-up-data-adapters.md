@@ -335,3 +335,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `9963750`.
 - Known limitation: the source labels are intentionally compact and browser link verification remains pending because browser tooling is unavailable.
 - Next task: verify the source links and filter/reset/aircraft workflows in a working browser harness.
+
+## Compact handoff: progressive transit loading
+- Complete: `useTransitData` now resolves the four local rail assets first and clears the initial loading state before optional KMB, Citybus, ferry, and tram requests finish.
+- Failure policy: optional adapters remain individually failure-tolerant and merge into the established `TransitData`; GTFS and HKG flight hydrations remain independent asynchronous phases.
+- Scope: loading order and perceived startup only; source URLs, normalized data contracts, and simulation behavior are unchanged.
+- Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `f618a64`.
+- Known risk: browser/network timing verification remains pending; optional feeds may appear after the base map and should be treated as hydration states.
+- Next task: verify progressive loading and source-link behavior in a working browser harness.
