@@ -31,3 +31,9 @@
 - Decision: Render a lightweight SVG rail schematic above MapLibre using the same line, station, and vehicle data.
 - Votes: Frontend pass, GIS pass, QA pass, Senior PM pass.
 - Reason: Playwright visual verification showed the MapLibre canvas could be visually blank in this environment while app data loaded; the overlay keeps the MVP inspectable without replacing MapLibre as the base map.
+
+### D-007: MapLibre-only renderer supersedes D-006
+- Decision: Remove the SVG schematic renderer after route geometry, layer controls, and MapLibre source updates were verified; MapLibre is the sole renderer.
+- Votes: Frontend pass, GIS pass, QA pass, Senior PM pass.
+- Reason: The schematic was a duplicate top layer and could diverge from the geographic map. Transport visibility and route focus now use MapLibre sources directly.
+- Verification boundary: browser/WebGL interaction is still pending; automated tests, lint, build, and diff checks are the available evidence.
