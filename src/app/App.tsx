@@ -140,6 +140,7 @@ export default function App() {
           onClearRouteSearch={() => setSelectedRouteSearchId(null)}
           selectedVehicleId={selectedVehicle?.id ?? null}
           selectedStationId={selectedStation?.id ?? null}
+          selectedFacilityId={selectedFacility?.id ?? null}
           selectedRouteSearchId={selectedRouteSearchId}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}

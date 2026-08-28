@@ -26,6 +26,7 @@ interface Props {
   onClearRouteSearch: () => void
   selectedVehicleId: string | null
   selectedStationId: string | null
+  selectedFacilityId: string | null
   selectedRouteSearchId: string | null
 }
 
@@ -135,7 +136,7 @@ function routeFocusToGeoJson(routes: SearchableRoute[], selectedRouteId: string 
   }
 }
 
-function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
+function airportFacilitiesToGeoJson(selectedFacilityId: string | null): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
     features: [{
@@ -149,6 +150,7 @@ function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
         namePt: hkiaFacility.namePt,
         iataCode: hkiaFacility.iataCode,
         icaoCode: hkiaFacility.icaoCode,
+        selected: hkiaFacility.id === selectedFacilityId,
       },
     }],
   }
@@ -185,7 +187,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedRouteSearchId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedRouteSearchId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -201,6 +203,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const selectedLineIdsRef = useRef(selectedLineIds)
   const selectedRouteIdsRef = useRef(selectedRouteIds)
   const selectedBusOperatorsRef = useRef(selectedBusOperators)
+  const selectedFacilityIdRef = useRef(selectedFacilityId)
   const selectedRouteSearchIdRef = useRef(selectedRouteSearchId)
   const { lang } = useI18n()
 
@@ -222,8 +225,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     selectedLineIdsRef.current = selectedLineIds
     selectedRouteIdsRef.current = selectedRouteIds
     selectedBusOperatorsRef.current = selectedBusOperators
+    selectedFacilityIdRef.current = selectedFacilityId
     selectedRouteSearchIdRef.current = selectedRouteSearchId
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
 
   useEffect(() => {
       onSelectVehicleRef.current = onSelectVehicle
@@ -355,10 +359,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         type: 'circle',
         source: 'airport-facilities',
         paint: {
-          'circle-radius': 8,
+          'circle-radius': ['case', ['get', 'selected'], 11, 8],
           'circle-color': '#38bdf8',
           'circle-stroke-color': '#f8fafc',
-          'circle-stroke-width': 2,
+          'circle-stroke-width': ['case', ['get', 'selected'], 4, 2],
         },
       })
       map.addLayer({
@@ -522,7 +526,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
-      updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
+      updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityIdRef.current))
       updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
       updateSource(map, 'airport-ground', airportGroundToGeoJson())
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
@@ -547,11 +551,11 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
-    updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
+    updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityId))
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
     updateSource(map, 'airport-ground', airportGroundToGeoJson())
     updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -689,7 +693,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           const point = project(hkiaFacility.coordinates)
           return (
             <g className="airport-hotspot">
-              <circle cx={point.x} cy={point.y} r="12" fill="#38bdf8" stroke="#f8fafc" strokeWidth="3" style={{ pointerEvents: 'auto', cursor: 'pointer' }} onClick={() => {
+              <circle cx={point.x} cy={point.y} r={selectedFacilityId === hkiaFacility.id ? 16 : 12} fill="#38bdf8" stroke="#f8fafc" strokeWidth={selectedFacilityId === hkiaFacility.id ? 5 : 3} style={{ pointerEvents: 'auto', cursor: 'pointer' }} onClick={() => {
                 onSelectVehicle(null)
                 onSelectStation(null)
                 onSelectFacility(hkiaFacility)
