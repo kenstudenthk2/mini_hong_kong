@@ -257,3 +257,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/airportGround.test.ts` covers feature kinds, source metadata, and HKIA bounds; full suite has 52 passing tests, lint/build/diff checks pass. Commits: `051fe5c`, `f642d91`.
 - Known risk: OSM geometry can change and must be re-pinned deliberately; browser visual verification remains pending because the local browser harness is unavailable.
 - Next task: add a documented snapshot refresh procedure or improve terminal/gate localization before connecting any aircraft records to ground features.
+
+## Compact handoff: trilingual HKIA ground labels
+- Complete: Terminal 1, Terminal 2, and all eight representative gate points now carry English, Traditional Chinese, and Portuguese labels; MapLibre switches the ground layer with the active locale.
+- Scope: label localization only; the pinned OSM snapshot, AIP runway source, and flight replay semantics are unchanged.
+- Evidence: `src/dataAdapters/airportGround.test.ts` asserts the complete Portuguese label set; full suite has 52 passing tests, lint/build/diff checks pass. Commit: `4ab6a3d`.
+- Known limitation: schematic gate labels use universal gate references and browser visual verification remains pending.
+- Next task: document the snapshot refresh/review procedure before connecting any aircraft record to a terminal or gate.
