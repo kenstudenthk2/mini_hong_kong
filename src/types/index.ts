@@ -68,6 +68,8 @@ export interface FerryRoute extends LocalizedName {
   journeyTimeMinutes: number
 }
 
+export type TramRoute = FerryRoute
+
 export interface FerrySchedule {
   id: string
   routeId: string
@@ -100,7 +102,7 @@ export interface TransitData {
   busDataTimestamp?: string
   ferryRoutes?: FerryRoute[]
   ferrySchedules?: FerrySchedule[]
-  tramRoutes?: unknown[]
+  tramRoutes?: TramRoute[]
   flights?: unknown[]
 }
 
