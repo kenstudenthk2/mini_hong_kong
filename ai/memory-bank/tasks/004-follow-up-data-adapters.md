@@ -678,3 +678,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: provenance presentation and manifest coverage only; feed loading and simulation behavior are unchanged.
 - Evidence: `src/dataAdapters/layerManifest.test.ts` asserts the GMB entry, live classification, URL, and locale labels. Focused test, lint, build, and diff checks pass. Commit: `0a2deb1`.
 - Known limitation: browser link navigation remains unverified because the integrated browser connector is unavailable.
+
+## Compact handoff: vehicle follow control
+- Complete: the control panel now exposes a trilingual `Follow vehicle` toggle for selected-vehicle camera recentering.
+- Semantics: the toggle defaults ON to preserve prior behavior; OFF leaves selection and playback active while allowing independent map panning.
+- Evidence: focused control/map tests, full suite of 88 tests, lint, and build pass. Commit: `674f116`.
+- Known limitation: real MapLibre camera interaction, touch behavior, and responsive control layout remain unverified because the Pencil browser connector is unavailable.
