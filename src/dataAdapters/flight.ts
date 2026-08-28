@@ -1,4 +1,4 @@
-import type { AirportFlight, FlightSourceLanguage } from '../types'
+import type { AirportFlight, FlightLocalizedFields, FlightSourceLanguage } from '../types'
 
 export interface HkgFlightNumber {
   No?: unknown
@@ -80,6 +80,43 @@ export function normalizeHkgFlightResponse(
       statusCode: nonEmptyString(record.StatusCode),
       status: nonEmptyString(record.Status),
       sourceLanguage,
+      localized: {
+        origin: arrival && nonEmptyString(record.Origin) ? { [sourceLanguage]: nonEmptyString(record.Origin) } : {},
+        destination: !arrival && nonEmptyString(record.Destination) ? { [sourceLanguage]: nonEmptyString(record.Destination) } : {},
+        status: nonEmptyString(record.Status) ? { [sourceLanguage]: nonEmptyString(record.Status) } : {},
+      },
     } satisfies AirportFlight]
   })
+}
+
+function firstLocalizedValue(values: FlightLocalizedFields['origin']): string | null {
+  return values.en ?? values.zh_HK ?? values.zh_CN ?? null
+}
+
+export function mergeHkgFlightLocales(feeds: AirportFlight[][]): AirportFlight[] {
+  const merged = new Map<string, AirportFlight>()
+  for (const feed of feeds) {
+    for (const flight of feed) {
+      const previous = merged.get(flight.id)
+      if (!previous) {
+        merged.set(flight.id, flight)
+        continue
+      }
+      const localized: FlightLocalizedFields = {
+        origin: { ...previous.localized.origin, ...flight.localized.origin },
+        destination: { ...previous.localized.destination, ...flight.localized.destination },
+        status: { ...previous.localized.status, ...flight.localized.status },
+      }
+      merged.set(flight.id, {
+        ...previous,
+        airlineCode: previous.airlineCode ?? flight.airlineCode,
+        origin: firstLocalizedValue(localized.origin),
+        destination: firstLocalizedValue(localized.destination),
+        status: firstLocalizedValue(localized.status),
+        localized,
+        sourceLanguage: localized.origin.en || localized.destination.en || localized.status.en ? 'en' : previous.sourceLanguage,
+      })
+    }
+  }
+  return [...merged.values()]
 }

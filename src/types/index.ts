@@ -98,6 +98,12 @@ export interface BusArrival {
 export type FlightDirection = 'arrival' | 'departure'
 export type FlightSourceLanguage = 'en' | 'zh_HK' | 'zh_CN'
 
+export interface FlightLocalizedFields {
+  origin: Partial<Record<FlightSourceLanguage, string>>
+  destination: Partial<Record<FlightSourceLanguage, string>>
+  status: Partial<Record<FlightSourceLanguage, string>>
+}
+
 export interface AirportFlight {
   id: string
   date: string
@@ -112,6 +118,7 @@ export interface AirportFlight {
   statusCode: string | null
   status: string | null
   sourceLanguage: FlightSourceLanguage
+  localized: FlightLocalizedFields
 }
 
 export interface TransitData {
