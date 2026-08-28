@@ -411,3 +411,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/InfoPanel.test.ts` covers Bus route resolution; full suite has 66 passing tests, lint/build/diff checks pass. Commit: `444fb13`.
 - Known limitation: browser selection, late ETA hydration, and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
 - Next task: validate the complete selected-vehicle information workflow in a working browser.
+
+## Compact handoff: station selection details
+- Complete: stations are now selectable in both MapLibre and SVG schematic renderers; the information panel shows localized station name, line IDs, and coordinates.
+- Interaction: vehicle and station selections are mutually exclusive, and empty map clicks clear both selections.
+- Scope: station information and selection only; station geometry, route filters, and schedule simulation are unchanged.
+- Evidence: full suite has 66 passing tests, lint/build/diff checks pass. Commit: `b3ca879`.
+- Known limitation: real browser click ordering, touch behavior, and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
+- Next task: validate station and vehicle selection in a working browser before adding more interaction controls.
