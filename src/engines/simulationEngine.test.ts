@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { BusRoute, BusSchedule, TransitData } from '../types'
-import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeVehiclePositions, getScheduleType } from './simulationEngine'
+import type { BusRoute, BusSchedule, FerryRoute, FerrySchedule, TransitData } from '../types'
+import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeVehiclePositions, getScheduleType } from './simulationEngine'
 import { hongKongWallToInstant } from './hongKongTime'
 import { interpolateOnLine } from './geometry'
 
@@ -54,6 +54,29 @@ const busSchedule: BusSchedule = {
   endMinutes: 420,
   headwayMinutes: 10,
   durationMinutes: 20,
+  dwellMinutes: 1,
+}
+
+const ferryRoute: FerryRoute = {
+  id: 'ferry-7001-1',
+  operator: 'Transport Department Ferry Network',
+  routeNumber: '7001',
+  nameEn: 'A - B',
+  nameZh: '甲 - 乙',
+  color: '#0284c7',
+  stopIds: ['pier-a', 'pier-b', 'pier-c'],
+  geometry: [[114, 22], [114.1, 22], [114.2, 22]],
+  journeyTimeMinutes: 20,
+}
+
+const ferrySchedule: FerrySchedule = {
+  id: 'ferry-7001-1-schedule',
+  routeId: ferryRoute.id,
+  scheduleType: 'weekday',
+  startMinutes: 360,
+  endMinutes: 420,
+  headwayMinutes: 20,
+  durationMinutes: ferryRoute.journeyTimeMinutes,
   dwellMinutes: 1,
 }
 
@@ -146,5 +169,18 @@ describe('computeBusVehiclePositionsFromEta', () => {
       id: 'a', routeId: busRoute.id, stopSequence: 1, arrivalSequence: 1, destinationEn: 'STAR FERRY', destinationZh: '尖沙咀碼頭', eta: '2026-08-28T06:10:00+08:00', remarkEn: '', dataTimestamp: '2026-08-28T05:59:00+08:00',
     }], hongKongWallToInstant(2026, 7, 24, 6, 15))
     expect(vehicles).toHaveLength(0)
+  })
+})
+
+describe('computeFerryVehiclePositions', () => {
+  it('creates scheduled ferry vehicles and interpolates between piers', () => {
+    const vehicles = computeFerryVehiclePositions([ferryRoute], [ferrySchedule], hongKongWallToInstant(2026, 7, 24, 6, 5))
+
+    expect(vehicles).toHaveLength(1)
+    expect(vehicles[0].type).toBe('ferry')
+    expect(vehicles[0].coordinates[0]).toBeGreaterThan(114)
+    expect(vehicles[0].coordinates[0]).toBeLessThan(114.1)
+    expect(vehicles[0].nextStopId).toBe('pier-b')
+    expect(vehicles[0].destinationId).toBe('pier-c')
   })
 })

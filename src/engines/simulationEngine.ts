@@ -1,4 +1,4 @@
-import type { BusRoute, BusArrival, BusSchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
+import type { BusRoute, BusArrival, BusSchedule, FerryRoute, FerrySchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
 import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
 import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
 
@@ -151,7 +151,11 @@ export function computeVehiclePositions(transitData: TransitData, time: Date): V
   return vehicles
 }
 
-function busPositionFromElapsed(route: BusRoute, schedule: BusSchedule, elapsed: number): TripPosition {
+function scheduledRoutePositionFromElapsed(
+  route: Pick<BusRoute | FerryRoute, 'stopIds' | 'geometry'>,
+  schedule: Pick<BusSchedule | FerrySchedule, 'dwellMinutes' | 'durationMinutes'>,
+  elapsed: number,
+): TripPosition {
   const stopCount = route.stopIds.length
   if (stopCount <= 1) {
     return { coordinates: route.geometry[0] ?? [0, 0], bearing: 0, progress: 0, nextStopId: route.stopIds[0] ?? null }
@@ -214,10 +218,46 @@ export function computeBusVehiclePositions(routes: BusRoute[], schedules: BusSch
       const adjustedNow = nowMinutes < schedule.startMinutes && schedule.endMinutes >= 1440
         ? nowMinutes + 1440
         : nowMinutes
-      const position = busPositionFromElapsed(route, schedule, adjustedNow - start)
+      const position = scheduledRoutePositionFromElapsed(route, schedule, adjustedNow - start)
       vehicles.push({
         id: `${schedule.id}-${start}`,
         type: 'bus',
+        lineId: route.id,
+        tripId: schedule.id,
+        color: route.color,
+        coordinates: position.coordinates,
+        bearing: position.bearing,
+        progress: position.progress,
+        labelEn: route.nameEn,
+        labelZh: route.nameZh,
+        labelPt: route.namePt || route.nameEn,
+        nextStopId: position.nextStopId,
+        destinationId: route.stopIds[route.stopIds.length - 1] ?? null,
+      })
+    }
+  }
+
+  return vehicles
+}
+
+export function computeFerryVehiclePositions(routes: FerryRoute[], schedules: FerrySchedule[], time: Date): VehiclePosition[] {
+  const scheduleType = getOperationalScheduleType(time)
+  const nowMinutes = hongKongMinutesOfDay(time)
+  const routeById = new Map(routes.map(route => [route.id, route]))
+  const vehicles: VehiclePosition[] = []
+
+  for (const schedule of schedules) {
+    if (schedule.scheduleType !== scheduleType) continue
+    const route = routeById.get(schedule.routeId)
+    if (!route) continue
+    for (const start of activeStarts(schedule, nowMinutes)) {
+      const adjustedNow = nowMinutes < schedule.startMinutes && schedule.endMinutes >= 1440
+        ? nowMinutes + 1440
+        : nowMinutes
+      const position = scheduledRoutePositionFromElapsed(route, schedule, adjustedNow - start)
+      vehicles.push({
+        id: `${schedule.id}-${start}`,
+        type: 'ferry',
         lineId: route.id,
         tripId: schedule.id,
         color: route.color,

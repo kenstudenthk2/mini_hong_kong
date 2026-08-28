@@ -68,6 +68,17 @@ export interface FerryRoute extends LocalizedName {
   journeyTimeMinutes: number
 }
 
+export interface FerrySchedule {
+  id: string
+  routeId: string
+  scheduleType: ScheduleType
+  startMinutes: number
+  endMinutes: number
+  headwayMinutes: number
+  durationMinutes: number
+  dwellMinutes: number
+}
+
 export interface BusArrival {
   id: string
   routeId: string
@@ -94,7 +105,7 @@ export interface TransitData {
 
 export interface VehiclePosition {
   id: string
-  type: TransitMode | 'bus'
+  type: TransitMode | 'bus' | 'ferry'
   lineId: string
   tripId: string
   color: string
