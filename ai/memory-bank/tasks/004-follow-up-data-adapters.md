@@ -629,3 +629,27 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 81 passing tests, lint/build/diff checks pass. Commit: `e4e330b`.
 - Known limitation: live network hydration and NLB marker rendering remain unverified in a browser; Portuguese names use the shared English fallback.
 - Next task: validate NLB runtime requests and marker behavior in a working browser before expanding route or operator coverage.
+
+## Compact handoff: GMB route normalizer
+- Complete: added a Zod-validated pure GMB adapter that maps official route directions, ordered route stops, and nested WGS84 stop coordinates into shared `BusRoute` records.
+- Guardrails: directions with fewer than two stops or any missing coordinate are omitted; no timetable headway or vehicle movement is inferred.
+- Evidence: `src/dataAdapters/gmb.test.ts` covers ordered geometry and incomplete-coordinate omission. Commit: `9692ef7`.
+- Next task: add bounded runtime loading for one approved route and preserve the provider request budget.
+
+## Compact handoff: bounded GMB runtime loading
+- Complete: optional hydration loads GMB HKI route `1`, both directions, up to six ordered stops per direction, and deduplicated stop coordinates.
+- Request policy: route-stop and stop requests use concurrency two; failures remain isolated from the base transit map.
+- Semantics: this slice provides bounded route geometry only; it does not infer schedules or claim live vehicle telemetry.
+- Evidence: mocked official payload-shape coverage plus full suite of 84 passing tests and passing build. Commit: `733b4c1`.
+- Next task: validate live network hydration in a working browser before expanding GMB route coverage.
+
+## Compact handoff: GMB operator visibility
+- Complete: GMB is available in the bus operator directory, and `NLB`/`GMB` vehicle prefixes now map to their own operator filters.
+- Evidence: full suite of 84 passing tests and passing build. Commits: `6bf7d7f`, `13df97f`.
+- Known limitation: live marker rendering and operator toggle interaction remain unverified because the integrated browser harness is unavailable.
+
+## Compact handoff: transport tool switches
+- Complete: Rail, Light Rail, Buses, Ferries, Trams, and Flights each have an `ON/OFF` control in the directory menu.
+- Interaction: switches reuse the existing line, route, operator, and flight visibility state; Reset restores all transport tools.
+- Evidence: full suite of 83 passing tests and passing build. Commit: `cdbb60f`.
+- Known limitation: browser interaction, responsive layout, and localized labels remain unverified because the integrated browser harness is unavailable.
