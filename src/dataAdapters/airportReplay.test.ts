@@ -31,9 +31,9 @@ describe('computeAirportFlightVehiclePositions', () => {
       type: 'flight',
       lineId: hkiaRunways[0].id,
       tripId: flight.id,
-      labelEn: 'HKIA movement replay',
-      labelZh: '香港國際機場移動重播',
-      labelPt: 'Repeticao de movimento HKIA',
+      labelEn: 'HX246 - HKIA movement replay',
+      labelZh: 'HX246 - 香港國際機場移動重播',
+      labelPt: 'HX246 - Repeticao de movimento HKIA',
       destinationId: null,
     })
     expect(vehicles[0].coordinates[0]).toBeGreaterThan(hkiaRunways[0].geometry[0][0])

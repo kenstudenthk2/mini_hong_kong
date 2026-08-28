@@ -37,9 +37,10 @@ export function computeAirportFlightVehiclePositions(flights: AirportFlight[], t
     const movementProgress = elapsed / MOVEMENT_DURATION_MINUTES
     const progress = flight.direction === 'arrival' ? 1 - movementProgress : movementProgress
     const position = interpolateOnLine(runway.geometry, progress)
-    const labelEn = 'HKIA movement replay'
-    const labelZh = '\u9999\u6e2f\u570b\u969b\u6a5f\u5834\u79fb\u52d5\u91cd\u64ad'
-    const labelPt = 'Repeticao de movimento HKIA'
+    const flightRef = flight.flightNumbers.join(' / ') || flight.id
+    const labelEn = `${flightRef} - HKIA movement replay`
+    const labelZh = `${flightRef} - \u9999\u6e2f\u570b\u969b\u6a5f\u5834\u79fb\u52d5\u91cd\u64ad`
+    const labelPt = `${flightRef} - Repeticao de movimento HKIA`
     const first = runway.geometry[0]
     const last = runway.geometry[runway.geometry.length - 1]
     const movementBearing = flight.direction === 'arrival' ? bearing(last, first) : bearing(first, last)
