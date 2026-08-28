@@ -221,3 +221,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: this is static aerodrome context only. Historical flight records remain in the information board and are not converted into aircraft positions.
 - Evidence: full suite has 47 passing tests, lint/build/diff checks pass. Commit: `c0b8641`.
 - Next task: evaluate a current static runway/terminal geometry extract, then implement a separately labeled flight replay layer only when route provenance and timing semantics are approved.
+
+## Compact handoff: AIP runway context
+- Complete: the three HKIA runway centerlines are represented by six official AIP threshold coordinates and rendered in both MapLibre and the schematic fallback.
+- Source contract: current Hong Kong AIP page `https://www.ais.gov.hk/eaip_20260709/2026-07-09-000000/html/eAIP/VH-AD-2-VHHH-en-US.html`; thresholds are converted from DMS to WGS-84 decimal coordinates.
+- Semantics: static runway context only; no taxi routes, flight paths, or aircraft positions are inferred.
+- Evidence: `src/dataAdapters/airport.test.ts` covers all runway designators and the exact `07R/25L` conversion; full suite has 48 passing tests, lint/build/diff checks pass. Commit: `49af735`.
+- Next task: add static terminal/aircraft-stand context only if an authoritative source is approved, then build a flight replay model with explicit route provenance.
