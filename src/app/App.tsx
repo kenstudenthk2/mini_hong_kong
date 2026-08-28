@@ -100,6 +100,7 @@ export default function App() {
         onResetFilters={resetFilters}
         liveBusMode={liveBusMode}
         hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
+        feedStatus={transitData.feedStatus}
         stations={transitData.data?.stations ?? []}
         selectedStationId={selectedStation?.id ?? null}
         onSelectStation={station => {

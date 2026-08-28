@@ -4,6 +4,7 @@ import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
 import { searchRoutes, type SearchableRoute } from '../../app/routeSearch'
+import type { TransitDataState } from '../../hooks/useTransitData'
 import type { AirportFlight, FerryRoute, Lang, RailLine, Station, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
   onRouteSearchQueryChange: (query: string) => void
   selectedRouteSearchId: string | null
   onSelectRouteSearch: (route: SearchableRoute | null) => void
+  feedStatus: TransitDataState['feedStatus']
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -76,7 +78,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch, feedStatus }: Props) {
   const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -93,6 +95,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
   const aipRevision = HKG_AIP_SOURCE.match(/eaip_(\d{8})/)?.[1] ?? '-'
   const searchableRoutes: SearchableRoute[] = [...mtrLines, ...lightRailLines, ...(data?.busRoutes ?? []), ...(data?.ferryRoutes ?? []), ...(data?.tramRoutes ?? [])]
   const routeSearchResults = searchRoutes(searchableRoutes, routeSearchQuery, lang).slice(0, 8)
+  const feedStatusLabel = (status: TransitDataState['feedStatus']['optionalTransit']) => lang === 'zh' ? ({ pending: '\u8f09\u5165\u4e2d', ready: '\u5df2\u5c31\u7dd2', unavailable: '\u4e0d\u53ef\u7528' }[status]) : lang === 'pt' ? ({ pending: 'A carregar', ready: 'Disponivel', unavailable: 'Indisponivel' }[status]) : ({ pending: 'Pending', ready: 'Ready', unavailable: 'Unavailable' }[status])
 
   return (
     <aside className="directory-menu" aria-label="Transit directory">
@@ -191,6 +194,9 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
+          <p>{lang === 'zh' ? '\u4ea4\u901a\u8cc7\u6599' : lang === 'pt' ? 'Transito' : 'Transit feeds'}: {feedStatusLabel(feedStatus.optionalTransit)}</p>
+          <p>GTFS: {feedStatusLabel(feedStatus.gtfsSchedules)}</p>
+          <p>{lang === 'zh' ? '\u822a\u73ed\u8cc7\u6599' : lang === 'pt' ? 'Voos' : 'Flight feed'}: {feedStatusLabel(feedStatus.flights)}</p>
           <p>{lang === 'zh' ? '\u5df4\u58eb\u6a21\u5f0f' : lang === 'pt' ? 'Modo dos autocarros' : 'Bus mode'}: {hasLiveBusData && liveBusMode ? (lang === 'zh' ? '\u5373\u6642 ETA' : lang === 'pt' ? 'ETA ao vivo' : 'Live ETA') : (lang === 'zh' ? '\u6642\u523b\u8868\u91cd\u64ad' : lang === 'pt' ? 'Replay de horario' : 'Schedule replay')}</p>
           {layerManifest.map(entry => (
             <p key={entry.id}>

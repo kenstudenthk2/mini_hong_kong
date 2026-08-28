@@ -8,10 +8,17 @@ import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../d
 import { loadHkgFlights } from '../dataAdapters/flight'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
-interface TransitDataState {
+export type FeedStatus = 'pending' | 'ready' | 'unavailable'
+
+export interface TransitDataState {
   data: TransitData | null
   loading: boolean
   error: string | null
+  feedStatus: {
+    optionalTransit: FeedStatus
+    gtfsSchedules: FeedStatus
+    flights: FeedStatus
+  }
 }
 
 async function loadJson(path: string): Promise<unknown> {
@@ -174,7 +181,12 @@ async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
 }
 
 export function useTransitData(): TransitDataState {
-  const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
+  const [state, setState] = useState<TransitDataState>({
+    data: null,
+    loading: true,
+    error: null,
+    feedStatus: { optionalTransit: 'pending', gtfsSchedules: 'pending', flights: 'pending' },
+  })
 
   useEffect(() => {
     let cancelled = false
@@ -204,22 +216,31 @@ export function useTransitData(): TransitDataState {
           loading: false,
           error: null,
           data,
+          feedStatus: { optionalTransit: 'pending', gtfsSchedules: 'pending', flights: 'pending' },
         })
         loadOptionalTransitFeed().then(optionalFeed => {
           if (cancelled) return
-          setState(current => current.data ? { ...current, data: { ...current.data, ...optionalFeed } } : current)
-        }).catch(() => undefined)
+          const hasOptionalData = optionalFeed.busRoutes.length > 0 || optionalFeed.ferryRoutes.length > 0 || optionalFeed.tramRoutes.length > 0
+          setState(current => current.data ? { ...current, data: { ...current.data, ...optionalFeed }, feedStatus: { ...current.feedStatus, optionalTransit: hasOptionalData ? 'ready' : 'unavailable' } } : current)
+        }).catch(() => {
+          if (!cancelled) setState(current => ({ ...current, feedStatus: { ...current.feedStatus, optionalTransit: 'unavailable' } }))
+        })
         loadGtfsSchedules().then(scheduleFeed => {
           if (cancelled) return
-          setState(current => current.data ? { ...current, data: { ...current.data, ...scheduleFeed } } : current)
-        }).catch(() => undefined)
+          const hasSchedules = scheduleFeed.ferrySchedules.length > 0 || scheduleFeed.tramSchedules.length > 0
+          setState(current => current.data ? { ...current, data: { ...current.data, ...scheduleFeed }, feedStatus: { ...current.feedStatus, gtfsSchedules: hasSchedules ? 'ready' : 'unavailable' } } : current)
+        }).catch(() => {
+          if (!cancelled) setState(current => ({ ...current, feedStatus: { ...current.feedStatus, gtfsSchedules: 'unavailable' } }))
+        })
         loadHkgFlights().then(flights => {
           if (cancelled) return
-          setState(current => current.data ? { ...current, data: { ...current.data, flights } } : current)
-        }).catch(() => undefined)
+          setState(current => current.data ? { ...current, data: { ...current.data, flights }, feedStatus: { ...current.feedStatus, flights: flights.length > 0 ? 'ready' : 'unavailable' } } : current)
+        }).catch(() => {
+          if (!cancelled) setState(current => ({ ...current, feedStatus: { ...current.feedStatus, flights: 'unavailable' } }))
+        })
       } catch (err) {
         if (!cancelled) {
-          setState({ data: null, loading: false, error: err instanceof Error ? err.message : String(err) })
+          setState({ data: null, loading: false, error: err instanceof Error ? err.message : String(err), feedStatus: { optionalTransit: 'unavailable', gtfsSchedules: 'unavailable', flights: 'unavailable' } })
         }
       }
     }
