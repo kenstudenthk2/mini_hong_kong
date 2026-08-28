@@ -783,3 +783,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Contract: the information panel cannot continue presenting a route or station hidden by the current layer filters.
 - Evidence: full suite has 99 passing tests, lint/build/diff checks pass.
 - Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
+
+## Compact handoff: OSM attribution control
+- Complete: the MapLibre map now adds a compact `AttributionControl` and retains OSM attribution on the raster source.
+- Contract: OSM credit is visible in the rendered map UI while route and transit data remain separate application sources.
+- Evidence: full suite has 99 passing tests, lint/build/diff checks pass.
+- Known limitation: rendered attribution placement remains unverified because the browser runtime cannot create a tab.

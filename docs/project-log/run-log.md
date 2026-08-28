@@ -176,3 +176,8 @@
 - This keeps the information panel consistent with the MapLibre layer state after Rail, Light Rail, Bus, Ferry, or Tram toggles.
 - Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
 - Browser limitation: live selection interaction remains unverified because the browser runtime cannot create a tab.
+
+### R-034: Visible OSM attribution control (2026-08-28)
+- Added MapLibre's compact attribution control alongside the OSM tile source attribution metadata.
+- OSM credit is now visibly available in the map UI rather than existing only in source configuration.
+- Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
