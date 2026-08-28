@@ -15,6 +15,7 @@ export default function App() {
   const transitData = useTransitData()
   const clock = useSimulationClock()
   const [pitchEnabled, setPitchEnabled] = useState(true)
+  const [liveBusMode, setLiveBusMode] = useState(true)
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
   const allLineIds = useMemo(
     () => new Set(transitData.data?.railLines.map(line => line.id) ?? []),
@@ -38,14 +39,14 @@ export default function App() {
   const vehicles = useMemo(
     () => transitData.data ? [
       ...computeVehiclePositions(transitData.data, clock.currentTime),
-      ...(transitData.data.busArrivals?.length
+      ...(liveBusMode && transitData.data.busArrivals?.length
         ? computeBusVehiclePositionsFromEta(transitData.data.busRoutes ?? [], transitData.data.busArrivals, clock.currentTime)
         : computeBusVehiclePositions(transitData.data.busRoutes ?? [], kmbReplaySchedules, clock.currentTime)),
       ...computeFerryVehiclePositions(transitData.data.ferryRoutes ?? [], transitData.data.ferrySchedules ?? [], clock.currentTime),
       ...computeTramVehiclePositions(transitData.data.tramRoutes ?? [], transitData.data.tramSchedules ?? [], clock.currentTime),
       ...computeAirportFlightVehiclePositions(transitData.data.flights ?? [], clock.currentTime),
     ] : [],
-    [clock.currentTime, transitData.data],
+    [clock.currentTime, liveBusMode, transitData.data],
   )
 
   useEffect(() => {
@@ -115,6 +116,9 @@ export default function App() {
           clock={clock}
           pitchEnabled={pitchEnabled}
           onTogglePitch={() => setPitchEnabled(value => !value)}
+          liveBusMode={liveBusMode}
+          hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
+          onToggleLiveBusMode={() => setLiveBusMode(value => !value)}
         />
         <InfoPanel data={transitData.data} vehicle={selectedVehicle} />
       </section>

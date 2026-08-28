@@ -6,9 +6,12 @@ interface Props {
   clock: SimulationClock
   pitchEnabled: boolean
   onTogglePitch: () => void
+  liveBusMode: boolean
+  hasLiveBusData: boolean
+  onToggleLiveBusMode: () => void
 }
 
-export function ControlPanel({ clock, pitchEnabled, onTogglePitch }: Props) {
+export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, hasLiveBusData, onToggleLiveBusMode }: Props) {
   const { lang, setLang, t } = useI18n()
   const formatted = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Hong_Kong',
@@ -39,6 +42,11 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch }: Props) {
         <button type="button" onClick={clock.syncToNow}>{t.now}</button>
         <button type="button" onClick={onTogglePitch}>{pitchEnabled ? t.mode3d : t.mode2d}</button>
       </div>
+      <label className="toggle-row">
+        <input type="checkbox" checked={liveBusMode} disabled={!hasLiveBusData} onChange={onToggleLiveBusMode} />
+        <span>{lang === 'zh' ? '巴士即時 ETA' : lang === 'pt' ? 'ETA ao vivo dos autocarros' : 'Live bus ETA'}</span>
+        <strong>{hasLiveBusData ? (liveBusMode ? t.active : t.planned) : '-'}</strong>
+      </label>
       <label className="slider-row">
         <span>{t.speed}</span>
         <input

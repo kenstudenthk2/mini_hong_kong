@@ -258,6 +258,19 @@ input {
   grid-template-columns: 74px 1fr;
 }
 
+.toggle-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  color: #b7c6d8;
+  font-size: 0.82rem;
+}
+
+.toggle-row input {
+  accent-color: #38bdf8;
+}
+
 .select-row select {
   min-height: 32px;
   color: #e2e8f0;
