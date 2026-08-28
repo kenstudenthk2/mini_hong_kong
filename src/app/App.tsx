@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { DirectoryMenu } from '../components/menu/DirectoryMenu'
 import { ControlPanel } from '../components/map/ControlPanel'
 import { InfoPanel } from '../components/map/InfoPanel'
@@ -9,6 +9,7 @@ import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeF
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
 import type { VehiclePosition } from '../types'
+import { isVehicleVisible } from './vehicleVisibility'
 
 export default function App() {
   const transitData = useTransitData()
@@ -46,6 +47,12 @@ export default function App() {
     ] : [],
     [clock.currentTime, transitData.data],
   )
+
+  useEffect(() => {
+    if (selectedVehicle && !isVehicleVisible(selectedVehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)) {
+      setSelectedVehicle(null)
+    }
+  }, [selectedBusOperators, selectedLineIds, selectedRouteIds, selectedVehicle])
 
   function toggleLine(lineId: string) {
     const next = new Set(selectedLineIds)

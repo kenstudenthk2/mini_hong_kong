@@ -1,0 +1,16 @@
+import type { VehiclePosition } from '../types'
+
+export function isVehicleVisible(
+  vehicle: VehiclePosition,
+  selectedLineIds: Set<string>,
+  selectedRouteIds: Set<string>,
+  selectedBusOperators: Set<string>,
+): boolean {
+  if (vehicle.type === 'flight') return true
+  if (vehicle.type === 'bus') {
+    const operator = vehicle.lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
+    return selectedBusOperators.has(operator)
+  }
+  if (vehicle.type === 'ferry' || vehicle.type === 'tram') return selectedRouteIds.has(vehicle.lineId)
+  return selectedLineIds.has(vehicle.lineId)
+}
