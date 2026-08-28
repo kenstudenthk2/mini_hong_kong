@@ -330,6 +330,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       },
     })
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right')
     map.on('load', () => {
       map.addSource('rail-lines', { type: 'geojson', data: emptyCollection })
       map.addSource('bus-routes', { type: 'geojson', data: emptyCollection })
