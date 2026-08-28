@@ -64,6 +64,19 @@ describe('GMB route adapter', () => {
     expect(calls.filter(path => path.includes('/eta/route-stop/'))).toHaveLength(4)
   })
 
+  it('keeps route geometry when one bounded ETA request fails', async () => {
+    const feed = await loadGmbFeed(async path => {
+      if (path.endsWith('/route/HKI/1')) return { data: { route_id: 2006408, region: 'HKI', route_code: '1', directions: [{ route_seq: 1, orig_tc: '山頂', orig_en: 'The Peak', dest_tc: '中環', dest_en: 'Central' }] } }
+      if (path.includes('/eta/route-stop/') && path.endsWith('/2')) throw new Error('provider timeout')
+      if (path.includes('/eta/route-stop/')) return { generated_timestamp: '2026-08-28T14:10:31+08:00', data: [{ enabled: true, eta: [{ eta_seq: 1, timestamp: '2026-08-28T14:14:00+08:00' }] }] }
+      if (path.includes('/route-stop/')) return { data: [{ stop_seq: 1, stop_id: 20014489, name_tc: '站一', name_en: 'Stop 1' }, { stop_seq: 2, stop_id: 20014490, name_tc: '站二', name_en: 'Stop 2' }] }
+      return { data: { coordinates: { wgs84: { latitude: 22.27, longitude: 114.14 } } } }
+    })
+
+    expect(feed.routes).toHaveLength(1)
+    expect(feed.busArrivals).toHaveLength(1)
+  })
+
   it('normalizes one official route direction with ordered stop coordinates', () => {
     const routes = normalizeGmbRoutes({
       routes: [{

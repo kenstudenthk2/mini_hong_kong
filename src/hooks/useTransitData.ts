@@ -204,7 +204,7 @@ async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
   return {
     busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbFeed.routes ?? []), ...(gmbFeed.routes ?? [])],
     busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? []), ...(nlbFeed.busArrivals ?? []), ...(gmbFeed.busArrivals ?? [])],
-    busDataTimestamp: busFeed.generatedAt,
+    busDataTimestamp: [busFeed.generatedAt, ...gmbFeed.busArrivals.map(arrival => arrival.dataTimestamp)].filter(Boolean).sort().at(-1) ?? '',
     ferryRoutes: ferryRoutes ?? [],
     tramRoutes: tramRoutes ?? [],
   }

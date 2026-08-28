@@ -162,13 +162,17 @@ export async function loadGmbFeed(loadJson: JsonLoader): Promise<GmbRuntimeFeed>
     }))
   })
   const arrivals = await mapWithConcurrency(etaTargets, 2, async target => {
-    const raw = await loadJson(`https://data.etagmb.gov.hk/eta/route-stop/${route.route_id}/${target.routeSeq}/${target.stopSeq}`)
-    return normalizeGmbEta(raw, {
-      routeId: target.routeId,
-      stopSequence: target.stopSeq,
-      destinationEn: target.destinationEn,
-      destinationZh: target.destinationZh,
-    })
+    try {
+      const raw = await loadJson(`https://data.etagmb.gov.hk/eta/route-stop/${route.route_id}/${target.routeSeq}/${target.stopSeq}`)
+      return normalizeGmbEta(raw, {
+        routeId: target.routeId,
+        stopSequence: target.stopSeq,
+        destinationEn: target.destinationEn,
+        destinationZh: target.destinationZh,
+      })
+    } catch {
+      return []
+    }
   })
   return { routes: normalizeGmbRoutes(snapshot), busArrivals: arrivals.flat() }
 }
