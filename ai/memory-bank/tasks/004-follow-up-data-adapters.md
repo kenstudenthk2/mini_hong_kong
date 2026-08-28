@@ -164,3 +164,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: adapter/type contract only; tram schedules are not yet loaded into `TransitData` or passed to a tram vehicle engine.
 - Evidence: new tram schedule fixture passes; full suite has 40 passing tests, lint/build/diff checks pass. Commit: `f1894d7`.
 - Next task: add `computeTramVehiclePositions`, wire staged tram schedules into `App`, and include tram vehicles in `MapView` visibility.
+
+## Compact handoff: scheduled tram movement
+- Complete: `computeTramVehiclePositions` creates `tram` vehicles from normalized schedule departures, reusing shared interpolation, dwell, destination, and overnight activation behavior.
+- Contract: `VehiclePosition.type` now includes `tram`; no timetable fetch or app wiring was changed in this slice.
+- Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `3eb6729`.
+- Next task: stage tram GTFS schedule loading into `TransitData`, feed schedules into `App`, and include tram vehicles in the map/menu visibility state.
