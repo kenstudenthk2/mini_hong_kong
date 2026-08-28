@@ -544,3 +544,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 76 passing tests, lint/build/diff checks pass. Commit: `a47893a`.
 - Known limitation: browser visual confirmation of the highlight and three-locale layout remains unverified because the integrated browser harness is unavailable.
 - Next task: validate HKIA and aircraft selection workflows in a working browser before adding more airport controls.
+
+## Compact handoff: transport source links
+- Complete: the directory layer manifest now links Buses to the DATA.GOV.HK hub and Ferries/Trams to the exact static GTFS source directory used by the staged loaders.
+- Scope: source provenance only; loading, normalization, simulation, and UI behavior are unchanged.
+- Evidence: `src/dataAdapters/layerManifest.test.ts` asserts the external source URLs; full suite has 77 passing tests, lint/build/diff checks pass. Commit: `f70316b`.
+- Known limitation: browser link navigation and source availability at runtime remain unverified; source freshness is still represented separately by feed status.
+- Next task: validate directory source links and feed status in a working browser before adding further data-source controls.
