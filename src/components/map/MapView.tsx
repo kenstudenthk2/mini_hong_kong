@@ -6,6 +6,7 @@ import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures, type AirportGroundFeature } from '../../dataAdapters/airportGround'
 import { isVehicleVisible } from '../../app/vehicleVisibility'
 import type { SearchableRoute } from '../../app/routeSearch'
+import type { TransportTool } from '../menu/DirectoryMenu'
 import type { AirportFacility, BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
@@ -31,6 +32,7 @@ interface Props {
   selectedGroundFeatureId: string | null
   selectedRouteSearchId: string | null
   followSelectedVehicle: boolean
+  activeTools: Set<TransportTool>
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
@@ -125,6 +127,10 @@ export function selectedRouteGeometry(routes: SearchableRoute[], selectedRouteId
   return routes.find(item => item.id === selectedRouteId)?.geometry ?? []
 }
 
+function lineTool(line: RailLine): TransportTool {
+  return line.mode === 'mtr' ? 'rail' : 'lightRail'
+}
+
 function routeFocusToGeoJson(routes: SearchableRoute[], selectedRouteId: string | null): GeoJSON.FeatureCollection {
   const route = routes.find(item => item.id === selectedRouteId)
   if (!route || route.geometry.length < 2) return emptyCollection
@@ -191,7 +197,7 @@ function airportGroundToGeoJson(selectedGroundFeatureId: string | null): GeoJSON
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle, activeTools }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -211,6 +217,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const selectedFacilityIdRef = useRef(selectedFacilityId)
   const selectedGroundFeatureIdRef = useRef(selectedGroundFeatureId)
   const selectedRouteSearchIdRef = useRef(selectedRouteSearchId)
+  const activeToolsRef = useRef(activeTools)
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
@@ -234,7 +241,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     selectedFacilityIdRef.current = selectedFacilityId
     selectedGroundFeatureIdRef.current = selectedGroundFeatureId
     selectedRouteSearchIdRef.current = selectedRouteSearchId
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
+    activeToolsRef.current = activeTools
+  }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
 
   useEffect(() => {
       onSelectVehicleRef.current = onSelectVehicle
@@ -547,7 +555,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
       map.on('mouseenter', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = '' })
-      updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
+      updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current.filter(line => activeToolsRef.current.has(lineTool(line))), selectedLineIdsRef.current))
       updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
@@ -569,7 +577,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     const map = mapRef.current
     if (!map?.getSource('rail-lines')) return
-    updateSource(map, 'rail-lines', linesToGeoJson(lines, selectedLineIds))
+    updateSource(map, 'rail-lines', linesToGeoJson(lines.filter(line => activeTools.has(lineTool(line))), selectedLineIds))
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
@@ -580,7 +588,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
     updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureId))
     updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
+  }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -645,7 +653,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           strokeWidth="72"
           strokeLinecap="round"
         />
-        {lines.map(line => (
+        {lines.filter(line => activeTools.has(lineTool(line))).map(line => (
           <g key={line.id} opacity={selectedLineIds.has(line.id) ? 1 : 0.18}>
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />

@@ -216,6 +216,7 @@ export default function App() {
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
           followSelectedVehicle={followSelectedVehicle}
+          activeTools={activeTools}
         />
         <ControlPanel
           clock={clock}
