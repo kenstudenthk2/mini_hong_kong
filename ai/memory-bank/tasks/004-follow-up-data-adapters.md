@@ -285,3 +285,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `42cb8b6`.
 - Known limitation: browser interaction verification remains pending; no route-level controls were added for buses or flights in this slice.
 - Next task: add a compact reset-all control or bounded Bus operator filtering only after interaction verification is available.
+
+## Compact handoff: directory filter reset
+- Complete: the directory header now exposes a trilingual `Reset filters` action that restores all Rail, Ferry, and Tram selections to their initial enabled state.
+- Scope: reset state and compact styling only; no vehicle, route, or data-source semantics changed.
+- Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `856e426`.
+- Known limitation: browser click verification remains pending; the reset action is intentionally text-labeled because it is an unfamiliar global command.
+- Next task: add a bounded Bus operator filter only if the menu remains scannable after browser verification.
