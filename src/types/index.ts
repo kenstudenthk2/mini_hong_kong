@@ -95,6 +95,25 @@ export interface BusArrival {
   dataTimestamp: string
 }
 
+export type FlightDirection = 'arrival' | 'departure'
+export type FlightSourceLanguage = 'en' | 'zh_HK' | 'zh_CN'
+
+export interface AirportFlight {
+  id: string
+  date: string
+  direction: FlightDirection
+  cargo: boolean
+  sequence: number
+  flightNumbers: string[]
+  airlineCode: string | null
+  origin: string | null
+  destination: string | null
+  scheduledTime: string
+  statusCode: string | null
+  status: string | null
+  sourceLanguage: FlightSourceLanguage
+}
+
 export interface TransitData {
   railLines: RailLine[]
   stations: Station[]
@@ -106,7 +125,7 @@ export interface TransitData {
   ferrySchedules?: FerrySchedule[]
   tramRoutes?: TramRoute[]
   tramSchedules?: TramSchedule[]
-  flights?: unknown[]
+  flights?: AirportFlight[]
 }
 
 export interface VehiclePosition {
