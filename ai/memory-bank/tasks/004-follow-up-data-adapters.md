@@ -139,3 +139,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: `MapView` now includes `ferry` vehicles in the always-visible vehicle filter, covering both MapLibre points/extrusions and schematic hotspots.
 - Scope: visibility only; ferry menu counts and labels remain a separate UI task.
 - Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `95ed296`.
+
+## Compact handoff: ferry directory menu
+- Complete: Ferries now appear as an active directory section with route-geometry and live vehicle counts; the Data Status summary includes ferries alongside rail and buses.
+- Scope: menu discoverability only; tram and flight sections remain planned.
+- Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `f46993e`.
