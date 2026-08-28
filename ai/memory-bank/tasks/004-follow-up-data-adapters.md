@@ -235,3 +235,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Timing contract: the adapter uses the record's Hong Kong scheduled time-of-day, tolerates midnight wraparound, and suppresses records outside the movement window.
 - Evidence: `src/dataAdapters/airportReplay.test.ts` covers interpolation and outside-window suppression; full suite has 50 passing tests, lint/build/diff checks pass. Commits: `7196a9b`, `625311a`.
 - Next task: add a static terminal/stand layer only after an authoritative geometry source is approved, then improve aircraft visual treatment without widening the telemetry claim.
+
+## Compact handoff: HKIA static geometry source review
+- Decision: do not add terminal, gate, apron, or parking-stand coordinates in this slice.
+- Evidence: OpenStreetMap documents `aeroway=terminal`, `gate`, `apron`, and `parking_position`, but its core API is an editing API and the documentation recommends Overpass for read-only extraction. No versioned HKIA geometry snapshot with an approved refresh/licensing contract was established here.
+- Guardrail: keep AIP runway context and the explicitly labeled runway movement replay; do not convert an unpinned OSM query or map tile into airport operational truth.
+- Sources reviewed: `https://wiki.openstreetmap.org/wiki/API`, `https://wiki.openstreetmap.org/wiki/Tag:aeroway%3Dterminal`, and `https://wiki.openstreetmap.org/wiki/Aeroway`.
+- Next task: choose and approve a pinned static geometry artifact or an explicit Overpass ingestion contract before adding terminal/stand rendering.
