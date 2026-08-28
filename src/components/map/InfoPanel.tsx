@@ -1,5 +1,5 @@
 import { localName, useI18n } from '../../i18n'
-import type { AirportFlight, Lang, Station, TransitData, VehiclePosition } from '../../types'
+import type { AirportFlight, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
@@ -25,6 +25,21 @@ function flightLabel(lang: Lang, key: 'flight' | 'airline' | 'route' | 'schedule
   return labels[lang][key]
 }
 
+export function routeForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): FerryRoute | undefined {
+  if (!data || (vehicle?.type !== 'ferry' && vehicle?.type !== 'tram')) return undefined
+  const routes = vehicle.type === 'ferry' ? data.ferryRoutes : data.tramRoutes
+  return routes?.find(route => route.id === vehicle.lineId)
+}
+
+function routeLabel(lang: Lang, key: 'operator' | 'routeNumber' | 'journey' | 'progress'): string {
+  const labels = {
+    en: { operator: 'Operator', routeNumber: 'Route', journey: 'Journey', progress: 'Progress' },
+    zh: { operator: '\u71df\u8fa6\u5546', routeNumber: '\u8def\u7dda', journey: '\u884c\u7a0b', progress: '\u9032\u5ea6' },
+    pt: { operator: 'Operador', routeNumber: 'Rota', journey: 'Viagem', progress: 'Progresso' },
+  } as const
+  return labels[lang][key]
+}
+
 export function InfoPanel({ data, vehicle }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
@@ -32,6 +47,7 @@ export function InfoPanel({ data, vehicle }: Props) {
   const nextStop: Station | undefined = vehicle?.nextStopId ? stationById.get(vehicle.nextStopId) : undefined
   const destination: Station | undefined = vehicle?.destinationId ? stationById.get(vehicle.destinationId) : undefined
   const flight = flightForVehicle(data, vehicle)
+  const route = routeForVehicle(data, vehicle)
 
   return (
     <section className="info-panel">
@@ -60,6 +76,17 @@ export function InfoPanel({ data, vehicle }: Props) {
           <p>{t.destination}: <strong>{localName(destination, lang)}</strong></p>
           <p>{t.nextStop}: <strong>{localName(nextStop, lang)}</strong></p>
           <p>Progress: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
+        </div>
+      )}
+      {vehicle && route && (
+        <div className="info-grid">
+          <span className="line-chip" style={{ borderColor: route.color, color: route.color }}>
+            {localName(route, lang)}
+          </span>
+          <p>{routeLabel(lang, 'operator')}: <strong>{route.operator}</strong></p>
+          <p>{routeLabel(lang, 'routeNumber')}: <strong>{route.routeNumber}</strong></p>
+          <p>{routeLabel(lang, 'journey')}: <strong>{route.journeyTimeMinutes} min</strong></p>
+          <p>{routeLabel(lang, 'progress')}: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
         </div>
       )}
     </section>

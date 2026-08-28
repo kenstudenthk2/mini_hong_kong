@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flightForVehicle } from './InfoPanel'
+import { flightForVehicle, routeForVehicle } from './InfoPanel'
 import type { TransitData, VehiclePosition } from '../../types'
 
 const flightVehicle: VehiclePosition = {
@@ -27,5 +27,16 @@ describe('flight info resolution', () => {
   it('does not resolve a flight for another vehicle or missing record', () => {
     expect(flightForVehicle(null, flightVehicle)).toBeUndefined()
     expect(flightForVehicle({ flights: [] } as unknown as TransitData, flightVehicle)).toBeUndefined()
+  })
+
+  it('resolves ferry and tram routes for selected surface vehicles', () => {
+    const ferry = { id: 'ferry-1', type: 'ferry', lineId: 'ferry-route-1' } as VehiclePosition
+    const tram = { id: 'tram-1', type: 'tram', lineId: 'tram-route-1' } as VehiclePosition
+    const data = {
+      ferryRoutes: [{ id: 'ferry-route-1', operator: 'Ferry', routeNumber: '1', color: '#0284c7', nameEn: 'Central - Mui Wo', nameZh: '\u4e2d\u74b0 - \u6885\u7a9d', geometry: [], stopIds: [], journeyTimeMinutes: 35 }],
+      tramRoutes: [{ id: 'tram-route-1', operator: 'Tram', routeNumber: '1', color: '#f59e0b', nameEn: 'East - West', nameZh: '\u6771 - \u897f', geometry: [], stopIds: [], journeyTimeMinutes: 12 }],
+    } as unknown as TransitData
+    expect(routeForVehicle(data, ferry)?.routeNumber).toBe('1')
+    expect(routeForVehicle(data, tram)?.operator).toBe('Tram')
   })
 })
