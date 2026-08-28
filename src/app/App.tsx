@@ -95,6 +95,8 @@ export default function App() {
         selectedBusOperators={selectedBusOperators}
         onToggleBusOperator={toggleBusOperator}
         onResetFilters={resetFilters}
+        liveBusMode={liveBusMode}
+        hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}

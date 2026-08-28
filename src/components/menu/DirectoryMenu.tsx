@@ -15,6 +15,8 @@ interface Props {
   selectedBusOperators: Set<string>
   onToggleBusOperator: (operator: string) => void
   onResetFilters: () => void
+  liveBusMode: boolean
+  hasLiveBusData: boolean
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -66,7 +68,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData }: Props) {
   const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -179,6 +181,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
+          <p>{lang === 'zh' ? '\u5df4\u58eb\u6a21\u5f0f' : lang === 'pt' ? 'Modo dos autocarros' : 'Bus mode'}: {hasLiveBusData && liveBusMode ? (lang === 'zh' ? '\u5373\u6642 ETA' : lang === 'pt' ? 'ETA ao vivo' : 'Live ETA') : (lang === 'zh' ? '\u6642\u523b\u8868\u91cd\u64ad' : lang === 'pt' ? 'Replay de horario' : 'Schedule replay')}</p>
           {layerManifest.map(entry => (
             <p key={entry.id}>
               {lang === 'zh' ? entry.labelZh : lang === 'pt' ? entry.labelPt : entry.labelEn}: {entry.dataClass} · {entry.sourceUrl ? <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{lang === 'zh' ? entry.sourceLabelZh : lang === 'pt' ? entry.sourceLabelPt : entry.sourceLabelEn}</a> : lang === 'zh' ? entry.sourceLabelZh : lang === 'pt' ? entry.sourceLabelPt : entry.sourceLabelEn}
