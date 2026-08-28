@@ -789,3 +789,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Contract: OSM credit is visible in the rendered map UI while route and transit data remain separate application sources.
 - Evidence: full suite has 99 passing tests, lint/build/diff checks pass.
 - Known limitation: rendered attribution placement remains unverified because the browser runtime cannot create a tab.
+
+## Compact handoff: direct map route selection
+- Complete: visible rail, bus, ferry, and tram MapLibre route layers are clickable.
+- Selection contract: map route clicks resolve normalized route IDs, clear vehicle/station/airport selections, and flow through the same route focus and information-panel state as directory search.
+- Evidence: `MapView.test.ts` covers normalized map feature lookup; full suite has 100 passing tests, lint/build/diff checks pass.
+- Known limitation: live map click and camera behavior remain unverified because the browser runtime cannot create a tab.

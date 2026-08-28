@@ -181,3 +181,9 @@
 - Added MapLibre's compact attribution control alongside the OSM tile source attribution metadata.
 - OSM credit is now visibly available in the map UI rather than existing only in source configuration.
 - Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
+
+### R-035: Direct map route selection (2026-08-28)
+- Added click selection for visible rail, bus, ferry, and tram route layers.
+- Map selection reuses the directory route state, clears competing selections, fits the route, and shows the existing localized route details.
+- Evidence: 25 test files and 100 tests pass, lint, build, and diff checks pass.
+- Browser limitation: direct map click behavior remains unverified because the browser runtime cannot create a tab.
