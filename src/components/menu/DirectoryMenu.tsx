@@ -1,4 +1,5 @@
 import { localName, useI18n } from '../../i18n'
+import { useState } from 'react'
 import { classifyFreshness } from '../../dataAdapters/freshness'
 import { hkiaFacility, HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures, HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
@@ -101,6 +102,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
 
 export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch, feedStatus, selectedFacilityId, onSelectFacility, selectedGroundFeatureId, onSelectGroundFeature, activeTools, onToggleTool }: Props) {
   const { lang, t } = useI18n()
+  const [collapsed, setCollapsed] = useState(false)
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
@@ -116,7 +118,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
   const feedStatusLabel = (status: TransitDataState['feedStatus']['optionalTransit']) => lang === 'zh' ? ({ pending: '\u8f09\u5165\u4e2d', ready: '\u5df2\u5c31\u7dd2', unavailable: '\u4e0d\u53ef\u7528' }[status]) : lang === 'pt' ? ({ pending: 'A carregar', ready: 'Disponivel', unavailable: 'Indisponivel' }[status]) : ({ pending: 'Pending', ready: 'Ready', unavailable: 'Unavailable' }[status])
 
   return (
-    <aside className="directory-menu" aria-label="Transit directory">
+    <aside className={`directory-menu${collapsed ? ' directory-menu-collapsed' : ''}`} aria-label="Transit directory">
+      <button className="directory-collapse" type="button" aria-label={collapsed ? 'Expand transit directory' : 'Collapse transit directory'} aria-expanded={!collapsed} onClick={() => setCollapsed(value => !value)}>{collapsed ? '+' : '\u2261'}</button>
       <header className="brand-block">
         <div className="brand-title">{t.appName}</div>
         <div className="brand-subtitle">{t.subtitle}</div>

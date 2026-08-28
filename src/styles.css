@@ -41,6 +41,37 @@ input {
   border-right: 1px solid rgba(148, 163, 184, 0.22);
 }
 
+.directory-collapse {
+  display: block;
+  width: 30px;
+  min-height: 30px;
+  margin: 0 0 8px auto;
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.directory-collapse:hover {
+  background: rgba(56, 189, 248, 0.22);
+}
+
+.directory-menu-collapsed {
+  overflow: visible;
+  padding: 10px;
+}
+
+.directory-menu-collapsed > :not(.directory-collapse) {
+  display: none;
+}
+
+.app-shell:has(.directory-menu-collapsed) {
+  grid-template-columns: 52px 1fr;
+}
+
 .brand-block {
   padding: 4px 0 18px;
 }
@@ -239,6 +270,7 @@ input {
 }
 
 .schematic-overlay {
+  display: none;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -437,6 +469,10 @@ input {
 
   .info-panel {
     bottom: 12px;
+  }
+
+  .app-shell:has(.directory-menu-collapsed) {
+    grid-template-columns: 1fr;
   }
 
   .timeline-panel {
