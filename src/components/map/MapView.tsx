@@ -49,6 +49,10 @@ export function basemapVisibilityForPitch(pitchEnabled: boolean): { light: 'visi
     : { light: 'visible', dark: 'none' }
 }
 
+export function airportLayersVisible(activeTools: Set<TransportTool>): boolean {
+  return activeTools.has('flights')
+}
+
 function ferryRoutesToGeoJson(routes: FerryRoute[]): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -615,9 +619,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator) && (activeBusRouteIds(vehiclesRef.current).has(route.id) || selectedRouteSearchIdRef.current === route.id))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
-      updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityIdRef.current))
-      updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
-      updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureIdRef.current))
+      const showAirport = airportLayersVisible(activeToolsRef.current)
+      updateSource(map, 'airport-facilities', showAirport ? airportFacilitiesToGeoJson(selectedFacilityIdRef.current) : emptyCollection)
+      updateSource(map, 'airport-runways', showAirport ? airportRunwaysToGeoJson() : emptyCollection)
+      updateSource(map, 'airport-ground', showAirport ? airportGroundToGeoJson(selectedGroundFeatureIdRef.current) : emptyCollection)
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -642,9 +647,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator) && (visibleBusRouteIds.has(route.id) || selectedRouteSearchId === route.id))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
-    updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityId))
-    updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
-    updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureId))
+    const showAirport = airportLayersVisible(activeTools)
+    updateSource(map, 'airport-facilities', showAirport ? airportFacilitiesToGeoJson(selectedFacilityId) : emptyCollection)
+    updateSource(map, 'airport-runways', showAirport ? airportRunwaysToGeoJson() : emptyCollection)
+    updateSource(map, 'airport-ground', showAirport ? airportGroundToGeoJson(selectedGroundFeatureId) : emptyCollection)
     updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
   }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleBusRouteIds, visibleVehicles])
 

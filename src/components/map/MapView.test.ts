@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { DEFAULT_MAP_VIEW, basemapVisibilityForPitch, isClearSelectionShortcut, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -24,6 +24,11 @@ const vehicle: VehiclePosition = {
 }
 
 describe('selected vehicle map focus', () => {
+  it('hides aviation context when the Flights tool is off', () => {
+    expect(airportLayersVisible(new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams']))).toBe(false)
+    expect(airportLayersVisible(new Set(['flights']))).toBe(true)
+  })
+
   it('uses the dark basemap for 3D and the light basemap for 2D', () => {
     expect(basemapVisibilityForPitch(true)).toEqual({ light: 'none', dark: 'visible' })
     expect(basemapVisibilityForPitch(false)).toEqual({ light: 'visible', dark: 'none' })

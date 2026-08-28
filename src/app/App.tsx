@@ -139,6 +139,12 @@ export default function App() {
         return next
       })
     }
+
+    if (tool === 'flights' && enabled) {
+      setSelectedVehicle(null)
+      setSelectedFacility(null)
+      setSelectedGroundFeature(null)
+    }
   }
 
   return (
