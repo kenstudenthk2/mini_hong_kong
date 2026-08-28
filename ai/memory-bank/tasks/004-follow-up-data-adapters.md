@@ -387,3 +387,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/InfoPanel.test.ts` covers record resolution and missing records; full suite has 64 passing tests, lint/build/diff checks pass. Commit: `99d50ec`.
 - Known limitation: browser selection, locale switching, and information-panel layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate flight selection in a working browser, then continue remaining reference-derived controls such as explicit follow mode or live/simulated bus mode.
+
+## Compact handoff: live and scheduled bus mode
+- Complete: the control panel now exposes a trilingual Live bus ETA toggle; enabled mode uses loaded ETA arrivals, while disabled mode uses deterministic schedule replay.
+- Fallback: the toggle is disabled when no ETA feed is loaded, and schedule replay remains available regardless of optional feed failure.
+- Scope: source selection only; route filtering, vehicle visibility, and the existing ETA/schedule interpolation contracts are unchanged.
+- Evidence: full suite has 64 passing tests, lint/build/diff checks pass. Commit: `ff5d502`.
+- Known limitation: browser toggle interaction, late optional-feed hydration, and visible mode-state confirmation remain unverified because the integrated browser harness is unavailable.
+- Next task: validate the toggle in a working browser and add a focused state test if the UI harness becomes available.
