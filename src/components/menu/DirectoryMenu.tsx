@@ -42,7 +42,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
 }
 
 export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }: Props) {
-  const { t } = useI18n()
+  const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
@@ -97,12 +97,18 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
 
       <details open className="menu-section">
         <summary>{t.ferries}<span>{vehicles.filter(vehicle => vehicle.type === 'ferry').length}</span></summary>
-        <div className="section-body muted-body">{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
+        <div className="section-body muted-body">
+          <div>{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
+          {(data?.ferryRoutes ?? []).map(route => <div key={route.id}>{route.routeNumber} · {localName(route, lang)}</div>)}
+        </div>
       </details>
 
       <details open className="menu-section">
         <summary>{t.trams}<span>{vehicles.filter(vehicle => vehicle.type === 'tram').length}</span></summary>
-        <div className="section-body muted-body">{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
+        <div className="section-body muted-body">
+          <div>{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
+          {(data?.tramRoutes ?? []).map(route => <div key={route.id}>{route.routeNumber} · {localName(route, lang)}</div>)}
+        </div>
       </details>
 
       <details open className="menu-section">
