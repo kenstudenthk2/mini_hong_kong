@@ -65,6 +65,12 @@ export const DEFAULT_MAP_VIEW = {
   bearing: -18,
 }
 
+export function basemapVisibilityForPitch(pitchEnabled: boolean): { light: 'visible' | 'none'; dark: 'visible' | 'none' } {
+  return pitchEnabled
+    ? { light: 'none', dark: 'visible' }
+    : { light: 'visible', dark: 'none' }
+}
+
 function pathForLine(line: RailLine): string {
   return pathForGeometry(line.geometry)
 }
@@ -215,6 +221,7 @@ function airportGroundToGeoJson(selectedGroundFeatureId: string | null): GeoJSON
 export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle, activeTools }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
+  const initialPitchEnabledRef = useRef(pitchEnabled)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
   const onSelectStationRef = useRef(onSelectStation)
@@ -315,7 +322,21 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             url: 'https://tiles.openfreemap.org/planet',
           },
         },
-        layers: [{ id: 'carto', type: 'raster', source: 'carto' }],
+        layers: [
+          { id: 'base-light', type: 'raster', source: 'carto', layout: { visibility: basemapVisibilityForPitch(initialPitchEnabledRef.current).light } },
+          {
+            id: 'base-dark',
+            type: 'raster',
+            source: 'carto',
+            layout: { visibility: basemapVisibilityForPitch(initialPitchEnabledRef.current).dark },
+            paint: {
+              'raster-brightness-min': 0.05,
+              'raster-brightness-max': 0.3,
+              'raster-saturation': -1,
+              'raster-contrast': 0.25,
+            },
+          },
+        ],
       },
     })
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
@@ -659,6 +680,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
+    const basemap = basemapVisibilityForPitch(pitchEnabled)
+    if (map.getLayer('base-light')) map.setLayoutProperty('base-light', 'visibility', basemap.light)
+    if (map.getLayer('base-dark')) map.setLayoutProperty('base-dark', 'visibility', basemap.dark)
     map.easeTo({ pitch: pitchEnabled ? 58 : 0, bearing: pitchEnabled ? -18 : 0, duration: 450 })
   }, [pitchEnabled])
 
