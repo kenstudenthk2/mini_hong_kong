@@ -99,6 +99,11 @@ export default function App() {
     setManualRouteIds(null)
     setManualBusOperators(null)
     setActiveTools(new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams', 'flights']))
+    setSelectedVehicle(null)
+    setSelectedStation(null)
+    setSelectedFacility(null)
+    setSelectedGroundFeature(null)
+    setSelectedRouteSearchId(null)
   }
 
   function toggleTool(tool: TransportTool) {
