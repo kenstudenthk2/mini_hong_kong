@@ -522,3 +522,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 75 passing tests, lint/build/diff checks pass. Commit: `91aa37f`.
 - Known limitation: browser hydration timing and localized status rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate feed status in a working browser before adding further data-source controls.
+
+## Compact handoff: filter-aligned directory counts
+- Complete: MTR, Light Rail, Bus, Ferry, Tram, and Flight directory summary counts now use the shared `isVehicleVisible` contract and reflect active line, route, and operator filters.
+- Scope: count presentation only; vehicle generation, map filtering, and filter state semantics are unchanged.
+- Evidence: `src/app/vehicleVisibility.test.ts` covers filtered counts for rail, ferry, bus, and flight modes; full suite has 76 passing tests, lint/build/diff checks pass. Commit: `6d14efd`.
+- Known limitation: browser filter interaction and rendered count updates remain unverified because the integrated browser harness is unavailable.
+- Next task: validate the directory filter workflow in a working browser before adding further controls.
