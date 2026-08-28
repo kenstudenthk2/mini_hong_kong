@@ -426,3 +426,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 66 passing tests, lint/build/diff checks pass. Commit: `5943afe`.
 - Known limitation: real browser event ordering and touch behavior across both renderers remain unverified because the integrated browser harness is unavailable.
 - Next task: validate station and vehicle selection parity in a working browser.
+
+## Compact handoff: localized station panel labels
+- Complete: station details now use localized Station, Lines, and Coordinates labels, and rail progress uses the same English, Traditional Chinese, and Portuguese label contract.
+- Semantics: station identity is no longer presented as a destination; route and vehicle behavior are unchanged.
+- Evidence: `src/components/map/InfoPanel.test.ts` covers the locale label contract; full suite has 67 passing tests, lint/build/diff checks pass. Commit: `9f8e305`.
+- Known limitation: browser locale switching and panel layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate all localized information panels in a working browser.
