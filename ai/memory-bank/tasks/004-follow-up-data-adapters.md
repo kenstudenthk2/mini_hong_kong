@@ -612,3 +612,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: pure adapter tests remain green; full suite has 80 passing tests, lint/build/diff checks pass. Commit: `c66e35b`.
 - Known limitation: runtime network hydration and directory rendering remain unverified in a browser; NLB Portuguese names use the shared English fallback because the official response has no Portuguese field.
 - Next task: add bounded NLB ETA normalization and decide whether a single featured route can support live vehicle visualization without excessive requests.
+
+## Compact handoff: NLB ETA normalizer
+- Complete: the NLB adapter now normalizes official ETA responses into shared `BusArrival` records, converts source timestamps to explicit Hong Kong `+08:00` ISO values, and strips HTML from the service message.
+- Contract: route ID, stop sequence, and localized destination are supplied by the caller because NLB ETA records do not repeat all route-stop context.
+- Guardrails: invalid arrival timestamps are omitted; no network polling, request fan-out, timetable headway, or vehicle movement was added.
+- Evidence: `src/dataAdapters/nlb.test.ts` covers valid/invalid timestamps, message cleanup, sequence IDs, and destination context; full suite has 81 passing tests, lint/build/diff checks pass. Commit: `187a761`.
+- Known limitation: runtime NLB ETA loading and live vehicle visualization remain pending.
+- Next task: add one bounded NLB ETA loader for the approved featured route/stop sample and measure request volume before wiring movement.
