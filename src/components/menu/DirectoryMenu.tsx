@@ -1,6 +1,6 @@
 import { localName, useI18n } from '../../i18n'
 import { classifyFreshness } from '../../dataAdapters/freshness'
-import type { RailLine, TransitData, VehiclePosition } from '../../types'
+import type { AirportFlight, Lang, RailLine, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
@@ -17,6 +17,27 @@ function LineRow({ line, enabled, onToggle }: { line: RailLine; enabled: boolean
       <span>{localName(line, lang)}</span>
       <span className="line-state">{enabled ? 'ON' : 'OFF'}</span>
     </button>
+  )
+}
+
+function flightText(values: Partial<Record<'en' | 'zh_HK' | 'zh_CN', string>>, lang: Lang, fallback: string | null): string {
+  const preferred = lang === 'zh' ? ['zh_HK', 'zh_CN', 'en'] : ['en', 'zh_HK', 'zh_CN']
+  return preferred.map(key => values[key as keyof typeof values]).find(Boolean) ?? fallback ?? '-'
+}
+
+function FlightRow({ flight }: { flight: AirportFlight }) {
+  const { lang, t } = useI18n()
+  const origin = flightText(flight.localized.origin, lang, flight.origin)
+  const destination = flightText(flight.localized.destination, lang, flight.destination)
+  const status = flightText(flight.localized.status, lang, flight.status)
+  const direction = flight.direction === 'arrival' ? t.arrival : t.departure
+  return (
+    <div className="flight-row">
+      <strong>{flight.flightNumbers.join(' / ')}</strong>
+      <span>{direction}{flight.cargo ? ` · ${t.cargo}` : ''} · {flight.scheduledTime}</span>
+      <span>{origin} {flight.direction === 'arrival' ? '<-' : '->'} {destination}</span>
+      <span>{status}</span>
+    </div>
   )
 }
 
@@ -86,6 +107,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
           <div>{flights.length ? `${flights.length} ${t.flightRecords}` : t.noFlightData}</div>
           <div>{t.historical}: {flightDate ?? '-'}</div>
           <div>{t.source}: {t.dataGov}</div>
+          {flights.length > 0 && <div className="flight-list">{flights.slice(0, 6).map(flight => <FlightRow key={flight.id} flight={flight} />)}</div>}
         </div>
       </details>
 

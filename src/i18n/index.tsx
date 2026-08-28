@@ -34,11 +34,17 @@ const translations = {
     flightRecords: 'flight records',
     historical: 'Historical',
     noFlightData: 'No records loaded',
+    arrival: 'Arrival',
+    departure: 'Departure',
+    cargo: 'Cargo',
   },
   zh: {
     flightRecords: '\u822a\u73ed\u8a18\u9304',
     historical: '\u6b77\u53f2\u6578\u64da',
     noFlightData: '\u6c92\u6709\u8f09\u5165\u8a18\u9304',
+    arrival: '\u5230\u9054',
+    departure: '\u96e2\u6e2f',
+    cargo: '\u8ca8\u904b',
     appName: 'Mini Hong Kong',
     subtitle: '按時間表推進的 3D 交通模擬',
     rail: '鐵路',
@@ -100,6 +106,9 @@ const translations = {
     flightRecords: 'registos de voos',
     historical: 'Historico',
     noFlightData: 'Sem registos carregados',
+    arrival: 'Chegada',
+    departure: 'Partida',
+    cargo: 'Carga',
   },
 } satisfies Record<Lang, Record<string, string>>
 
