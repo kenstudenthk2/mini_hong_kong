@@ -292,3 +292,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `856e426`.
 - Known limitation: browser click verification remains pending; the reset action is intentionally text-labeled because it is an unfamiliar global command.
 - Next task: add a bounded Bus operator filter only if the menu remains scannable after browser verification.
+
+## Compact handoff: Bus operator filter
+- Complete: the Buses directory now provides compact KMB/LWB and Citybus toggles; selected operators filter bus counts, route lines, and vehicle markers in both renderers.
+- Mapping contract: `citybus-*` route IDs map to Citybus; other normalized bus IDs map to KMB/LWB. The existing reset action restores both operators.
+- Scope: no feed, schedule, or vehicle-generation behavior changed; the operator filter only controls visibility.
+- Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `75d476b`.
+- Known limitation: browser interaction verification remains pending; operator controls are not yet covered by component tests.
+- Next task: add focused UI harness coverage or a bounded flight-record visibility control after browser tooling is available.
