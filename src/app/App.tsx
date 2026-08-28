@@ -73,6 +73,27 @@ export default function App() {
     }
   }, [selectedBusOperators, selectedLineIds, selectedRouteIds, selectedVehicle, vehicles])
 
+  useEffect(() => {
+    if (selectedStation) {
+      const stationVisible = selectedStation.lineIds.some(lineId => {
+        const line = transitData.data?.railLines.find(item => item.id === lineId)
+        const tool = line?.mode === 'mtr' ? 'rail' : line?.mode === 'light_rail' ? 'lightRail' : null
+        return Boolean(line && selectedLineIds.has(lineId) && tool && activeTools.has(tool))
+      })
+      if (!stationVisible) setSelectedStation(null)
+    }
+
+    if (selectedRouteSearchId) {
+      const route = selectedRoute
+      const tool = route && ('mode' in route)
+        ? route.mode === 'mtr' ? 'rail' : 'lightRail'
+        : route?.id.startsWith('ferry-') ? 'ferries'
+          : route?.id.startsWith('tram-') ? 'trams'
+            : route ? 'buses' : null
+      if (!tool || !activeTools.has(tool)) setSelectedRouteSearchId(null)
+    }
+  }, [activeTools, selectedLineIds, selectedRoute, selectedRouteSearchId, selectedStation, transitData.data])
+
   function toggleLine(lineId: string) {
     const next = new Set(selectedLineIds)
     if (next.has(lineId)) next.delete(lineId)
