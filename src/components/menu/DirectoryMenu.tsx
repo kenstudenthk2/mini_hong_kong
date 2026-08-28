@@ -46,6 +46,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
+  const activeFlightMovements = vehicles.filter(vehicle => vehicle.type === 'flight').length
   const flightDate = flights[0]?.date
   const kmbFreshness = data?.busDataTimestamp
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
@@ -102,9 +103,10 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
       </details>
 
       <details open className="menu-section">
-        <summary>{t.flights}<span>{flights.length}</span></summary>
+        <summary>{t.flights}<span>{activeFlightMovements}</span></summary>
         <div className="section-body muted-body">
           <div>{flights.length ? `${flights.length} ${t.flightRecords}` : t.noFlightData}</div>
+          <div>{activeFlightMovements} {t.activeMovements}</div>
           <div>{t.historical}: {flightDate ?? '-'}</div>
           <div>{t.source}: {t.dataGov}</div>
           {flights.length > 0 && <div className="flight-list">{flights.slice(0, 6).map(flight => <FlightRow key={flight.id} flight={flight} />)}</div>}

@@ -32,6 +32,7 @@ const translations = {
     nextStop: 'Next stop',
     destination: 'Destination',
     flightRecords: 'flight records',
+    activeMovements: 'active airport movements',
     historical: 'Historical',
     noFlightData: 'No records loaded',
     arrival: 'Arrival',
@@ -73,6 +74,7 @@ const translations = {
     noSelection: '選擇班車或車站',
     nextStop: '下一站',
     destination: '目的地',
+    activeMovements: '\u6b63\u5728\u6a5f\u5834\u79fb\u52d5',
   },
   pt: {
     appName: 'Mini Hong Kong',
@@ -103,6 +105,7 @@ const translations = {
     noSelection: 'Selecione um veiculo ou estacao',
     nextStop: 'Proxima paragem',
     destination: 'Destino',
+    activeMovements: 'movimentos aeroportuarios ativos',
     flightRecords: 'registos de voos',
     historical: 'Historico',
     noFlightData: 'Sem registos carregados',

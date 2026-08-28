@@ -3,9 +3,16 @@
 Trilingual 3D visualization of Hong Kong public transport, modeled after Mini Macau,
 Mini Taiwan, and Mini Tokyo 3D.
 
-The first MVP implements a browser-local timetable simulation for MTR heavy rail
-and Light Rail. Buses, ferries, trams, and HKG flights are documented as follow-up
-data adapters and intentionally kept out of the first implementation slice.
+The current MVP combines browser-local schedule simulation for MTR, Light Rail,
+buses, ferries, and trams with a trilingual historical HKG flight board. HKIA is
+represented with current AIP runway context and an explicitly labeled six-minute
+runway movement replay; the app does not claim live aircraft telemetry or infer
+en-route flight paths.
+
+Data contracts and source decisions are recorded in
+`ai/memory-bank/tasks/004-follow-up-data-adapters.md`. The interface uses a
+directory-style menu with localized English, Traditional Chinese, and Portuguese
+labels, plus MapLibre 3D and schematic fallback rendering.
 
 ## Stack
 
