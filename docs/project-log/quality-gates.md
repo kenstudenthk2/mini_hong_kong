@@ -33,8 +33,8 @@
 
 ## Current Gate Update (latest, 2026-08-28)
 - The historical snapshots above are retained for traceability; this section is authoritative for the current state.
-- Automated gates: 25 test files and 98 tests pass; lint, build, and diff check pass.
+- Automated gates: 25 test files and 100 tests pass; lint, build, and diff check pass.
 - HTTP smoke: Vite returned HTTP 200 for the app shell, module entrypoint, rail lines, stations, and both trip snapshots on port 5184.
-- Remote: `origin/feature/mini-hong-kong-mvp` and `origin/main` are synchronized through `e743a5a`.
+- Remote: `origin/feature/mini-hong-kong-mvp` and `origin/main` are synchronized through `078d0c9`.
 - Renderer: MapLibre is the sole renderer; the SVG schematic fallback has been removed.
 - Browser: Pencil failed before page creation on the latest controlled attempt; no rendered pass is claimed.

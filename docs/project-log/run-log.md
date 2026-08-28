@@ -187,3 +187,7 @@
 - Map selection reuses the directory route state, clears competing selections, fits the route, and shows the existing localized route details.
 - Evidence: 25 test files and 100 tests pass, lint, build, and diff checks pass.
 - Browser limitation: direct map click behavior remains unverified because the browser runtime cannot create a tab.
+
+### R-036: Current route-selection gate record (2026-08-28)
+- Updated the authoritative quality-gate record to the latest 100-test state and synchronized remote commit.
+- Historical gate snapshots remain unchanged for traceability.
