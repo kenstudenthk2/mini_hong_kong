@@ -749,7 +749,6 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 
 ## Compact handoff: directory and map layer authority
 - Complete: the transport directory can collapse to a narrow control rail and expand again without changing filter state.
-- Complete: the legacy SVG schematic overlay is hidden; the MapLibre OSM-backed map and data layers are the visible authority.
-- Fallback: schematic JSX remains available in source for a future recovery decision, but it cannot cover the live map.
+- Complete: the legacy SVG schematic overlay and its projection helpers were removed; the MapLibre OSM-backed map and data layers are the sole renderer.
 - Evidence: 25 test files and 96 tests pass, lint, build, and diff checks pass.
 - Known limitation: browser visual QA remains blocked by the runtime failing before tab creation.
