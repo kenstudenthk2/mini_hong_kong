@@ -24,6 +24,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
   const { t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
+  const flights = data?.flights ?? []
+  const flightDate = flights[0]?.date
   const kmbFreshness = data?.busDataTimestamp
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
     : 'invalid'
@@ -78,15 +80,19 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         <div className="section-body muted-body">{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
       </details>
 
-      <details className="menu-section planned-section">
-        <summary>{t.flights}<span>{t.planned}</span></summary>
-        <div className="section-body muted-body">{t.source}: {t.dataGov}</div>
+      <details open className="menu-section">
+        <summary>{t.flights}<span>{flights.length}</span></summary>
+        <div className="section-body muted-body">
+          <div>{flights.length ? `${flights.length} ${t.flightRecords}` : t.noFlightData}</div>
+          <div>{t.historical}: {flightDate ?? '-'}</div>
+          <div>{t.source}: {t.dataGov}</div>
+        </div>
       </details>
 
       <details open className="menu-section">
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
-          <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams</p>
+          <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
           <p>KMB ETA: {kmbFreshness}</p>
           <p>{t.source}: {t.dataGov} seed-ready contracts</p>
         </div>

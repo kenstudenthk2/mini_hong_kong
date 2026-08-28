@@ -31,8 +31,14 @@ const translations = {
     noSelection: 'Select a vehicle or station',
     nextStop: 'Next stop',
     destination: 'Destination',
+    flightRecords: 'flight records',
+    historical: 'Historical',
+    noFlightData: 'No records loaded',
   },
   zh: {
+    flightRecords: '\u822a\u73ed\u8a18\u9304',
+    historical: '\u6b77\u53f2\u6578\u64da',
+    noFlightData: '\u6c92\u6709\u8f09\u5165\u8a18\u9304',
     appName: 'Mini Hong Kong',
     subtitle: '按時間表推進的 3D 交通模擬',
     rail: '鐵路',
@@ -91,6 +97,9 @@ const translations = {
     noSelection: 'Selecione um veiculo ou estacao',
     nextStop: 'Proxima paragem',
     destination: 'Destino',
+    flightRecords: 'registos de voos',
+    historical: 'Historico',
+    noFlightData: 'Sem registos carregados',
   },
 } satisfies Record<Lang, Record<string, string>>
 
