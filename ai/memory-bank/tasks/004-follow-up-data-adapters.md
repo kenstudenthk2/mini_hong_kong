@@ -558,3 +558,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/app/vehicleVisibility.test.ts` covers present, absent, and mismatched selected vehicles; full suite has 78 passing tests, lint/build/diff checks pass. Commit: `627f9f3`.
 - Known limitation: browser time advancement and panel disappearance remain unverified because the integrated browser harness is unavailable.
 - Next task: validate time progression, vehicle selection, and panel clearing in a working browser.
+
+## Compact handoff: selectable airport ground context
+- Complete: representative OSM snapshot terminals and gates at HKIA are now selectable in MapLibre and the SVG schematic; the panel shows localized feature name/type, reference, coordinates, snapshot timestamp, and OSM source link.
+- Selection contract: ground features clear airport facility, station, and vehicle selection; the inverse selection paths also clear ground context.
+- Provenance: these are pinned static OSM context points, not live airport operations or aircraft telemetry.
+- Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `7a006a1`.
+- Known limitation: browser hit testing, selection highlight, and localized panel layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate HKIA facility, terminal/gate, and aircraft selection workflows in a working browser.
