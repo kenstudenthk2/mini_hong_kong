@@ -17,6 +17,7 @@ describe('normalizeKmbEta', () => {
       id: 'kmb-1-o-1-eta-1-1',
       routeId: 'kmb-1-o-1',
       stopSequence: 1,
+      arrivalSequence: 1,
       destinationEn: 'STAR FERRY',
       destinationZh: '尖沙咀碼頭',
       eta: '2026-08-28T09:59:00+08:00',

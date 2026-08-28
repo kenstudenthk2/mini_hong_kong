@@ -38,6 +38,7 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: `normalizeKmbEta` validates and normalizes live ETA records, including route ID, stop sequence, destination, ETA, remark, and source timestamp.
 - Source behavior: ETA data is published per stop/route and the DATA.GOV.HK dataset states a one-minute update cadence.
 - Evidence: parser tests cover a valid record and invalid envelope timestamp; ETA-to-vehicle placement remains the next task.
+- Contract detail: `eta_seq` is retained as `arrivalSequence` so concurrent predicted buses remain distinct during interpolation.
 
 ## Compact handoff: bus geometry utility
 - Complete: `busRoutesToGeoJson` converts normalized KMB routes to MapLibre `LineString` features with route metadata.

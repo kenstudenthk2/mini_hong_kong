@@ -70,6 +70,7 @@ export interface KmbArrival {
   id: string
   routeId: string
   stopSequence: number
+  arrivalSequence: number
   destinationEn: string
   destinationZh: string
   eta: string
@@ -89,6 +90,7 @@ export function normalizeKmbEta(raw: unknown): KmbArrival[] {
       id: `${routeId}-eta-${record.seq}-${record.eta_seq}`,
       routeId,
       stopSequence: record.seq,
+      arrivalSequence: record.eta_seq,
       destinationEn: record.dest_en,
       destinationZh: record.dest_tc,
       eta: record.eta,
