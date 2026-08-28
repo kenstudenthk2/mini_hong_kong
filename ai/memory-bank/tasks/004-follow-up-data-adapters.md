@@ -462,3 +462,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/airport.test.ts` asserts the Portuguese facility name; full suite has 68 passing tests, lint/build/diff checks pass. Commit: `8c77518`.
 - Known limitation: browser locale switching and Portuguese map-label rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate all three locale map labels and station search in a working browser.
+
+## Compact handoff: playback keyboard shortcut
+- Complete: pressing Space outside form controls now toggles simulation play/pause; repeated keydown events are ignored and the browser default scroll action is prevented.
+- Scope: playback input only; speed, date/time control, `Now`, and simulation timing semantics are unchanged.
+- Evidence: `src/hooks/useSimulationClock.test.ts` covers accepted, repeated, and form-control key events; full suite has 70 passing tests, lint/build/diff checks pass. Commit: `dad00ee`.
+- Known limitation: browser focus management, keyboard layout, and touch behavior remain unverified because the integrated browser harness is unavailable.
+- Next task: validate keyboard and station-search workflows in a working browser.
