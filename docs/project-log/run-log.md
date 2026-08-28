@@ -48,3 +48,9 @@
 - Screenshots: desktop `C:\Users\02007572\AppData\Local\Temp\mini-hk-desktop-verified.png`; mobile `C:\Users\02007572\AppData\Local\Temp\mini-hk-mobile-verified.png`.
 - Result: Desktop and mobile passed after adding the SVG schematic overlay.
 - Verified visible elements: directory menu, Rail/Light Rail sections, planned future transport sections, controls, route lines, station markers, and moving vehicle hotspots.
+
+### R-011: Current continuation status (2026-08-28)
+- Completed: GMB route geometry, bounded ETA loading, operator visibility, per-transport ON/OFF controls, ETA failure isolation, freshness propagation, and source-contract updates.
+- Current verification: 88 Vitest tests, ESLint, production build, and `git diff --check` pass. Local Vite HTTP smoke returned 200 for `/` and `/data/rail-lines.json` on port 5180.
+- Current branch: `feature/mini-hong-kong-mvp`; `origin` is configured. `origin/main` diverges from the feature branch, so no force push or unsafe merge was performed.
+- Browser status: no current integrated browser/WebGL verification is claimed; historical Playwright screenshots remain historical evidence only.

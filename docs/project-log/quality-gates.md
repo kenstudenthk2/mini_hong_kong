@@ -17,3 +17,9 @@
 ## Senior PM Disposition
 - Status: Conditional pass for local MVP scaffold.
 - Conditions: Remote PR creation remains pending until a Git remote is available. Native MapLibre canvas visibility should be revisited in a full browser/WebGL environment; the MVP has a verified SVG schematic fallback.
+
+## Current Gate Update (2026-08-28)
+- Automated gates: 88 tests, lint, build, and diff check passed.
+- HTTP smoke: local Vite served `/` and `/data/rail-lines.json` with HTTP 200 on port 5180.
+- Remote: `origin` is configured, but the feature branch and `origin/main` diverge; integration requires an approved merge/rebase decision.
+- Browser: current browser/WebGL interaction remains unverified; prior screenshots are historical evidence only.
