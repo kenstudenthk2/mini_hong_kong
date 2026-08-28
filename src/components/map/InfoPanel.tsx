@@ -1,4 +1,5 @@
 import { localName, useI18n } from '../../i18n'
+import { openStreetMapMarkerUrl } from '../../app/osmLinks'
 import type { AirportGroundFeature } from '../../dataAdapters/airportGround'
 import type { AirportFacility, AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
@@ -69,6 +70,10 @@ function facilityLabel(lang: Lang, key: 'airport' | 'iata' | 'icao' | 'coordinat
   return labels[lang][key]
 }
 
+function osmLabel(lang: Lang): string {
+  return lang === 'zh' ? '在 OpenStreetMap 開啟' : lang === 'pt' ? 'Abrir no OpenStreetMap' : 'Open in OpenStreetMap'
+}
+
 export function InfoPanel({ data, vehicle, station, facility, groundFeature }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
@@ -78,10 +83,14 @@ export function InfoPanel({ data, vehicle, station, facility, groundFeature }: P
   const flight = flightForVehicle(data, vehicle)
   const route = routeForVehicle(data, vehicle)
   const stationLines = stationLineNames(data, station, lang)
+  const selectedCoordinates = vehicle?.coordinates ?? station?.coordinates ?? facility?.coordinates ?? groundFeature?.coordinates
 
   return (
     <section className="info-panel">
       <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : groundFeature ? groundFeature.ref : t.noSelection}</h2>
+      {selectedCoordinates && (
+        <p><a href={openStreetMapMarkerUrl(selectedCoordinates)} target="_blank" rel="noreferrer">{osmLabel(lang)}</a></p>
+      )}
       {!vehicle && station && (
         <div className="info-grid">
           <p>{infoLabel(lang, 'station')}: <strong>{localName(station, lang)}</strong></p>
