@@ -65,3 +65,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: KMB route 1 has an explicitly labelled weekday replay schedule and its vehicles share the simulation clock.
 - Approximation: KMB route APIs expose topology and realtime ETA, not headway/timetable fields; the replay schedule is not an operator timetable.
 - Evidence: full test and build gates passed in the implementation task; official timetable/ETA-driven movement remains follow-up work.
+
+## Compact handoff: source freshness contract
+- Complete: `classifyFreshness` returns `fresh`, `stale`, or `invalid` for a source timestamp and configured age window.
+- Scope: pure helper only; KMB timestamp propagation and menu labeling are the next separate wiring task.
+- Evidence: `src/dataAdapters/freshness.test.ts` covers fresh, stale, and malformed timestamps; focused test and lint pass.
+- Clear context: no network fetch behavior or generated data output changed in this slice.
