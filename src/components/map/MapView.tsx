@@ -2,11 +2,12 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from 'maplibre-gl'
 import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
-import type { RailLine, Station, VehiclePosition } from '../../types'
-import { linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
+import type { BusRoute, RailLine, Station, VehiclePosition } from '../../types'
+import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
 interface Props {
   lines: RailLine[]
+  busRoutes: BusRoute[]
   stations: Station[]
   vehicles: VehiclePosition[]
   selectedLineIds: Set<string>
@@ -28,8 +29,8 @@ function project([lng, lat]: [number, number]): { x: number; y: number } {
   return { x, y }
 }
 
-function pathForLine(line: RailLine): string {
-  return line.geometry
+function pathForGeometry(geometry: [number, number][]): string {
+  return geometry
     .map((coord, index) => {
       const point = project(coord)
       return `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
@@ -37,17 +38,22 @@ function pathForLine(line: RailLine): string {
     .join(' ')
 }
 
+function pathForLine(line: RailLine): string {
+  return pathForGeometry(line.geometry)
+}
+
 function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollection) {
   const source = map.getSource(id) as GeoJSONSource | undefined
   source?.setData(data)
 }
 
-export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
+export function MapView({ lines, busRoutes, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
   const linesRef = useRef(lines)
+  const busRoutesRef = useRef(busRoutes)
   const stationsRef = useRef(stations)
   const selectedLineIdsRef = useRef(selectedLineIds)
   const { lang } = useI18n()
@@ -63,9 +69,10 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
 
   useEffect(() => {
     linesRef.current = lines
+    busRoutesRef.current = busRoutes
     stationsRef.current = stations
     selectedLineIdsRef.current = selectedLineIds
-  }, [lines, selectedLineIds, stations])
+  }, [busRoutes, lines, selectedLineIds, stations])
 
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
@@ -95,6 +102,7 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
     map.on('load', () => {
       map.addSource('rail-lines', { type: 'geojson', data: emptyCollection })
+      map.addSource('bus-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
@@ -117,6 +125,17 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
           'line-color': ['get', 'color'],
           'line-width': ['case', ['get', 'selected'], 3.6, 1.4],
           'line-opacity': ['case', ['get', 'selected'], 0.95, 0.18],
+        },
+      })
+      map.addLayer({
+        id: 'bus-routes',
+        type: 'line',
+        source: 'bus-routes',
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': 1.5,
+          'line-opacity': 0.55,
+          'line-dasharray': [2, 2],
         },
       })
       map.addLayer({
@@ -195,6 +214,7 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
+      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current))
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -213,7 +233,8 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
-  }, [lines, selectedLineIds, stations, visibleVehicles])
+    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes))
+  }, [busRoutes, lines, selectedLineIds, stations, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -254,6 +275,17 @@ export function MapView({ lines, stations, vehicles, selectedLineIds, pitchEnabl
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
           </g>
+        ))}
+        {busRoutes.map(route => (
+          <path
+            key={route.id}
+            d={pathForGeometry(route.geometry)}
+            fill="none"
+            stroke={route.color}
+            strokeWidth="2"
+            strokeDasharray="8 8"
+            opacity="0.42"
+          />
         ))}
         {stations.map(station => {
           const point = project(station.coordinates)

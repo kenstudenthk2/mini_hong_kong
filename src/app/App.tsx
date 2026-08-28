@@ -45,6 +45,7 @@ export default function App() {
         {transitData.loading && <div className="load-error">Loading Hong Kong transit data...</div>}
         <MapView
           lines={transitData.data?.railLines ?? []}
+          busRoutes={transitData.data?.busRoutes ?? []}
           stations={transitData.data?.stations ?? []}
           vehicles={vehicles}
           selectedLineIds={selectedLineIds}
