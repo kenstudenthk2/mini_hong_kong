@@ -30,6 +30,9 @@ export default function App() {
   )
   const [manualRouteIds, setManualRouteIds] = useState<Set<string> | null>(null)
   const selectedRouteIds = manualRouteIds ?? allRouteIds
+  const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus']), [])
+  const [manualBusOperators, setManualBusOperators] = useState<Set<string> | null>(null)
+  const selectedBusOperators = manualBusOperators ?? allBusOperators
 
   const vehicles = useMemo(
     () => transitData.data ? [
@@ -58,9 +61,17 @@ export default function App() {
     setManualRouteIds(next)
   }
 
+  function toggleBusOperator(operator: string) {
+    const next = new Set(selectedBusOperators)
+    if (next.has(operator)) next.delete(operator)
+    else next.add(operator)
+    setManualBusOperators(next)
+  }
+
   function resetFilters() {
     setManualLineIds(null)
     setManualRouteIds(null)
+    setManualBusOperators(null)
   }
 
   return (
@@ -72,6 +83,8 @@ export default function App() {
         onToggleLine={toggleLine}
         selectedRouteIds={selectedRouteIds}
         onToggleRoute={toggleRoute}
+        selectedBusOperators={selectedBusOperators}
+        onToggleBusOperator={toggleBusOperator}
         onResetFilters={resetFilters}
       />
       <section className="map-shell">
@@ -88,6 +101,7 @@ export default function App() {
           pitchEnabled={pitchEnabled}
           onSelectVehicle={setSelectedVehicle}
           selectedRouteIds={selectedRouteIds}
+          selectedBusOperators={selectedBusOperators}
         />
         <ControlPanel
           clock={clock}

@@ -9,6 +9,8 @@ interface Props {
   onToggleLine: (lineId: string) => void
   selectedRouteIds: Set<string>
   onToggleRoute: (routeId: string) => void
+  selectedBusOperators: Set<string>
+  onToggleBusOperator: (operator: string) => void
   onResetFilters: () => void
 }
 
@@ -23,6 +25,21 @@ function LineRow({ line, enabled, onToggle }: { line: DirectoryRoute; enabled: b
       <span className="line-state">{enabled ? 'ON' : 'OFF'}</span>
     </button>
   )
+}
+
+function OperatorRow({ operator, enabled, onToggle }: { operator: string; enabled: boolean; onToggle: () => void }) {
+  return (
+    <button className="line-row" type="button" onClick={onToggle} aria-pressed={enabled}>
+      <span className="line-dot" style={{ background: operator === 'Citybus' ? '#dc2626' : '#0f766e' }} />
+      <span>{operator}</span>
+      <span className="line-state">{enabled ? 'ON' : 'OFF'}</span>
+    </button>
+  )
+}
+
+function busOperatorForVehicle(vehicle: VehiclePosition): string | null {
+  if (vehicle.type !== 'bus') return null
+  return vehicle.lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
 }
 
 function flightText(values: Partial<Record<'en' | 'zh_HK' | 'zh_CN', string>>, lang: Lang, fallback: string | null): string {
@@ -46,12 +63,16 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, onResetFilters }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters }: Props) {
   const { t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
   const activeFlightMovements = vehicles.filter(vehicle => vehicle.type === 'flight').length
+  const visibleBusCount = vehicles.filter(vehicle => {
+    const operator = busOperatorForVehicle(vehicle)
+    return operator !== null && selectedBusOperators.has(operator)
+  }).length
   const flightDate = flights[0]?.date
   const kmbFreshness = data?.busDataTimestamp
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
@@ -94,10 +115,18 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </details>
 
       <details open className="menu-section">
-        <summary>{t.buses}<span>{vehicles.filter(vehicle => vehicle.type === 'bus').length}</span></summary>
+        <summary>{t.buses}<span>{visibleBusCount}</span></summary>
         <div className="section-body muted-body">
-          <div>{vehicles.filter(vehicle => vehicle.type === 'bus').length} {t.vehicles}</div>
-          <div>{data?.busRoutes?.length ?? 0} normalized KMB/LWB and Citybus routes</div>
+          <div>{visibleBusCount} {t.vehicles}</div>
+          <div>{(data?.busRoutes ?? []).filter(route => selectedBusOperators.has(route.operator)).length} normalized routes</div>
+          {['KMB/LWB', 'Citybus'].map(operator => (
+            <OperatorRow
+              key={operator}
+              operator={operator}
+              enabled={selectedBusOperators.has(operator)}
+              onToggle={() => onToggleBusOperator(operator)}
+            />
+          ))}
         </div>
       </details>
 

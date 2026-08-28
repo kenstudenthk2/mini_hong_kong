@@ -16,6 +16,7 @@ interface Props {
   vehicles: VehiclePosition[]
   selectedLineIds: Set<string>
   selectedRouteIds: Set<string>
+  selectedBusOperators: Set<string>
   pitchEnabled: boolean
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
 }
@@ -90,6 +91,10 @@ function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollect
   source?.setData(data)
 }
 
+function busOperatorForLineId(lineId: string): string {
+  return lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
+}
+
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -139,7 +144,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, pitchEnabled, onSelectVehicle }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -151,11 +156,15 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const stationsRef = useRef(stations)
   const selectedLineIdsRef = useRef(selectedLineIds)
   const selectedRouteIdsRef = useRef(selectedRouteIds)
+  const selectedBusOperatorsRef = useRef(selectedBusOperators)
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
-    () => vehicles.filter(vehicle => vehicle.type === 'bus' || vehicle.type === 'flight' || (vehicle.type === 'ferry' || vehicle.type === 'tram' ? selectedRouteIds.has(vehicle.lineId) : selectedLineIds.has(vehicle.lineId))),
-    [vehicles, selectedLineIds, selectedRouteIds],
+    () => vehicles.filter(vehicle => vehicle.type === 'flight'
+      || (vehicle.type === 'bus' ? selectedBusOperators.has(busOperatorForLineId(vehicle.lineId))
+        : vehicle.type === 'ferry' || vehicle.type === 'tram' ? selectedRouteIds.has(vehicle.lineId)
+          : selectedLineIds.has(vehicle.lineId))),
+    [vehicles, selectedBusOperators, selectedLineIds, selectedRouteIds],
   )
 
   useEffect(() => {
@@ -170,7 +179,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     stationsRef.current = stations
     selectedLineIdsRef.current = selectedLineIds
     selectedRouteIdsRef.current = selectedRouteIds
-  }, [busRoutes, ferryRoutes, lines, selectedLineIds, selectedRouteIds, stations, tramRoutes])
+    selectedBusOperatorsRef.current = selectedBusOperators
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, stations, tramRoutes])
 
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
@@ -404,7 +414,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
-      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current))
+      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
@@ -428,13 +438,13 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
-    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes))
+    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
     updateSource(map, 'airport-ground', airportGroundToGeoJson())
-  }, [busRoutes, ferryRoutes, lines, selectedLineIds, selectedRouteIds, stations, tramRoutes, visibleVehicles])
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -482,7 +492,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
           </g>
         ))}
-        {busRoutes.map(route => (
+        {busRoutes.filter(route => selectedBusOperators.has(route.operator)).map(route => (
           <path
             key={route.id}
             d={pathForGeometry(route.geometry)}
