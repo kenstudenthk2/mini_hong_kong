@@ -551,3 +551,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/layerManifest.test.ts` asserts the external source URLs; full suite has 77 passing tests, lint/build/diff checks pass. Commit: `f70316b`.
 - Known limitation: browser link navigation and source availability at runtime remain unverified; source freshness is still represented separately by feed status.
 - Next task: validate directory source links and feed status in a working browser before adding further data-source controls.
+
+## Compact handoff: expired vehicle selection
+- Complete: selected vehicle details are now cleared when the selected vehicle ID leaves the current simulation frame, including schedule-window expiry or feed-driven replacement; filter visibility remains part of the same validity check.
+- Scope: selection lifecycle only; vehicle generation, schedule timing, and map rendering are unchanged.
+- Evidence: `src/app/vehicleVisibility.test.ts` covers present, absent, and mismatched selected vehicles; full suite has 78 passing tests, lint/build/diff checks pass. Commit: `627f9f3`.
+- Known limitation: browser time advancement and panel disappearance remain unverified because the integrated browser harness is unavailable.
+- Next task: validate time progression, vehicle selection, and panel clearing in a working browser.
