@@ -77,3 +77,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Policy: the one-minute ETA cadence is used as the freshness window; failed or empty ETA loads retain the existing replay fallback and show `invalid`.
 - Evidence: full suite has 27 passing tests; lint, build, and `git diff --check` pass. Commit: `121a2f3`.
 - Next task: expand ETA coverage beyond route 1 or add another operator as a separate adapter slice; connected visual QA remains blocked by unavailable browser tooling.
+
+## Compact handoff: Citybus route adapter
+- Complete: `normalizeCitybusRoutes` validates Citybus route, route-stop, and stop records and emits one normalized `BusRoute` per inbound/outbound direction.
+- Source contract: Citybus provides multilingual route/stop data through DATA.GOV.HK-backed APIs; ETA data is documented as updating every minute.
+- Guardrails: missing coordinates or fewer than two ordered stops omit only the affected direction; no network fetch or generated output was added.
+- Evidence: `src/dataAdapters/citybus.test.ts` covers localized names, coordinate ordering, direction IDs, and incomplete geometry; full suite has 29 passing tests and build passes. Commit: `487bb39`.
+- Next task: add bounded Citybus route/stop loading and ETA integration with explicit request-volume and freshness behavior.
