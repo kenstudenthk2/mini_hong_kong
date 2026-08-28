@@ -759,3 +759,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Async rule: the same `airportLayersVisible` contract is applied during initial map load and later source updates.
 - Evidence: `MapView.test.ts` covers the Flights visibility contract; full suite has 97 passing tests, lint/build/diff checks pass.
 - Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
+
+## Compact handoff: route highlight visibility
+- Complete: the dedicated selected-route highlight now checks the route's transport tool before rendering.
+- Mapping: rail/light rail use line mode, bus routes use the buses tool, and `ferry-*` / `tram-*` IDs map to their respective tools.
+- Evidence: `MapView.test.ts` covers the OFF/ON rail route contract; full suite has 98 passing tests, lint/build/diff checks pass.
+- Known limitation: browser interaction remains unverified because the runtime cannot create a tab.

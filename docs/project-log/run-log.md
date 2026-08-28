@@ -140,3 +140,9 @@
 - Applied the same visibility rule during initial map population and asynchronous source refreshes.
 - Evidence: 25 test files and 97 tests pass, lint, build, and diff checks pass.
 - Browser limitation: live interaction remains unverified because the browser runtime fails before tab creation.
+
+### R-027: Route highlight visibility contract (2026-08-28)
+- Selected route highlights now obey the corresponding Rail, Light Rail, Bus, Ferry, or Tram tool state.
+- Turning a transport tool OFF can no longer leave its selected route highlight visible through the dedicated focus source.
+- Evidence: 25 test files and 98 tests pass, lint, build, and diff checks pass.
+- Browser limitation: live interaction remains unverified because the browser runtime fails before tab creation.
