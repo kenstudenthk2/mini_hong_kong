@@ -50,6 +50,14 @@ interface GtfsScheduleFeed {
   tramSchedules: NonNullable<TransitData['tramSchedules']>
 }
 
+interface OptionalTransitFeed {
+  busRoutes: NonNullable<TransitData['busRoutes']>
+  busArrivals: NonNullable<TransitData['busArrivals']>
+  busDataTimestamp: string
+  ferryRoutes: NonNullable<TransitData['ferryRoutes']>
+  tramRoutes: NonNullable<TransitData['tramRoutes']>
+}
+
 async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper: (item: T) => Promise<R>): Promise<R[]> {
   const results: R[] = []
   let nextIndex = 0
@@ -147,6 +155,24 @@ async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
   }
 }
 
+async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
+  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, busFeed] = await Promise.all([
+    loadKmbRoutes().catch(() => []),
+    loadCitybusRoutes().catch(() => []),
+    loadCitybusArrivals().catch(() => []),
+    loadFerryRoutes().catch(() => []),
+    loadTramRoutes().catch(() => []),
+    loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
+  ])
+  return {
+    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
+    busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
+    busDataTimestamp: busFeed.generatedAt,
+    ferryRoutes: ferryRoutes ?? [],
+    tramRoutes: tramRoutes ?? [],
+  }
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -154,17 +180,11 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, busFeed] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
-          loadKmbRoutes().catch(() => []),
-          loadCitybusRoutes().catch(() => []),
-          loadCitybusArrivals().catch(() => []),
-          loadFerryRoutes().catch(() => []),
-          loadTramRoutes().catch(() => []),
-          loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
         const data = assertValidTransitData({
@@ -174,17 +194,21 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekdayTrips, 'trips-weekday.json'),
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
-          busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
-          busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
-          busDataTimestamp: busFeed.generatedAt,
-          ferryRoutes,
-          tramRoutes,
+          busRoutes: [],
+          busArrivals: [],
+          busDataTimestamp: '',
+          ferryRoutes: [],
+          tramRoutes: [],
         })
         setState({
           loading: false,
           error: null,
           data,
         })
+        loadOptionalTransitFeed().then(optionalFeed => {
+          if (cancelled) return
+          setState(current => current.data ? { ...current, data: { ...current.data, ...optionalFeed } } : current)
+        }).catch(() => undefined)
         loadGtfsSchedules().then(scheduleFeed => {
           if (cancelled) return
           setState(current => current.data ? { ...current, data: { ...current.data, ...scheduleFeed } } : current)
