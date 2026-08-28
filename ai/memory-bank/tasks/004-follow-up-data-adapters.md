@@ -574,3 +574,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `498db5b`.
 - Known limitation: browser visual confirmation remains unavailable.
 - Next task: validate HKIA facility, terminal/gate, and aircraft selection workflows in a working browser.
+
+## Compact handoff: airport directory submenu
+- Complete: the main directory now includes a compact HKIA submenu with selectable airport facility, Terminal 1, Terminal 2, and representative gate entries.
+- Interaction: directory selections use the same shared App state as map selections, clear competing station/vehicle/ground context, and update the localized information panel.
+- Scope: navigation and selection access only; airport data, OSM snapshot provenance, and replay semantics are unchanged.
+- Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `0c40879`.
+- Known limitation: browser menu interaction, responsive layout, and locale rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate the full HKIA directory and map selection workflow in a working browser.
