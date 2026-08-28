@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
 import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures } from '../../dataAdapters/airportGround'
+import { isVehicleVisible } from '../../app/vehicleVisibility'
 import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
@@ -91,10 +92,6 @@ function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollect
   source?.setData(data)
 }
 
-function busOperatorForLineId(lineId: string): string {
-  return lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
-}
-
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -160,10 +157,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
-    () => vehicles.filter(vehicle => vehicle.type === 'flight'
-      || (vehicle.type === 'bus' ? selectedBusOperators.has(busOperatorForLineId(vehicle.lineId))
-        : vehicle.type === 'ferry' || vehicle.type === 'tram' ? selectedRouteIds.has(vehicle.lineId)
-          : selectedLineIds.has(vehicle.lineId))),
+    () => vehicles.filter(vehicle => isVehicleVisible(vehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)),
     [vehicles, selectedBusOperators, selectedLineIds, selectedRouteIds],
   )
 
