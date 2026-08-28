@@ -469,3 +469,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/hooks/useSimulationClock.test.ts` covers accepted, repeated, and form-control key events; full suite has 70 passing tests, lint/build/diff checks pass. Commit: `dad00ee`.
 - Known limitation: browser focus management, keyboard layout, and touch behavior remain unverified because the integrated browser harness is unavailable.
 - Next task: validate keyboard and station-search workflows in a working browser.
+
+## Compact handoff: localized route search contract
+- Complete: `searchRoutes` now provides a typed, order-preserving search contract across Rail, Bus, Ferry, and Tram records, matching IDs, operators, English names, Traditional Chinese names, and Portuguese names.
+- Scope: pure search foundation only; no directory filtering or map behavior changed in this slice.
+- Evidence: `src/app/routeSearch.test.ts` covers operator, localized-name, and empty-query behavior; full suite has 72 passing tests, lint/build/diff checks pass. Commit: `f7c213a`.
+- Known limitation: the helper is not yet exposed in the UI, and browser search interaction remains unavailable for verification.
+- Next task: wire the search contract into one compact directory control and connect route selection to map focus.
