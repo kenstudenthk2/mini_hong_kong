@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flightForVehicle, infoLabel, routeForVehicle } from './InfoPanel'
+import { flightForVehicle, infoLabel, routeForVehicle, stationLineNames } from './InfoPanel'
 import type { TransitData, VehiclePosition } from '../../types'
 
 const flightVehicle: VehiclePosition = {
@@ -23,6 +23,12 @@ describe('flight info resolution', () => {
     expect(infoLabel('en', 'station')).toBe('Station')
     expect(infoLabel('zh', 'coordinates')).toBe('\u5ea7\u6a19')
     expect(infoLabel('pt', 'progress')).toBe('Progresso')
+  })
+
+  it('resolves localized station line names with an ID fallback', () => {
+    const station = { id: 's1', nameEn: 'Central', nameZh: '\u4e2d\u74b0', namePt: 'Central', coordinates: [114, 22] as [number, number], lineIds: ['mtr-east', 'unknown'] }
+    const data = { railLines: [{ id: 'mtr-east', nameEn: 'East Rail Line', nameZh: '\u6771\u9435\u7dda', namePt: 'Linha East Rail', mode: 'mtr', color: '#38bdf8', operator: 'MTR', stationIds: [], geometry: [] }] } as unknown as TransitData
+    expect(stationLineNames(data, station, 'zh')).toEqual(['\u6771\u9435\u7dda', 'unknown'])
   })
 
   it('resolves the normalized flight record from a replay vehicle', () => {

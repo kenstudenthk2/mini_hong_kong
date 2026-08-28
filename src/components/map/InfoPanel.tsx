@@ -51,6 +51,12 @@ export function infoLabel(lang: Lang, key: 'station' | 'lines' | 'coordinates' |
   return labels[lang][key]
 }
 
+export function stationLineNames(data: TransitData | null, station: Station | null, lang: Lang): string[] {
+  if (!station) return []
+  const lines = new Map((data?.railLines ?? []).map(line => [line.id, localName(line, lang)] as const))
+  return station.lineIds.map(lineId => lines.get(lineId) || lineId)
+}
+
 export function InfoPanel({ data, vehicle, station }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
@@ -59,6 +65,7 @@ export function InfoPanel({ data, vehicle, station }: Props) {
   const destination: Station | undefined = vehicle?.destinationId ? stationById.get(vehicle.destinationId) : undefined
   const flight = flightForVehicle(data, vehicle)
   const route = routeForVehicle(data, vehicle)
+  const stationLines = stationLineNames(data, station, lang)
 
   return (
     <section className="info-panel">
@@ -66,7 +73,7 @@ export function InfoPanel({ data, vehicle, station }: Props) {
       {!vehicle && station && (
         <div className="info-grid">
           <p>{infoLabel(lang, 'station')}: <strong>{localName(station, lang)}</strong></p>
-          <p>{infoLabel(lang, 'lines')}: <strong>{station.lineIds.join(', ') || '-'}</strong></p>
+          <p>{infoLabel(lang, 'lines')}: <strong>{stationLines.join(', ') || '-'}</strong></p>
           <p>{infoLabel(lang, 'coordinates')}: <strong>{station.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
         </div>
       )}
