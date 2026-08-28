@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
-import { normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
+import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
 interface TransitDataState {
@@ -34,6 +34,11 @@ async function loadKmbRoutes(): Promise<TransitData['busRoutes']> {
   })
 }
 
+async function loadKmbArrivals(): Promise<TransitData['busArrivals']> {
+  const raw = await loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route-eta/1/1')
+  return normalizeKmbEta(raw)
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -41,12 +46,13 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes, busArrivals] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
           loadKmbRoutes().catch(() => []),
+          loadKmbArrivals().catch(() => []),
         ])
         if (cancelled) return
         const data = assertValidTransitData({
@@ -57,6 +63,7 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
           busRoutes,
+          busArrivals,
         })
         setState({
           loading: false,
