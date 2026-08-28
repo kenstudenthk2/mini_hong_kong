@@ -403,3 +403,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/InfoPanel.test.ts` covers Ferry and Tram route resolution; full suite has 65 passing tests, lint/build/diff checks pass. Commit: `50e887a`.
 - Known limitation: browser selection and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
 - Next task: validate all selected-vehicle information panels in a working browser before further feature expansion.
+
+## Compact handoff: selected bus details
+- Complete: selected Bus vehicles now resolve their normalized route records and show localized route name, operator, route number, and progress in the information panel.
+- Contract: Ferry, Tram, and Bus records share the route resolver; journey duration remains shown only for modes that provide it.
+- Scope: information presentation only; live ETA versus schedule mode, filtering, geometry, and vehicle movement are unchanged.
+- Evidence: `src/components/map/InfoPanel.test.ts` covers Bus route resolution; full suite has 66 passing tests, lint/build/diff checks pass. Commit: `444fb13`.
+- Known limitation: browser selection, late ETA hydration, and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
+- Next task: validate the complete selected-vehicle information workflow in a working browser.
