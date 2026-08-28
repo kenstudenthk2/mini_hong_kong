@@ -2,6 +2,7 @@ import { localName, useI18n } from '../../i18n'
 import { classifyFreshness } from '../../dataAdapters/freshness'
 import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
+import { layerManifest } from '../../dataAdapters/layerManifest'
 import type { AirportFlight, FerryRoute, Lang, RailLine, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
@@ -178,6 +179,11 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
+          {layerManifest.map(entry => (
+            <p key={entry.id}>
+              {entry.label}: {entry.dataClass} · {entry.sourceUrl ? <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{entry.sourceLabel}</a> : entry.sourceLabel}
+            </p>
+          ))}
           <p>KMB ETA: {kmbFreshness}</p>
           <p>{t.source}: {t.dataGov} seed-ready contracts</p>
           <p>{t.source}: HKIA AIP {aipRevision}</p>
