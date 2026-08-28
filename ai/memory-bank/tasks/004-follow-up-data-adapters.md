@@ -144,3 +144,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: Ferries now appear as an active directory section with route-geometry and live vehicle counts; the Data Status summary includes ferries alongside rail and buses.
 - Scope: menu discoverability only; tram and flight sections remain planned.
 - Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `f46993e`.
+
+## Compact handoff: tram GeoJSON adapter
+- Complete: `normalizeTramGeoJson` validates the official Transport Department tram GeoJSON, filters `routeType: 4`, groups ordered stop points by route/direction, and preserves localized names and journey time.
+- Source contract: `https://static.data.gov.hk/td/routes-fares-geojson/JSON_TRAM.json`; live inspection returned 427 tram features.
+- Guardrails: non-tram features and incomplete route groups are omitted; no runtime fetch or generated output was added in this slice.
+- Evidence: `src/dataAdapters/tram.test.ts` covers direction grouping, coordinate ordering, localization, and filtering; full suite has 39 passing tests, lint/build/diff checks pass. Commit: `9be47e2`.
+- Next task: load tram geometry into the map, add tram schedule/vehicle movement, and promote Trams in the directory menu.
