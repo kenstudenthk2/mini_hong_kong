@@ -4,8 +4,8 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, routeFocusToGeoJson, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
-import type { RailLine, VehiclePosition } from '../../types'
+import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, routeFocusToGeoJson, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection, visibleStationsForTools } from './MapView'
+import type { RailLine, Station, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
   id: 'mtr-1',
@@ -33,6 +33,20 @@ describe('selected vehicle map focus', () => {
     const route: RailLine = { id: 'mtr-east', geometry: [[114.1, 22.3], [114.2, 22.4]], nameEn: 'East Rail', nameZh: '\u6771\u9435', mode: 'mtr', color: '#38bdf8', operator: 'MTR', stationIds: [] }
     expect(routeFocusToGeoJson([route], 'mtr-east', new Set(['lightRail'])).features).toHaveLength(0)
     expect(routeFocusToGeoJson([route], 'mtr-east', new Set(['rail'])).features).toHaveLength(1)
+  })
+
+  it('hides stations whose enabled rail lines are all turned off', () => {
+    const lines: RailLine[] = [
+      { id: 'mtr-east', geometry: [], nameEn: 'East Rail', nameZh: '\u6771\u9435', mode: 'mtr', color: '#38bdf8', operator: 'MTR', stationIds: ['shared', 'rail-only'] },
+      { id: 'light-rail-610', geometry: [], nameEn: 'Light Rail 610', nameZh: '\u8f15\u9438610', mode: 'light_rail', color: '#f59e0b', operator: 'Light Rail', stationIds: ['shared', 'light-only'] },
+    ]
+    const stations: Station[] = [
+      { id: 'shared', coordinates: [114.1, 22.3], lineIds: ['mtr-east', 'light-rail-610'], nameEn: 'Shared', nameZh: 'Shared' },
+      { id: 'rail-only', coordinates: [114.1, 22.3], lineIds: ['mtr-east'], nameEn: 'Rail', nameZh: 'Rail' },
+      { id: 'light-only', coordinates: [114.1, 22.3], lineIds: ['light-rail-610'], nameEn: 'Light', nameZh: 'Light' },
+    ]
+    expect(visibleStationsForTools(stations, lines, new Set(['mtr-east', 'light-rail-610']), new Set(['rail']))).toEqual([stations[0], stations[1]])
+    expect(visibleStationsForTools(stations, lines, new Set(), new Set(['rail', 'lightRail']))).toEqual([])
   })
 
   it('uses the dark basemap for 3D and the light basemap for 2D', () => {

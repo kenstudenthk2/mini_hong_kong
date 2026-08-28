@@ -130,6 +130,11 @@ function lineTool(line: RailLine): TransportTool {
   return line.mode === 'mtr' ? 'rail' : 'lightRail'
 }
 
+export function visibleStationsForTools(stations: Station[], lines: RailLine[], selectedLineIds: Set<string>, activeTools: Set<TransportTool>): Station[] {
+  const visibleLineIds = new Set(lines.filter(line => selectedLineIds.has(line.id) && activeTools.has(lineTool(line))).map(line => line.id))
+  return stations.filter(station => station.lineIds.some(lineId => visibleLineIds.has(lineId)))
+}
+
 function routeTool(route: SearchableRoute): TransportTool {
   if ('mode' in route) return lineTool(route)
   if (route.id.startsWith('ferry-')) return 'ferries'
@@ -630,7 +635,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'airport-facilities', showAirport ? airportFacilitiesToGeoJson(selectedFacilityIdRef.current) : emptyCollection)
       updateSource(map, 'airport-runways', showAirport ? airportRunwaysToGeoJson() : emptyCollection)
       updateSource(map, 'airport-ground', showAirport ? airportGroundToGeoJson(selectedGroundFeatureIdRef.current) : emptyCollection)
-      updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
+      updateSource(map, 'stations', stationsToGeoJson(visibleStationsForTools(stationsRef.current, linesRef.current, selectedLineIdsRef.current, activeToolsRef.current)))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-trails', vehiclesToTrailGeoJson(vehiclesRef.current, [...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current, ...hkiaRunways]))
@@ -647,7 +652,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     const map = mapRef.current
     if (!map?.getSource('rail-lines')) return
     updateSource(map, 'rail-lines', linesToGeoJson(lines.filter(line => activeTools.has(lineTool(line))), selectedLineIds))
-    updateSource(map, 'stations', stationsToGeoJson(stations))
+    updateSource(map, 'stations', stationsToGeoJson(visibleStationsForTools(stations, lines, selectedLineIds, activeTools)))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-trails', vehiclesToTrailGeoJson(visibleVehicles, [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes, ...hkiaRunways]))
