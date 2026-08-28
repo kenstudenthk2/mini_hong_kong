@@ -14,3 +14,13 @@ export function isVehicleVisible(
   if (vehicle.type === 'ferry' || vehicle.type === 'tram') return selectedRouteIds.has(vehicle.lineId)
   return selectedLineIds.has(vehicle.lineId)
 }
+
+export function visibleVehicleCount(
+  vehicles: VehiclePosition[],
+  selectedLineIds: Set<string>,
+  selectedRouteIds: Set<string>,
+  selectedBusOperators: Set<string>,
+  type: VehiclePosition['type'],
+): number {
+  return vehicles.filter(vehicle => vehicle.type === type && isVehicleVisible(vehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)).length
+}

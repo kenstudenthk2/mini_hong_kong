@@ -4,6 +4,7 @@ import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
 import { searchRoutes, type SearchableRoute } from '../../app/routeSearch'
+import { visibleVehicleCount } from '../../app/vehicleVisibility'
 import type { TransitDataState } from '../../hooks/useTransitData'
 import type { AirportFlight, FerryRoute, Lang, RailLine, Station, TransitData, TramRoute, VehiclePosition } from '../../types'
 
@@ -52,11 +53,6 @@ function OperatorRow({ operator, enabled, onToggle }: { operator: string; enable
   )
 }
 
-function busOperatorForVehicle(vehicle: VehiclePosition): string | null {
-  if (vehicle.type !== 'bus') return null
-  return vehicle.lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
-}
-
 function flightText(values: Partial<Record<'en' | 'zh_HK' | 'zh_CN', string>>, lang: Lang, fallback: string | null): string {
   const preferred = lang === 'zh' ? ['zh_HK', 'zh_CN', 'en'] : ['en', 'zh_HK', 'zh_CN']
   return preferred.map(key => values[key as keyof typeof values]).find(Boolean) ?? fallback ?? '-'
@@ -84,10 +80,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
   const activeFlightMovements = vehicles.filter(vehicle => vehicle.type === 'flight').length
-  const visibleBusCount = vehicles.filter(vehicle => {
-    const operator = busOperatorForVehicle(vehicle)
-    return operator !== null && selectedBusOperators.has(operator)
-  }).length
+  const visibleBusCount = visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'bus')
   const flightDate = flights[0]?.date
   const kmbFreshness = data?.busDataTimestamp
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
@@ -106,7 +99,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </header>
 
       <details open className="menu-section">
-        <summary>{t.rail}<span>{vehicles.filter(v => v.type === 'mtr').length}</span></summary>
+        <summary>{t.rail}<span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'mtr')}</span></summary>
         <div className="section-body">
           {mtrLines.map(line => (
             <LineRow
@@ -120,7 +113,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </details>
 
       <details open className="menu-section">
-        <summary>{t.lightRail}<span>{vehicles.filter(v => v.type === 'light_rail').length}</span></summary>
+        <summary>{t.lightRail}<span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'light_rail')}</span></summary>
         <div className="section-body">
           {lightRailLines.map(line => (
             <LineRow
@@ -150,7 +143,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </details>
 
       <details open className="menu-section">
-        <summary>{t.ferries}<span>{vehicles.filter(vehicle => vehicle.type === 'ferry').length}</span></summary>
+        <summary>{t.ferries}<span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'ferry')}</span></summary>
         <div className="section-body muted-body">
           <div>{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
           {(data?.ferryRoutes ?? []).map(route => (
@@ -165,7 +158,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </details>
 
       <details open className="menu-section">
-        <summary>{t.trams}<span>{vehicles.filter(vehicle => vehicle.type === 'tram').length}</span></summary>
+        <summary>{t.trams}<span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'tram')}</span></summary>
         <div className="section-body muted-body">
           <div>{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
           {(data?.tramRoutes ?? []).map(route => (
@@ -180,7 +173,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       </details>
 
       <details open className="menu-section">
-        <summary>{t.flights}<span>{activeFlightMovements}</span></summary>
+        <summary>{t.flights}<span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'flight')}</span></summary>
         <div className="section-body muted-body">
           <div>{flights.length ? `${flights.length} ${t.flightRecords}` : t.noFlightData}</div>
           <div>{activeFlightMovements} {t.activeMovements}</div>
