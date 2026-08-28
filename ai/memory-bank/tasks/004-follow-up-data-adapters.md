@@ -109,3 +109,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: route geometry only; no ferry vehicle positions or timetable replay are generated yet.
 - Evidence: full suite has 33 passing tests, lint/build/diff checks pass. Commit: `d41c03d`.
 - Known risk: the live ferry payload is a large network response and currently waits in the initial data load; ferry schedule integration should address asynchronous hydration and stale-source labeling.
+
+## Compact handoff: scheduled ferry movement engine
+- Complete: `computeFerryVehiclePositions` creates headway-based ferry vehicles using shared Hong Kong operational-day rules and route interpolation, including dwell, bearing, destination, and `ferry` vehicle type.
+- Contract: `FerrySchedule` carries explicit service window, headway, duration, and dwell values; route `journeyTimeMinutes` can seed an approved schedule but is not itself treated as a timetable.
+- Evidence: full suite has 34 passing tests, lint/build/diff checks pass. Commit: `b1ec6d9`.
+- Next task: provide an approved ferry timetable source/output and wire schedules into `App`; do not invent service frequencies from route geometry alone.
