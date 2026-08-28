@@ -3,7 +3,8 @@ import { DirectoryMenu } from '../components/menu/DirectoryMenu'
 import { ControlPanel } from '../components/map/ControlPanel'
 import { InfoPanel } from '../components/map/InfoPanel'
 import { MapView } from '../components/map/MapView'
-import { computeVehiclePositions } from '../engines/simulationEngine'
+import { kmbReplaySchedules } from '../dataAdapters/kmb'
+import { computeBusVehiclePositions, computeVehiclePositions } from '../engines/simulationEngine'
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
 import type { VehiclePosition } from '../types'
@@ -21,7 +22,10 @@ export default function App() {
   const selectedLineIds = manualLineIds ?? allLineIds
 
   const vehicles = useMemo(
-    () => transitData.data ? computeVehiclePositions(transitData.data, clock.currentTime) : [],
+    () => transitData.data ? [
+      ...computeVehiclePositions(transitData.data, clock.currentTime),
+      ...computeBusVehiclePositions(transitData.data.busRoutes ?? [], kmbReplaySchedules, clock.currentTime),
+    ] : [],
     [clock.currentTime, transitData.data],
   )
 

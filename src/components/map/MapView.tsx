@@ -59,7 +59,7 @@ export function MapView({ lines, busRoutes, stations, vehicles, selectedLineIds,
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
-    () => vehicles.filter(vehicle => selectedLineIds.has(vehicle.lineId)),
+    () => vehicles.filter(vehicle => vehicle.type === 'bus' || selectedLineIds.has(vehicle.lineId)),
     [vehicles, selectedLineIds],
   )
 

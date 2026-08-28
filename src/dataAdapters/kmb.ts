@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { BusRoutesSchema } from '../dataSchemas'
-import type { Coordinate } from '../types'
+import type { BusSchedule, Coordinate } from '../types'
 
 const KmbRouteSchema = z.object({
   route: z.string(),
@@ -39,6 +39,18 @@ export interface KmbRouteSnapshot {
   routeStops: z.input<typeof KmbRouteStopSchema>[]
   stops: z.input<typeof KmbStopSchema>[]
 }
+
+// KMB's route feed does not publish headways; this is a clearly labelled replay scaffold.
+export const kmbReplaySchedules: BusSchedule[] = [{
+  id: 'kmb-1-o-1-replay',
+  routeId: 'kmb-1-o-1',
+  scheduleType: 'weekday',
+  startMinutes: 360,
+  endMinutes: 1380,
+  headwayMinutes: 10,
+  durationMinutes: 90,
+  dwellMinutes: 1,
+}]
 
 export function normalizeKmbRoutes(snapshot: KmbRouteSnapshot) {
   const routes = KmbEnvelope(KmbRouteSchema).parse({
