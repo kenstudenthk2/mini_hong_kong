@@ -484,3 +484,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 72 passing tests, lint/build/diff checks pass. Commit: `2ccb02a`.
 - Known limitation: browser typing, result selection, map focus, touch behavior, and three-locale layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate route search in a working browser before adding broader route-level filtering.
+
+## Compact handoff: route search focus coverage
+- Complete: route-focus geometry lookup is now a pure helper used by MapLibre, returning the first geometry point for a selected route and null for missing or cleared selections.
+- Scope: testability only; route search UI and map behavior are unchanged.
+- Evidence: `src/components/map/MapView.test.ts` covers selected, missing, and cleared route IDs; full suite has 73 passing tests, lint/build/diff checks pass. Commit: `dae606c`.
+- Known limitation: browser route search, map focus, touch behavior, and locale layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate route search in a working browser before broader route-level filtering.
