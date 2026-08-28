@@ -12,7 +12,9 @@ en-route flight paths.
 Data contracts and source decisions are recorded in
 `ai/memory-bank/tasks/004-follow-up-data-adapters.md`. The interface uses a
 directory-style menu with localized English, Traditional Chinese, and Portuguese
-labels, plus MapLibre 3D and schematic fallback rendering.
+labels. MapLibre is the authoritative renderer for the OSM-backed basemap,
+3D buildings, transit routes, vehicles, and movement trails; the legacy
+schematic markup remains hidden as a recovery path.
 
 ## Stack
 

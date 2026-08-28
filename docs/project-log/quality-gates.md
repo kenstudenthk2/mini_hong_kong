@@ -1,5 +1,11 @@
 # Quality Gates
 
+## Authoritative Update (2026-08-28)
+- Automated gates: 25 test files and 96 tests pass; lint, build, and diff checks pass.
+- Remote: verified commits through `3d38ab7` are synchronized to both `origin/feature/mini-hong-kong-mvp` and `origin/main`.
+- Renderer: MapLibre is authoritative; the legacy SVG schematic is hidden and must not be treated as visual evidence.
+- Browser: desktop/mobile WebGL interaction remains pending because the integrated browser runtime fails before tab creation.
+
 ## Required Before PR
 - `npm.cmd test` — passed 2026-08-27 after review fixes, 13 tests.
 - `npm.cmd run lint` — passed 2026-08-27 with no warnings.

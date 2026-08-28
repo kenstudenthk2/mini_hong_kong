@@ -122,3 +122,8 @@
 - The schematic JSX remains in place as a fallback implementation, but CSS prevents it from obscuring or diverging from the map.
 - Evidence: 25 test files and 96 tests pass, lint passes, production build passes, and `git diff --check` passes.
 - Browser limitation: live visual confirmation remains unavailable because the browser runtime fails before tab creation with an OS path error.
+
+### R-024: Gate documentation alignment (2026-08-28)
+- Updated README and quality-gate notes to match the current MapLibre-authoritative renderer and synchronized remote branches.
+- Preserved historical browser limitations and prior gate evidence; no new visual pass is claimed.
+- Evidence: documentation diff checked; source behavior unchanged after the previous verified commit.
