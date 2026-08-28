@@ -4,6 +4,7 @@ import { ControlPanel } from '../components/map/ControlPanel'
 import { InfoPanel } from '../components/map/InfoPanel'
 import { MapView } from '../components/map/MapView'
 import { kmbReplaySchedules } from '../dataAdapters/kmb'
+import { computeAirportFlightVehiclePositions } from '../dataAdapters/airportReplay'
 import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeTramVehiclePositions, computeVehiclePositions } from '../engines/simulationEngine'
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
@@ -29,6 +30,7 @@ export default function App() {
         : computeBusVehiclePositions(transitData.data.busRoutes ?? [], kmbReplaySchedules, clock.currentTime)),
       ...computeFerryVehiclePositions(transitData.data.ferryRoutes ?? [], transitData.data.ferrySchedules ?? [], clock.currentTime),
       ...computeTramVehiclePositions(transitData.data.tramRoutes ?? [], transitData.data.tramSchedules ?? [], clock.currentTime),
+      ...computeAirportFlightVehiclePositions(transitData.data.flights ?? [], clock.currentTime),
     ] : [],
     [clock.currentTime, transitData.data],
   )

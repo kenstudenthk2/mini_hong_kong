@@ -16,6 +16,15 @@ export function InfoPanel({ data, vehicle }: Props) {
   return (
     <section className="info-panel">
       <h2>{vehicle ? t.selectedVehicle : t.noSelection}</h2>
+      {vehicle?.type === 'flight' && (
+        <div className="info-grid">
+          <span className="line-chip" style={{ borderColor: vehicle.color, color: vehicle.color }}>
+            {lang === 'zh' ? vehicle.labelZh : lang === 'pt' ? vehicle.labelPt : vehicle.labelEn}
+          </span>
+          <p>{t.destination}: <strong>{lang === 'zh' ? '\u9999\u6e2f\u570b\u969b\u6a5f\u5834' : lang === 'pt' ? 'Aeroporto Internacional de Hong Kong' : 'Hong Kong International Airport'}</strong></p>
+          <p>Progress: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
+        </div>
+      )}
       {vehicle && line && (
         <div className="info-grid">
           <span className="line-chip" style={{ borderColor: line.color, color: line.color }}>

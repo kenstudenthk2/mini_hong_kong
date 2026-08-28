@@ -132,7 +132,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
-    () => vehicles.filter(vehicle => vehicle.type === 'bus' || vehicle.type === 'ferry' || vehicle.type === 'tram' || selectedLineIds.has(vehicle.lineId)),
+    () => vehicles.filter(vehicle => vehicle.type === 'bus' || vehicle.type === 'ferry' || vehicle.type === 'tram' || vehicle.type === 'flight' || selectedLineIds.has(vehicle.lineId)),
     [vehicles, selectedLineIds],
   )
 
@@ -320,7 +320,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         type: 'circle',
         source: 'vehicles',
         paint: {
-          'circle-radius': ['case', ['==', ['get', 'mode'], 'light_rail'], 5, 6],
+          'circle-radius': ['case', ['==', ['get', 'mode'], 'flight'], 7, ['==', ['get', 'mode'], 'light_rail'], 5, 6],
           'circle-color': ['get', 'color'],
           'circle-stroke-color': '#f8fafc',
           'circle-stroke-width': 1,
