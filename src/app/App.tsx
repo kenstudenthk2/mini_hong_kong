@@ -5,6 +5,7 @@ import { InfoPanel } from '../components/map/InfoPanel'
 import { MapView } from '../components/map/MapView'
 import { kmbReplaySchedules } from '../dataAdapters/kmb'
 import { computeAirportFlightVehiclePositions } from '../dataAdapters/airportReplay'
+import type { AirportGroundFeature } from '../dataAdapters/airportGround'
 import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeTramVehiclePositions, computeVehiclePositions } from '../engines/simulationEngine'
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
@@ -20,6 +21,7 @@ export default function App() {
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const [selectedFacility, setSelectedFacility] = useState<AirportFacility | null>(null)
+  const [selectedGroundFeature, setSelectedGroundFeature] = useState<AirportGroundFeature | null>(null)
   const [routeSearchQuery, setRouteSearchQuery] = useState('')
   const [selectedRouteSearchId, setSelectedRouteSearchId] = useState<string | null>(null)
   const allLineIds = useMemo(
@@ -108,6 +110,7 @@ export default function App() {
           setSelectedStation(station)
           setSelectedVehicle(null)
           setSelectedFacility(null)
+          setSelectedGroundFeature(null)
         }}
         routeSearchQuery={routeSearchQuery}
         onRouteSearchQueryChange={setRouteSearchQuery}
@@ -131,9 +134,17 @@ export default function App() {
             setSelectedStation(station)
             setSelectedVehicle(null)
             setSelectedFacility(null)
+            setSelectedGroundFeature(null)
           }}
           onSelectFacility={facility => {
             setSelectedFacility(facility)
+            setSelectedStation(null)
+            setSelectedVehicle(null)
+            setSelectedGroundFeature(null)
+          }}
+          onSelectGroundFeature={feature => {
+            setSelectedGroundFeature(feature)
+            setSelectedFacility(null)
             setSelectedStation(null)
             setSelectedVehicle(null)
           }}
@@ -141,6 +152,7 @@ export default function App() {
           selectedVehicleId={selectedVehicle?.id ?? null}
           selectedStationId={selectedStation?.id ?? null}
           selectedFacilityId={selectedFacility?.id ?? null}
+          selectedGroundFeatureId={selectedGroundFeature?.id ?? null}
           selectedRouteSearchId={selectedRouteSearchId}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
@@ -153,7 +165,7 @@ export default function App() {
           hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
           onToggleLiveBusMode={() => setLiveBusMode(value => !value)}
         />
-        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} />
+        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} groundFeature={selectedGroundFeature} />
       </section>
     </main>
   )

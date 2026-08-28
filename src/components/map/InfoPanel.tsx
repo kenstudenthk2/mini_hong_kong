@@ -1,4 +1,5 @@
 import { localName, useI18n } from '../../i18n'
+import type { AirportGroundFeature } from '../../dataAdapters/airportGround'
 import type { AirportFacility, AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
   vehicle: VehiclePosition | null
   station: Station | null
   facility: AirportFacility | null
+  groundFeature: AirportGroundFeature | null
 }
 
 export function flightForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): AirportFlight | undefined {
@@ -58,16 +60,16 @@ export function stationLineNames(data: TransitData | null, station: Station | nu
   return station.lineIds.map(lineId => lines.get(lineId) || lineId)
 }
 
-function facilityLabel(lang: Lang, key: 'airport' | 'iata' | 'icao' | 'coordinates' | 'source'): string {
+function facilityLabel(lang: Lang, key: 'airport' | 'iata' | 'icao' | 'coordinates' | 'source' | 'feature' | 'snapshot'): string {
   const labels = {
-    en: { airport: 'Airport', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordinates', source: 'Source' },
-    zh: { airport: '\u6a5f\u5834', iata: 'IATA', icao: 'ICAO', coordinates: '\u5ea7\u6a19', source: '\u8cc7\u6599\u4f86\u6e90' },
-    pt: { airport: 'Aeroporto', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordenadas', source: 'Fonte' },
+    en: { airport: 'Airport', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordinates', source: 'Source', feature: 'Feature', snapshot: 'Snapshot' },
+    zh: { airport: '\u6a5f\u5834', iata: 'IATA', icao: 'ICAO', coordinates: '\u5ea7\u6a19', source: '\u8cc7\u6599\u4f86\u6e90', feature: '\u5730\u7269', snapshot: '\u5feb\u7167' },
+    pt: { airport: 'Aeroporto', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordenadas', source: 'Fonte', feature: 'Elemento', snapshot: 'Snapshot' },
   } as const
   return labels[lang][key]
 }
 
-export function InfoPanel({ data, vehicle, station, facility }: Props) {
+export function InfoPanel({ data, vehicle, station, facility, groundFeature }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
   const line = data?.railLines.find(item => item.id === vehicle?.lineId)
@@ -79,7 +81,7 @@ export function InfoPanel({ data, vehicle, station, facility }: Props) {
 
   return (
     <section className="info-panel">
-      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : t.noSelection}</h2>
+      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : groundFeature ? groundFeature.ref : t.noSelection}</h2>
       {!vehicle && station && (
         <div className="info-grid">
           <p>{infoLabel(lang, 'station')}: <strong>{localName(station, lang)}</strong></p>
@@ -94,6 +96,16 @@ export function InfoPanel({ data, vehicle, station, facility }: Props) {
           <p>{facilityLabel(lang, 'icao')}: <strong>{facility.icaoCode}</strong></p>
           <p>{facilityLabel(lang, 'coordinates')}: <strong>{facility.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
           <p>{facilityLabel(lang, 'source')}: <a href={facility.sourceUrl} target="_blank" rel="noreferrer">AIP</a></p>
+        </div>
+      )}
+      {!vehicle && !station && !facility && groundFeature && (
+        <div className="info-grid">
+          <p>{facilityLabel(lang, 'feature')}: <strong>{localName(groundFeature, lang)}</strong></p>
+          <p>{facilityLabel(lang, 'feature')}: <strong>{groundFeature.kind === 'terminal' ? (lang === 'zh' ? '\u5ba2\u904b\u5927\u6a13' : lang === 'pt' ? 'Terminal' : 'Terminal') : (lang === 'zh' ? '\u767b\u6a5f\u9580' : lang === 'pt' ? 'Porta' : 'Gate')}</strong></p>
+          <p>{lang === 'zh' ? '\u53c3\u8003' : lang === 'pt' ? 'Referencia' : 'Reference'}: <strong>{groundFeature.ref}</strong></p>
+          <p>{facilityLabel(lang, 'coordinates')}: <strong>{groundFeature.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
+          <p>{facilityLabel(lang, 'snapshot')}: <strong>{groundFeature.sourceTimestamp}</strong></p>
+          <p>{facilityLabel(lang, 'source')}: <a href={groundFeature.sourceUrl} target="_blank" rel="noreferrer">OSM</a></p>
         </div>
       )}
       {vehicle?.type === 'flight' && (
