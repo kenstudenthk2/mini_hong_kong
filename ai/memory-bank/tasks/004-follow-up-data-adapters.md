@@ -103,3 +103,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrails: non-ferry features and route groups with fewer than two piers are omitted; no network loader, generated file, or schedule replay was added.
 - Evidence: `src/dataAdapters/ferry.test.ts` covers route grouping, coordinate ordering, localization, and filtering; full suite has 33 passing tests, lint/build/diff checks pass. Commit: `a08b238`.
 - Next task: load the ferry GeoJSON into the map and add a bounded timetable-driven ferry movement model.
+
+## Compact handoff: ferry route rendering
+- Complete: the official ferry GeoJSON is loaded as optional transit data and rendered through a dedicated MapLibre `ferry-routes` line layer plus schematic fallback paths.
+- Scope: route geometry only; no ferry vehicle positions or timetable replay are generated yet.
+- Evidence: full suite has 33 passing tests, lint/build/diff checks pass. Commit: `d41c03d`.
+- Known risk: the live ferry payload is a large network response and currently waits in the initial data load; ferry schedule integration should address asynchronous hydration and stale-source labeling.
