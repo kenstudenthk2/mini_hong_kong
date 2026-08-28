@@ -40,6 +40,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: parser tests cover a valid record and invalid envelope timestamp; ETA-to-vehicle placement remains the next task.
 - Contract detail: `eta_seq` is retained as `arrivalSequence` so concurrent predicted buses remain distinct during interpolation.
 
+## Compact handoff: ETA vehicle placement
+- Complete: `computeBusVehiclePositionsFromEta` places buses between consecutive KMB stop predictions using the shared simulation clock.
+- Guardrails: incomplete stop pairs, missing routes, invalid time order, and pre-first-stop predictions produce no invented vehicle position.
+- Evidence: full test, lint, and build gates pass; runtime ETA fetch/wiring remains the next task.
+
 ## Compact handoff: bus geometry utility
 - Complete: `busRoutesToGeoJson` converts normalized KMB routes to MapLibre `LineString` features with route metadata.
 - Evidence: `src/layers/vehicleShapes.test.ts` passes; map wiring and bus vehicle simulation remain separate tasks.
