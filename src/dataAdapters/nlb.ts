@@ -30,6 +30,8 @@ export interface NlbRouteSnapshot {
 
 // Keep the first runtime integration bounded; each selected route needs one stop request.
 export const nlbFeaturedRouteIds = ['1', '2', '3', '4'] as const
+export const nlbEtaFeaturedRouteId = '1'
+export const nlbEtaStopLimit = 6
 
 function nlbTimestamp(value: string): string | null {
   const iso = `${value.replace(' ', 'T')}+08:00`

@@ -5,7 +5,7 @@ import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
 import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
 import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
-import { nlbFeaturedRouteIds, normalizeNlbRoutes, type NlbRouteSnapshot } from '../dataAdapters/nlb'
+import { nlbEtaFeaturedRouteId, nlbEtaStopLimit, nlbFeaturedRouteIds, normalizeNlbEta, normalizeNlbRoutes, type NlbRouteSnapshot } from '../dataAdapters/nlb'
 import { loadHkgFlights } from '../dataAdapters/flight'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -149,7 +149,7 @@ async function loadTramRoutes(): Promise<TransitData['tramRoutes']> {
   return normalizeTramGeoJson(raw)
 }
 
-async function loadNlbRoutes(): Promise<TransitData['busRoutes']> {
+async function loadNlbFeed(): Promise<{ routes: NonNullable<TransitData['busRoutes']>; busArrivals: NonNullable<TransitData['busArrivals']> }> {
   const rawRoutes = await loadJson('https://rt.data.gov.hk/v2/transport/nlb/route.php?action=list') as { routes: NlbRouteSnapshot['routes'] }
   const featuredIds = new Set<string>(nlbFeaturedRouteIds)
   const routes = rawRoutes.routes.filter(route => featuredIds.has(route.routeId))
@@ -157,7 +157,18 @@ async function loadNlbRoutes(): Promise<TransitData['busRoutes']> {
     const rawStops = await loadJson(`https://rt.data.gov.hk/v2/transport/nlb/stop.php?action=list&routeId=${encodeURIComponent(route.routeId)}`) as { stops: NlbRouteSnapshot['stopsByRoute'][string] }
     return [route.routeId, rawStops.stops] as const
   })
-  return normalizeNlbRoutes({ routes, stopsByRoute: Object.fromEntries(stopEntries) })
+  const stopsByRoute = Object.fromEntries(stopEntries)
+  const normalizedRoutes = normalizeNlbRoutes({ routes, stopsByRoute })
+  const etaRoute = routes.find(route => route.routeId === nlbEtaFeaturedRouteId)
+  const etaStops = etaRoute ? (stopsByRoute[etaRoute.routeId] ?? []).slice(0, nlbEtaStopLimit) : []
+  const etaRequests = etaStops.map((stop, index) => ({ stop, index }))
+  const busArrivals = etaRoute ? (await mapWithConcurrency(etaRequests, 2, async ({ stop, index }) => {
+    const rawEta = await loadJson(`https://rt.data.gov.hk/v2/transport/nlb/stop.php?action=estimatedArrivals&language=en&routeId=${encodeURIComponent(etaRoute.routeId)}&stopId=${encodeURIComponent(stop.stopId)}`)
+    const destinationEn = etaRoute.routeName_e.split('>').at(-1)?.trim() ?? etaRoute.routeName_e
+    const destinationZh = etaRoute.routeName_c.split('>').at(-1)?.trim() ?? etaRoute.routeName_c
+    return normalizeNlbEta(rawEta, { routeId: `nlb-${etaRoute.routeId}`, stopSequence: index + 1, destinationEn, destinationZh })
+  })).flat() : []
+  return { routes: normalizedRoutes, busArrivals }
 }
 
 async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
@@ -175,18 +186,18 @@ async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
 }
 
 async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
-  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, nlbRoutes, busFeed] = await Promise.all([
+  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, nlbFeed, busFeed] = await Promise.all([
     loadKmbRoutes().catch(() => []),
     loadCitybusRoutes().catch(() => []),
     loadCitybusArrivals().catch(() => []),
     loadFerryRoutes().catch(() => []),
     loadTramRoutes().catch(() => []),
-    loadNlbRoutes().catch(() => []),
+    loadNlbFeed().catch(() => ({ routes: [], busArrivals: [] })),
     loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
   ])
   return {
-    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbRoutes ?? [])],
-    busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
+    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbFeed.routes ?? [])],
+    busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? []), ...(nlbFeed.busArrivals ?? [])],
     busDataTimestamp: busFeed.generatedAt,
     ferryRoutes: ferryRoutes ?? [],
     tramRoutes: tramRoutes ?? [],
