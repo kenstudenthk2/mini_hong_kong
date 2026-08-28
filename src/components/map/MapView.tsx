@@ -2,7 +2,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from 'maplibre-gl'
 import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
-import { hkiaFacility } from '../../dataAdapters/airport'
+import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
@@ -106,6 +106,18 @@ function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
+function airportRunwaysToGeoJson(): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: hkiaRunways.map(runway => ({
+      type: 'Feature',
+      id: runway.id,
+      geometry: { type: 'LineString', coordinates: runway.geometry },
+      properties: { id: runway.id, designator: runway.designator },
+    })),
+  }
+}
+
 export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
@@ -169,6 +181,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.addSource('ferry-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('tram-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('airport-facilities', { type: 'geojson', data: emptyCollection })
+      map.addSource('airport-runways', { type: 'geojson', data: emptyCollection })
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
@@ -233,6 +246,17 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           'circle-color': '#38bdf8',
           'circle-stroke-color': '#f8fafc',
           'circle-stroke-width': 2,
+        },
+      })
+      map.addLayer({
+        id: 'airport-runways',
+        type: 'line',
+        source: 'airport-runways',
+        paint: {
+          'line-color': '#cbd5e1',
+          'line-width': 3,
+          'line-opacity': 0.65,
+          'line-dasharray': [2, 1],
         },
       })
       map.addLayer({
@@ -331,6 +355,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
+      updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -353,6 +378,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
+    updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
   }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
@@ -453,6 +479,17 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             </g>
           )
         })()}
+        {hkiaRunways.map(runway => (
+          <path
+            key={runway.id}
+            d={pathForGeometry(runway.geometry)}
+            fill="none"
+            stroke="#cbd5e1"
+            strokeWidth="4"
+            strokeDasharray="8 4"
+            opacity="0.72"
+          />
+        ))}
         {visibleVehicles.map(vehicle => {
           const point = project(vehicle.coordinates)
           return (
