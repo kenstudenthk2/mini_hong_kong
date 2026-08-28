@@ -3,6 +3,18 @@ import type { TransitData } from './types'
 
 const CoordinateSchema = z.tuple([z.number(), z.number()])
 
+export const BusRoutesSchema = z.array(z.object({
+  id: z.string(),
+  operator: z.string(),
+  routeNumber: z.string(),
+  nameEn: z.string(),
+  nameZh: z.string(),
+  namePt: z.string().optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+  stopIds: z.array(z.string()).min(2),
+  geometry: z.array(CoordinateSchema).min(2),
+}))
+
 export const RailLinesSchema = z.array(z.object({
   id: z.string(),
   mode: z.enum(['mtr', 'light_rail']),

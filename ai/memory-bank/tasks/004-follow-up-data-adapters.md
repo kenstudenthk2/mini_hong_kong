@@ -15,4 +15,12 @@ Data Engineer + GIS QA
 - Buses, ferries, trams, and flights are implemented as separate PRs.
 
 ## Status
-Not started.
+Bus contract slice complete; live adapter and concrete output remain pending approval.
+
+## Bus contract slice
+- Source family: DATA.GOV.HK transport datasets, with operator ETA feeds as the future realtime overlay.
+- Normalization cadence: define during adapter task; this slice contains no downloader or generated bus output.
+- Staleness behavior: future UI must label the route feed stale when its source timestamp exceeds the configured freshness window.
+- Schema: `BusRoutesSchema` in `src/dataSchemas.ts` validates route identity, operator, localized names, color, ordered stops, and geometry.
+- Output file: none yet; a generated `public/data/bus-routes.json` requires a separate approved adapter/output task.
+- Validation: `npm.cmd test -- src/dataSchemas.test.ts`
