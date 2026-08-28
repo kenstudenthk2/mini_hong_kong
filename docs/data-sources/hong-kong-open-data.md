@@ -4,13 +4,13 @@
 Use DATA.GOV.HK as the default authoritative source for Hong Kong public datasets:
 https://data.gov.hk/en/
 
-## Planned Transport Feeds
+## Transport Feeds
 - Transport Department GTFS/headway data: static schedule backbone.
 - MTR Next Train: future realtime heavy rail overlay.
 - MTR Light Rail Next Train: future realtime Light Rail overlay.
 - KMB/LWB ETA, Citybus ETA, NLB ETA, GMB ETA: bounded bus overlays currently loaded by the app.
-- Sun Ferry ETA, HKKF ETA, Star Ferry timetables: future ferry layers.
-- Hong Kong Tramways routes: future tram layer.
+- Ferry route geometry: optional DATA.GOV.HK GeoJSON route feed currently loaded by the app.
+- Ferry and Hong Kong Tramways schedules: optional DATA.GOV.HK GTFS/headway schedule feed currently loaded for replay movement.
 - Airport Authority Hong Kong flight information: historical/replay first unless a live source is verified.
 
 ## Verified Operator Contracts (2026-08-28)
