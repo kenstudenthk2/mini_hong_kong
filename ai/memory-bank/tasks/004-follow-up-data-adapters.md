@@ -419,3 +419,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 66 passing tests, lint/build/diff checks pass. Commit: `b3ca879`.
 - Known limitation: real browser click ordering, touch behavior, and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
 - Next task: validate station and vehicle selection in a working browser before adding more interaction controls.
+
+## Compact handoff: fallback selection invariant
+- Complete: SVG fallback vehicle clicks now clear any selected station before selecting a vehicle, matching the MapLibre click path for aircraft and surface vehicles.
+- Scope: selection state consistency only; no new dependency, script, data source, or simulation behavior was added.
+- Evidence: full suite has 66 passing tests, lint/build/diff checks pass. Commit: `5943afe`.
+- Known limitation: real browser event ordering and touch behavior across both renderers remain unverified because the integrated browser harness is unavailable.
+- Next task: validate station and vehicle selection parity in a working browser.
