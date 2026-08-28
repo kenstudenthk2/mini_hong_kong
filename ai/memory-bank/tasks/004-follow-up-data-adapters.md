@@ -566,3 +566,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `7a006a1`.
 - Known limitation: browser hit testing, selection highlight, and localized panel layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate HKIA facility, terminal/gate, and aircraft selection workflows in a working browser.
+
+## Compact handoff: selected airport ground highlight
+- Complete: the selected OSM terminal or gate now receives a larger radius and heavier stroke in MapLibre, matching the existing SVG schematic highlight.
+- Lifecycle: the selected ground-feature ID is synchronized through the MapView ref and reactive source update, so selection feedback survives map initialization and later state changes.
+- Scope: visual selection feedback only; OSM snapshot data, timestamps, and airport telemetry boundaries are unchanged.
+- Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `498db5b`.
+- Known limitation: browser visual confirmation remains unavailable.
+- Next task: validate HKIA facility, terminal/gate, and aircraft selection workflows in a working browser.
