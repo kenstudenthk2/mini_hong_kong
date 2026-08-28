@@ -30,6 +30,7 @@ interface Props {
   selectedFacilityId: string | null
   selectedGroundFeatureId: string | null
   selectedRouteSearchId: string | null
+  followSelectedVehicle: boolean
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
@@ -190,7 +191,7 @@ function airportGroundToGeoJson(selectedGroundFeatureId: string | null): GeoJSON
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -607,9 +608,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     const map = mapRef.current
     const center = selectedVehicleCenter(visibleVehicles, selectedVehicleId)
-    if (!map || !center) return
+    if (!map || !center || !followSelectedVehicle) return
     map.easeTo({ center, duration: 220 })
-  }, [selectedVehicleId, visibleVehicles])
+  }, [followSelectedVehicle, selectedVehicleId, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current

@@ -9,13 +9,15 @@ interface Props {
   liveBusMode: boolean
   hasLiveBusData: boolean
   onToggleLiveBusMode: () => void
+  followSelectedVehicle: boolean
+  onToggleFollowSelectedVehicle: () => void
 }
 
 export function simulationTimeLocale(lang: Lang): string {
   return lang === 'zh' ? 'zh-HK' : lang === 'pt' ? 'pt-PT' : 'en-GB'
 }
 
-export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, hasLiveBusData, onToggleLiveBusMode }: Props) {
+export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, hasLiveBusData, onToggleLiveBusMode, followSelectedVehicle, onToggleFollowSelectedVehicle }: Props) {
   const { lang, setLang, t } = useI18n()
   const formatted = new Intl.DateTimeFormat(simulationTimeLocale(lang), {
     timeZone: 'Asia/Hong_Kong',
@@ -50,6 +52,11 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
         <input type="checkbox" checked={liveBusMode} disabled={!hasLiveBusData} onChange={onToggleLiveBusMode} />
         <span>{lang === 'zh' ? '巴士即時 ETA' : lang === 'pt' ? 'ETA ao vivo dos autocarros' : 'Live bus ETA'}</span>
         <strong>{hasLiveBusData ? (liveBusMode ? t.active : t.planned) : '-'}</strong>
+      </label>
+      <label className="toggle-row">
+        <input type="checkbox" checked={followSelectedVehicle} onChange={onToggleFollowSelectedVehicle} />
+        <span>{lang === 'zh' ? '\u8ddf\u96a8\u73ed\u8eca' : lang === 'pt' ? 'Seguir veiculo' : 'Follow vehicle'}</span>
+        <strong>{followSelectedVehicle ? 'ON' : 'OFF'}</strong>
       </label>
       <label className="slider-row">
         <span>{t.speed}</span>

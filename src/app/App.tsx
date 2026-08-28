@@ -18,6 +18,7 @@ export default function App() {
   const clock = useSimulationClock()
   const [pitchEnabled, setPitchEnabled] = useState(true)
   const [liveBusMode, setLiveBusMode] = useState(true)
+  const [followSelectedVehicle, setFollowSelectedVehicle] = useState(true)
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const [selectedFacility, setSelectedFacility] = useState<AirportFacility | null>(null)
@@ -214,6 +215,7 @@ export default function App() {
           selectedRouteSearchId={selectedRouteSearchId}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
+          followSelectedVehicle={followSelectedVehicle}
         />
         <ControlPanel
           clock={clock}
@@ -222,6 +224,8 @@ export default function App() {
           liveBusMode={liveBusMode}
           hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
           onToggleLiveBusMode={() => setLiveBusMode(value => !value)}
+          followSelectedVehicle={followSelectedVehicle}
+          onToggleFollowSelectedVehicle={() => setFollowSelectedVehicle(value => !value)}
         />
         <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} groundFeature={selectedGroundFeature} />
       </section>
