@@ -100,3 +100,8 @@
 - Started Vite successfully on `http://127.0.0.1:5183/`.
 - In-app browser runtime failed before tab creation with `The system cannot find the path specified (os error 3)`, matching the previous browser startup failure.
 - Temporary server stopped; no rendered pass is claimed and no further retries are planned in this task pass.
+
+### R-020: Light/dark 3D basemap mode (2026-08-28)
+- Added two presentation layers over the same OSM raster source: readable light 2D mode and darkened 3D mode, switched with the existing 2D/3D control.
+- This mirrors the light Tokyo and dark Macau presentation modes without introducing another key-dependent provider.
+- Evidence: focused MapView tests, lint, build, and diff check pass.

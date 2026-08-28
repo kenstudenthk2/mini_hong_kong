@@ -730,3 +730,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Attempted a second local browser verification pass after starting Vite on port 5183.
 - The browser runtime again failed before tab creation with an OS path error; the server was stopped and no visual pass is claimed.
 - Code-level evidence remains: 25 test files, 93 tests, lint, and build pass.
+
+## Compact handoff: light/dark 3D basemap mode
+- Complete: the existing 2D/3D control now switches between a readable light OSM raster and a darkened raster presentation for the 3D scene.
+- Data boundary: both modes reuse the same raster tiles; building vectors and transit data remain separate.
+- Evidence: focused MapView tests, lint, build, and diff checks pass.
