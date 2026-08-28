@@ -1,7 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeGmbRoutes } from './gmb'
+import { gmbStopLimit, loadGmbRoutes, normalizeGmbRoutes } from './gmb'
 
 describe('GMB route adapter', () => {
+  it('loads one bounded route sample from the official endpoint shapes', async () => {
+    const calls: string[] = []
+    const routes = await loadGmbRoutes(async path => {
+      calls.push(path)
+      if (path.endsWith('/route/HKI/1')) return { data: { route_id: 2006408, region: 'HKI', route_code: '1', directions: [{ route_seq: 1, orig_tc: '山頂', orig_en: 'The Peak', dest_tc: '中環', dest_en: 'Central' }] } }
+      if (path.endsWith('/route-stop/2006408/1')) return { data: Array.from({ length: gmbStopLimit + 1 }, (_, index) => ({ stop_seq: index + 1, stop_id: 20014489 + index, name_tc: `站${index + 1}`, name_en: `Stop ${index + 1}` })) }
+      const stopId = Number(path.split('/').at(-1))
+      return { data: { coordinates: { wgs84: { latitude: 22.27 + stopId / 1000000, longitude: 114.14 + stopId / 1000000 } } } }
+    })
+
+    expect(routes[0].stopIds).toHaveLength(gmbStopLimit)
+    expect(calls).toHaveLength(2 + gmbStopLimit)
+    expect(calls.filter(path => path.includes('/stop/'))).toHaveLength(gmbStopLimit)
+  })
+
   it('normalizes one official route direction with ordered stop coordinates', () => {
     const routes = normalizeGmbRoutes({
       routes: [{
