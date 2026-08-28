@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { selectedVehicleCenter } from './MapView'
+import { selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -31,5 +31,10 @@ describe('selected vehicle map focus', () => {
   it('does not move the map for a missing or cleared selection', () => {
     expect(selectedVehicleCenter([vehicle], 'missing')).toBeNull()
     expect(selectedVehicleCenter([vehicle], null)).toBeNull()
+  })
+
+  it('clears selection only when empty map space was clicked', () => {
+    expect(shouldClearVehicleSelection(0)).toBe(true)
+    expect(shouldClearVehicleSelection(1)).toBe(false)
   })
 })

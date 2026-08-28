@@ -98,6 +98,10 @@ export function selectedVehicleCenter(vehicles: VehiclePosition[], selectedVehic
   return vehicle ? vehicle.coordinates : null
 }
 
+export function shouldClearVehicleSelection(vehicleFeatureCount: number): boolean {
+  return vehicleFeatureCount === 0
+}
+
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -410,6 +414,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         const id = event.features?.[0]?.properties?.id
         const vehicle = vehiclesRef.current.find(item => item.id === id)
         onSelectVehicleRef.current(vehicle ?? null)
+      })
+      map.on('click', event => {
+        const vehicleFeatures = map.queryRenderedFeatures(event.point, { layers: ['vehicles-circle'] })
+        if (shouldClearVehicleSelection(vehicleFeatures.length)) onSelectVehicleRef.current(null)
       })
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
