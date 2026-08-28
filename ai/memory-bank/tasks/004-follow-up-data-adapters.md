@@ -447,3 +447,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 68 passing tests, lint/build/diff checks pass. Commit: `f14d00b`.
 - Known limitation: browser hydration timing, toggle state, and localized status rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate Data Status mode reporting and the full bus toggle workflow in a working browser.
+
+## Compact handoff: station search
+- Complete: the directory now includes a compact trilingual station selector; selecting a station updates the shared station selection state, clears vehicle selection, and focuses the map on that station.
+- Renderer behavior: the same selected-station state is shared by MapLibre and SVG schematic views; empty map clicks still clear selection.
+- Scope: search and focus only; station data, route filters, and simulation behavior are unchanged.
+- Evidence: full suite has 68 passing tests, lint/build/diff checks pass. Commit: `2234f4b`.
+- Known limitation: browser select interaction, map recentering, touch behavior, and three-locale layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate station search and selection in a working browser before adding route search.
