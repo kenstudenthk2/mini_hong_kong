@@ -103,6 +103,35 @@ input {
   text-transform: uppercase;
 }
 
+.summary-label {
+  color: #f8fafc !important;
+  text-transform: none !important;
+}
+
+.summary-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-toggle {
+  min-width: 38px;
+  padding: 3px 6px;
+  color: #bae6fd;
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tool-toggle[aria-pressed="false"] {
+  color: #fecaca;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(252, 165, 165, 0.3);
+}
+
 .section-body {
   display: grid;
   gap: 7px;

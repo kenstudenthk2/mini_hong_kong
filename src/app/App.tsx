@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { DirectoryMenu } from '../components/menu/DirectoryMenu'
+import { DirectoryMenu, type TransportTool } from '../components/menu/DirectoryMenu'
 import { ControlPanel } from '../components/map/ControlPanel'
 import { InfoPanel } from '../components/map/InfoPanel'
 import { MapView } from '../components/map/MapView'
@@ -42,6 +42,7 @@ export default function App() {
   const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus', 'NLB']), [])
   const [manualBusOperators, setManualBusOperators] = useState<Set<string> | null>(null)
   const selectedBusOperators = manualBusOperators ?? allBusOperators
+  const [activeTools, setActiveTools] = useState<Set<TransportTool>>(() => new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams', 'flights']))
 
   const vehicles = useMemo(
     () => transitData.data ? [
@@ -52,8 +53,8 @@ export default function App() {
       ...computeFerryVehiclePositions(transitData.data.ferryRoutes ?? [], transitData.data.ferrySchedules ?? [], clock.currentTime),
       ...computeTramVehiclePositions(transitData.data.tramRoutes ?? [], transitData.data.tramSchedules ?? [], clock.currentTime),
       ...computeAirportFlightVehiclePositions(transitData.data.flights ?? [], clock.currentTime),
-    ] : [],
-    [clock.currentTime, liveBusMode, transitData.data],
+    ].filter(vehicle => vehicle.type !== 'flight' || activeTools.has('flights')) : [],
+    [activeTools, clock.currentTime, liveBusMode, transitData.data],
   )
 
   useEffect(() => {
@@ -87,6 +88,47 @@ export default function App() {
     setManualLineIds(null)
     setManualRouteIds(null)
     setManualBusOperators(null)
+    setActiveTools(new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams', 'flights']))
+  }
+
+  function toggleTool(tool: TransportTool) {
+    const enabled = activeTools.has(tool)
+    setActiveTools(previous => {
+      const next = new Set(previous)
+      if (enabled) next.delete(tool)
+      else next.add(tool)
+      return next
+    })
+
+    if (tool === 'rail' || tool === 'lightRail') {
+      const lineMode = tool === 'rail' ? 'mtr' : 'light_rail'
+      const lineIds = new Set((transitData.data?.railLines ?? []).filter(line => line.mode === lineMode).map(line => line.id))
+      setManualLineIds(previous => {
+        const next = new Set(previous ?? allLineIds)
+        lineIds.forEach(id => enabled ? next.delete(id) : next.add(id))
+        return next
+      })
+    }
+
+    if (tool === 'buses') {
+      setManualBusOperators(previous => {
+        const next = new Set(previous ?? allBusOperators)
+        for (const operator of ['KMB/LWB', 'Citybus', 'NLB']) {
+          if (enabled) next.delete(operator)
+          else next.add(operator)
+        }
+        return next
+      })
+    }
+
+    if (tool === 'ferries' || tool === 'trams') {
+      const routeIds = new Set((tool === 'ferries' ? transitData.data?.ferryRoutes : transitData.data?.tramRoutes)?.map(route => route.id) ?? [])
+      setManualRouteIds(previous => {
+        const next = new Set(previous ?? allRouteIds)
+        routeIds.forEach(id => enabled ? next.delete(id) : next.add(id))
+        return next
+      })
+    }
   }
 
   return (
@@ -101,6 +143,8 @@ export default function App() {
         selectedBusOperators={selectedBusOperators}
         onToggleBusOperator={toggleBusOperator}
         onResetFilters={resetFilters}
+        activeTools={activeTools}
+        onToggleTool={toggleTool}
         liveBusMode={liveBusMode}
         hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
         feedStatus={transitData.feedStatus}
