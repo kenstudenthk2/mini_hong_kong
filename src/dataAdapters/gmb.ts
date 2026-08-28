@@ -60,6 +60,11 @@ export interface GmbRouteSnapshot {
   stopsById: Record<string, z.input<typeof GmbStopSchema>>
 }
 
+export interface GmbRuntimeFeed {
+  routes: ReturnType<typeof normalizeGmbRoutes>
+  busArrivals: BusArrival[]
+}
+
 function validTimestamp(value: string): string | null {
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? null : date.toISOString()
@@ -112,9 +117,14 @@ async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper:
 }
 
 export async function loadGmbRoutes(loadJson: JsonLoader): Promise<ReturnType<typeof normalizeGmbRoutes>> {
+  const { snapshot } = await loadGmbSnapshot(loadJson)
+  return normalizeGmbRoutes(snapshot)
+}
+
+async function loadGmbSnapshot(loadJson: JsonLoader): Promise<{ snapshot: GmbRouteSnapshot; route: GmbRouteSnapshot['routes'][number] }> {
   const routeResponse = await loadJson(`https://data.etagmb.gov.hk/route/${gmbFeaturedRegion}/${gmbFeaturedRouteCode}`) as { data?: unknown }
   const routeData = unwrapData(routeResponse)
-  const route = (Array.isArray(routeData) ? routeData[0] : routeData) as { route_id: number; region: string; route_code: string; directions: Array<{ route_seq: number }> }
+  const route = (Array.isArray(routeData) ? routeData[0] : routeData) as GmbRouteSnapshot['routes'][number]
   const directions = route.directions
   const routeStopEntries = await mapWithConcurrency(directions, 2, async direction => {
     const response = await loadJson(`https://data.etagmb.gov.hk/route-stop/${route.route_id}/${direction.route_seq}`) as { data?: unknown }
@@ -128,11 +138,39 @@ export async function loadGmbRoutes(loadJson: JsonLoader): Promise<ReturnType<ty
     return [stopId, unwrapData(response)] as const
   })
 
-  return normalizeGmbRoutes({
+  return {
+    route,
+    snapshot: {
     routes: [route as GmbRouteSnapshot['routes'][number]],
     routeStopsByDirection: Object.fromEntries(Object.entries(routeStopsByDirection).map(([sequence, stops]) => [`${route.route_id}-${sequence}`, stops as GmbRouteSnapshot['routeStopsByDirection'][string]])),
     stopsById: Object.fromEntries(stopEntries) as GmbRouteSnapshot['stopsById'],
+    },
+  }
+}
+
+export async function loadGmbFeed(loadJson: JsonLoader): Promise<GmbRuntimeFeed> {
+  const { snapshot, route } = await loadGmbSnapshot(loadJson)
+  const etaTargets = route.directions.flatMap(direction => {
+    const routeId = `gmb-${route.region.toLowerCase()}-${route.route_id}-${direction.route_seq}`
+    const routeStops = snapshot.routeStopsByDirection[`${route.route_id}-${direction.route_seq}`] ?? []
+    return routeStops.map(stop => ({
+      routeId,
+      routeSeq: direction.route_seq,
+      stopSeq: Number(stop.stop_seq),
+      destinationEn: direction.dest_en,
+      destinationZh: direction.dest_tc,
+    }))
   })
+  const arrivals = await mapWithConcurrency(etaTargets, 2, async target => {
+    const raw = await loadJson(`https://data.etagmb.gov.hk/eta/route-stop/${route.route_id}/${target.routeSeq}/${target.stopSeq}`)
+    return normalizeGmbEta(raw, {
+      routeId: target.routeId,
+      stopSequence: target.stopSeq,
+      destinationEn: target.destinationEn,
+      destinationZh: target.destinationZh,
+    })
+  })
+  return { routes: normalizeGmbRoutes(snapshot), busArrivals: arrivals.flat() }
 }
 
 export function normalizeGmbRoutes(snapshot: GmbRouteSnapshot) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { gmbStopLimit, loadGmbRoutes, normalizeGmbEta, normalizeGmbRoutes } from './gmb'
+import { gmbStopLimit, loadGmbFeed, loadGmbRoutes, normalizeGmbEta, normalizeGmbRoutes } from './gmb'
 
 describe('GMB route adapter', () => {
   it('normalizes enabled ETA entries with Hong Kong timestamps and remarks', () => {
@@ -47,6 +47,21 @@ describe('GMB route adapter', () => {
     expect(routes[0].stopIds).toHaveLength(gmbStopLimit)
     expect(calls).toHaveLength(2 + gmbStopLimit)
     expect(calls.filter(path => path.includes('/stop/'))).toHaveLength(gmbStopLimit)
+  })
+
+  it('loads bounded ETA requests for each sampled direction and merges arrivals', async () => {
+    const calls: string[] = []
+    const feed = await loadGmbFeed(async path => {
+      calls.push(path)
+      if (path.endsWith('/route/HKI/1')) return { data: { route_id: 2006408, region: 'HKI', route_code: '1', directions: [{ route_seq: 1, orig_tc: '山頂', orig_en: 'The Peak', dest_tc: '中環', dest_en: 'Central' }, { route_seq: 2, orig_tc: '中環', orig_en: 'Central', dest_tc: '山頂', dest_en: 'The Peak' }] } }
+      if (path.includes('/eta/route-stop/')) return { generated_timestamp: '2026-08-28T14:10:31+08:00', data: [{ enabled: true, eta: [{ eta_seq: 1, timestamp: '2026-08-28T14:14:00+08:00' }] }] }
+      if (path.includes('/route-stop/')) return { data: [{ stop_seq: 1, stop_id: 20014489, name_tc: '站一', name_en: 'Stop 1' }, { stop_seq: 2, stop_id: 20014490, name_tc: '站二', name_en: 'Stop 2' }] }
+      return { data: { coordinates: { wgs84: { latitude: 22.27, longitude: 114.14 } } } }
+    })
+
+    expect(feed.routes).toHaveLength(2)
+    expect(feed.busArrivals).toHaveLength(4)
+    expect(calls.filter(path => path.includes('/eta/route-stop/'))).toHaveLength(4)
   })
 
   it('normalizes one official route direction with ordered stop coordinates', () => {

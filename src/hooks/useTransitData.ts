@@ -6,7 +6,7 @@ import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules, type FerryGtfs
 import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { nlbEtaFeaturedRouteId, nlbEtaStopLimit, nlbFeaturedRouteIds, normalizeNlbEta, normalizeNlbRoutes, type NlbRouteSnapshot } from '../dataAdapters/nlb'
-import { loadGmbRoutes } from '../dataAdapters/gmb'
+import { loadGmbFeed } from '../dataAdapters/gmb'
 import { loadHkgFlights } from '../dataAdapters/flight'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -172,8 +172,8 @@ async function loadNlbFeed(): Promise<{ routes: NonNullable<TransitData['busRout
   return { routes: normalizedRoutes, busArrivals }
 }
 
-async function loadGmbFeed(): Promise<NonNullable<TransitData['busRoutes']>> {
-  return loadGmbRoutes(loadJson)
+async function loadGmbRuntimeFeed(): Promise<{ routes: NonNullable<TransitData['busRoutes']>; busArrivals: NonNullable<TransitData['busArrivals']> }> {
+  return loadGmbFeed(loadJson)
 }
 
 async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
@@ -191,19 +191,19 @@ async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
 }
 
 async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
-  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, nlbFeed, gmbRoutes, busFeed] = await Promise.all([
+  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, nlbFeed, gmbFeed, busFeed] = await Promise.all([
     loadKmbRoutes().catch(() => []),
     loadCitybusRoutes().catch(() => []),
     loadCitybusArrivals().catch(() => []),
     loadFerryRoutes().catch(() => []),
     loadTramRoutes().catch(() => []),
     loadNlbFeed().catch(() => ({ routes: [], busArrivals: [] })),
-    loadGmbFeed().catch(() => []),
+    loadGmbRuntimeFeed().catch(() => ({ routes: [], busArrivals: [] })),
     loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
   ])
   return {
-    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbFeed.routes ?? []), ...(gmbRoutes ?? [])],
-    busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? []), ...(nlbFeed.busArrivals ?? [])],
+    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbFeed.routes ?? []), ...(gmbFeed.routes ?? [])],
+    busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? []), ...(nlbFeed.busArrivals ?? []), ...(gmbFeed.busArrivals ?? [])],
     busDataTimestamp: busFeed.generatedAt,
     ferryRoutes: ferryRoutes ?? [],
     tramRoutes: tramRoutes ?? [],
