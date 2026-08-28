@@ -58,6 +58,13 @@ function pathForGeometry(geometry: [number, number][]): string {
     .join(' ')
 }
 
+export const DEFAULT_MAP_VIEW = {
+  center: [114.16, 22.32] as [number, number],
+  zoom: 12.4,
+  pitch: 58,
+  bearing: -18,
+}
+
 function pathForLine(line: RailLine): string {
   return pathForGeometry(line.geometry)
 }
@@ -290,10 +297,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     if (!mapNode.current || mapRef.current) return
     const map = new maplibregl.Map({
       container: mapNode.current,
-      center: [114.10, 22.32],
-      zoom: 10.8,
-      pitch: 58,
-      bearing: -18,
+      center: DEFAULT_MAP_VIEW.center,
+      zoom: DEFAULT_MAP_VIEW.zoom,
+      pitch: DEFAULT_MAP_VIEW.pitch,
+      bearing: DEFAULT_MAP_VIEW.bearing,
       style: {
         version: 8,
         sources: {

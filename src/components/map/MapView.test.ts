@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { isClearSelectionShortcut, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import { DEFAULT_MAP_VIEW, isClearSelectionShortcut, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -24,6 +24,10 @@ const vehicle: VehiclePosition = {
 }
 
 describe('selected vehicle map focus', () => {
+  it('starts over the dense urban transit area for the 3D city view', () => {
+    expect(DEFAULT_MAP_VIEW).toMatchObject({ center: [114.16, 22.32], zoom: 12.4, pitch: 58 })
+  })
+
   it('returns the selected vehicle center', () => {
     expect(selectedVehicleCenter([vehicle], 'mtr-1')).toEqual([114.16, 22.33])
   })
