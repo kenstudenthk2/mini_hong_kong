@@ -725,3 +725,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: the initial camera now focuses central Hong Kong at zoom 12.4 with 58-degree pitch so the OSM-derived building layer can appear immediately.
 - Navigation: route and feature selection still re-centre or fit the map as before.
 - Evidence: focused MapView test, lint, and build pass.
+
+## Compact handoff: browser QA blocker
+- Attempted a second local browser verification pass after starting Vite on port 5183.
+- The browser runtime again failed before tab creation with an OS path error; the server was stopped and no visual pass is claimed.
+- Code-level evidence remains: 25 test files, 93 tests, lint, and build pass.

@@ -95,3 +95,8 @@
 - Changed the initial map view from territory-wide zoom to a central Hong Kong urban transit focus at zoom 12.4, allowing the 3D building layer to contribute in the first viewport.
 - Route selection and airport/feature selection remain responsible for moving to other network areas.
 - Evidence: focused MapView test, lint, and production build pass.
+
+### R-019: Browser QA retry (2026-08-28)
+- Started Vite successfully on `http://127.0.0.1:5183/`.
+- In-app browser runtime failed before tab creation with `The system cannot find the path specified (os error 3)`, matching the previous browser startup failure.
+- Temporary server stopped; no rendered pass is claimed and no further retries are planned in this task pass.
