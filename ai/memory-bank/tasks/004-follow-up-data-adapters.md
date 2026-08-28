@@ -350,3 +350,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/layerManifest.test.ts` covers unique registration and representative classifications; full suite has 56 passing tests, lint/build/diff checks pass. Commit: `cd22af7`.
 - Known limitation: browser rendering and link-click verification remain pending because the integrated browser harness is unavailable; the manifest is not a freshness monitor.
 - Next task: validate the Data Status links and progressive-loading states in a working browser harness before adding more layer controls.
+
+## Compact handoff: trilingual data-layer status
+- Complete: every manifest entry now provides explicit English, Traditional Chinese, and Portuguese labels plus localized source names for the Data Status directory.
+- Scope: localization contract only; layer classifications, source URLs, loading behavior, and simulation behavior are unchanged.
+- Evidence: `src/dataAdapters/layerManifest.test.ts` asserts all three locale values for every entry; full suite has 57 passing tests, lint/build/diff checks pass. Commit: `5f9c338`.
+- Known limitation: browser locale switching and source-link rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: perform browser verification for all three locales and continue the remaining reference-derived interaction gaps.
