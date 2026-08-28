@@ -8,7 +8,7 @@ import { computeAirportFlightVehiclePositions } from '../dataAdapters/airportRep
 import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeTramVehiclePositions, computeVehiclePositions } from '../engines/simulationEngine'
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
-import type { Station, VehiclePosition } from '../types'
+import type { AirportFacility, Station, VehiclePosition } from '../types'
 import { isVehicleVisible } from './vehicleVisibility'
 import type { SearchableRoute } from './routeSearch'
 
@@ -19,6 +19,7 @@ export default function App() {
   const [liveBusMode, setLiveBusMode] = useState(true)
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
+  const [selectedFacility, setSelectedFacility] = useState<AirportFacility | null>(null)
   const [routeSearchQuery, setRouteSearchQuery] = useState('')
   const [selectedRouteSearchId, setSelectedRouteSearchId] = useState<string | null>(null)
   const allLineIds = useMemo(
@@ -106,6 +107,7 @@ export default function App() {
         onSelectStation={station => {
           setSelectedStation(station)
           setSelectedVehicle(null)
+          setSelectedFacility(null)
         }}
         routeSearchQuery={routeSearchQuery}
         onRouteSearchQueryChange={setRouteSearchQuery}
@@ -128,6 +130,12 @@ export default function App() {
           onSelectStation={station => {
             setSelectedStation(station)
             setSelectedVehicle(null)
+            setSelectedFacility(null)
+          }}
+          onSelectFacility={facility => {
+            setSelectedFacility(facility)
+            setSelectedStation(null)
+            setSelectedVehicle(null)
           }}
           onClearRouteSearch={() => setSelectedRouteSearchId(null)}
           selectedVehicleId={selectedVehicle?.id ?? null}
@@ -144,7 +152,7 @@ export default function App() {
           hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
           onToggleLiveBusMode={() => setLiveBusMode(value => !value)}
         />
-        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} />
+        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} />
       </section>
     </main>
   )

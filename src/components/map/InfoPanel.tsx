@@ -1,10 +1,11 @@
 import { localName, useI18n } from '../../i18n'
-import type { AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
+import type { AirportFacility, AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
   vehicle: VehiclePosition | null
   station: Station | null
+  facility: AirportFacility | null
 }
 
 export function flightForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): AirportFlight | undefined {
@@ -57,7 +58,16 @@ export function stationLineNames(data: TransitData | null, station: Station | nu
   return station.lineIds.map(lineId => lines.get(lineId) || lineId)
 }
 
-export function InfoPanel({ data, vehicle, station }: Props) {
+function facilityLabel(lang: Lang, key: 'airport' | 'iata' | 'icao' | 'coordinates' | 'source'): string {
+  const labels = {
+    en: { airport: 'Airport', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordinates', source: 'Source' },
+    zh: { airport: '\u6a5f\u5834', iata: 'IATA', icao: 'ICAO', coordinates: '\u5ea7\u6a19', source: '\u8cc7\u6599\u4f86\u6e90' },
+    pt: { airport: 'Aeroporto', iata: 'IATA', icao: 'ICAO', coordinates: 'Coordenadas', source: 'Fonte' },
+  } as const
+  return labels[lang][key]
+}
+
+export function InfoPanel({ data, vehicle, station, facility }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
   const line = data?.railLines.find(item => item.id === vehicle?.lineId)
@@ -69,12 +79,21 @@ export function InfoPanel({ data, vehicle, station }: Props) {
 
   return (
     <section className="info-panel">
-      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : t.noSelection}</h2>
+      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : t.noSelection}</h2>
       {!vehicle && station && (
         <div className="info-grid">
           <p>{infoLabel(lang, 'station')}: <strong>{localName(station, lang)}</strong></p>
           <p>{infoLabel(lang, 'lines')}: <strong>{stationLines.join(', ') || '-'}</strong></p>
           <p>{infoLabel(lang, 'coordinates')}: <strong>{station.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
+        </div>
+      )}
+      {!vehicle && !station && facility && (
+        <div className="info-grid">
+          <p>{facilityLabel(lang, 'airport')}: <strong>{localName(facility, lang)}</strong></p>
+          <p>{facilityLabel(lang, 'iata')}: <strong>{facility.iataCode}</strong></p>
+          <p>{facilityLabel(lang, 'icao')}: <strong>{facility.icaoCode}</strong></p>
+          <p>{facilityLabel(lang, 'coordinates')}: <strong>{facility.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
+          <p>{facilityLabel(lang, 'source')}: <a href={facility.sourceUrl} target="_blank" rel="noreferrer">AIP</a></p>
         </div>
       )}
       {vehicle?.type === 'flight' && (

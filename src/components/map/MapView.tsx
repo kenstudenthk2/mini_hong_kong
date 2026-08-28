@@ -6,7 +6,7 @@ import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures } from '../../dataAdapters/airportGround'
 import { isVehicleVisible } from '../../app/vehicleVisibility'
 import type { SearchableRoute } from '../../app/routeSearch'
-import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
+import type { AirportFacility, BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
   pitchEnabled: boolean
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
   onSelectStation: (station: Station | null) => void
+  onSelectFacility: (facility: AirportFacility | null) => void
   onClearRouteSearch: () => void
   selectedVehicleId: string | null
   selectedStationId: string | null
@@ -184,12 +185,13 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedRouteSearchId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedRouteSearchId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
   const onSelectStationRef = useRef(onSelectStation)
+  const onSelectFacilityRef = useRef(onSelectFacility)
   const onClearRouteSearchRef = useRef(onClearRouteSearch)
   const linesRef = useRef(lines)
   const busRoutesRef = useRef(busRoutes)
@@ -224,12 +226,16 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
 
   useEffect(() => {
-    onSelectVehicleRef.current = onSelectVehicle
+      onSelectVehicleRef.current = onSelectVehicle
   }, [onSelectVehicle])
 
   useEffect(() => {
     onSelectStationRef.current = onSelectStation
   }, [onSelectStation])
+
+  useEffect(() => {
+    onSelectFacilityRef.current = onSelectFacility
+  }, [onSelectFacility])
 
   useEffect(() => {
     onClearRouteSearchRef.current = onClearRouteSearch
@@ -240,6 +246,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       if (!isClearSelectionShortcut(event)) return
       onSelectVehicleRef.current(null)
       onSelectStationRef.current(null)
+      onSelectFacilityRef.current(null)
       onClearRouteSearchRef.current()
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -482,24 +489,35 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         const id = event.features?.[0]?.properties?.id
         const vehicle = vehiclesRef.current.find(item => item.id === id)
         onSelectStationRef.current(null)
+        onSelectFacilityRef.current(null)
         onSelectVehicleRef.current(vehicle ?? null)
       })
       map.on('click', 'stations-circle', event => {
         const id = event.features?.[0]?.properties?.id
         const station = stationsRef.current.find(item => item.id === id)
         onSelectVehicleRef.current(null)
+        onSelectFacilityRef.current(null)
         onSelectStationRef.current(station ?? null)
+      })
+      map.on('click', 'airport-facilities-circle', () => {
+        onSelectVehicleRef.current(null)
+        onSelectStationRef.current(null)
+        onSelectFacilityRef.current(hkiaFacility)
       })
       map.on('click', event => {
         const vehicleFeatures = map.queryRenderedFeatures(event.point, { layers: ['vehicles-circle'] })
         const stationFeatures = map.queryRenderedFeatures(event.point, { layers: ['stations-circle'] })
-        if (shouldClearVehicleSelection(vehicleFeatures.length) && shouldClearVehicleSelection(stationFeatures.length)) {
+        const facilityFeatures = map.queryRenderedFeatures(event.point, { layers: ['airport-facilities-circle'] })
+        if (shouldClearVehicleSelection(vehicleFeatures.length) && shouldClearVehicleSelection(stationFeatures.length) && shouldClearVehicleSelection(facilityFeatures.length)) {
           onSelectVehicleRef.current(null)
           onSelectStationRef.current(null)
+          onSelectFacilityRef.current(null)
         }
       })
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
+      map.on('mouseenter', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = '' })
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
       updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
@@ -662,6 +680,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
               onClick={() => {
                 onSelectVehicle(null)
                 onSelectStation(station)
+                onSelectFacility(null)
               }}
             />
           )
@@ -670,7 +689,11 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           const point = project(hkiaFacility.coordinates)
           return (
             <g className="airport-hotspot">
-              <circle cx={point.x} cy={point.y} r="12" fill="#38bdf8" stroke="#f8fafc" strokeWidth="3" />
+              <circle cx={point.x} cy={point.y} r="12" fill="#38bdf8" stroke="#f8fafc" strokeWidth="3" style={{ pointerEvents: 'auto', cursor: 'pointer' }} onClick={() => {
+                onSelectVehicle(null)
+                onSelectStation(null)
+                onSelectFacility(hkiaFacility)
+              }} />
               <text x={point.x} y={point.y - 18} textAnchor="middle" fill="#bae6fd" fontSize="16" fontWeight="700">HKIA</text>
             </g>
           )
@@ -709,6 +732,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
                 strokeWidth="2"
                 onClick={() => {
                   onSelectStation(null)
+                  onSelectFacility(null)
                   onSelectVehicle(vehicle)
                 }}
                 aria-label={vehicle.labelEn}
@@ -727,6 +751,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
               strokeWidth="4"
               onClick={() => {
                 onSelectStation(null)
+                onSelectFacility(null)
                 onSelectVehicle(vehicle)
               }}
               aria-label={vehicle.labelEn}
