@@ -24,3 +24,14 @@ export function visibleVehicleCount(
 ): number {
   return vehicles.filter(vehicle => vehicle.type === type && isVehicleVisible(vehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)).length
 }
+
+export function isSelectedVehicleCurrent(
+  selectedVehicle: VehiclePosition,
+  vehicles: VehiclePosition[],
+  selectedLineIds: Set<string>,
+  selectedRouteIds: Set<string>,
+  selectedBusOperators: Set<string>,
+): boolean {
+  return vehicles.some(vehicle => vehicle.id === selectedVehicle.id)
+    && isVehicleVisible(selectedVehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)
+}

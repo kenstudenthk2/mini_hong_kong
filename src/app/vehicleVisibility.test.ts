@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isVehicleVisible, visibleVehicleCount } from './vehicleVisibility'
+import { isSelectedVehicleCurrent, isVehicleVisible, visibleVehicleCount } from './vehicleVisibility'
 import type { VehiclePosition } from '../types'
 
 const vehicle = (type: VehiclePosition['type'], lineId: string): VehiclePosition => ({
@@ -46,5 +46,14 @@ describe('isVehicleVisible', () => {
     expect(visibleVehicleCount(vehicles, rail, routes, operators, 'ferry')).toBe(1)
     expect(visibleVehicleCount(vehicles, rail, routes, operators, 'bus')).toBe(1)
     expect(visibleVehicleCount(vehicles, rail, routes, operators, 'flight')).toBe(1)
+  })
+
+  it('rejects a selected vehicle after it leaves the current simulation frame', () => {
+    const selected = vehicle('mtr', 'mtr-east')
+    const filters = [rail, routes, operators] as const
+
+    expect(isSelectedVehicleCurrent(selected, [selected], ...filters)).toBe(true)
+    expect(isSelectedVehicleCurrent(selected, [], ...filters)).toBe(false)
+    expect(isSelectedVehicleCurrent(vehicle('mtr', 'mtr-west'), [selected], ...filters)).toBe(false)
   })
 })

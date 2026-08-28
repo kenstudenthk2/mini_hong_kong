@@ -9,7 +9,7 @@ import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeF
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
 import type { AirportFacility, Station, VehiclePosition } from '../types'
-import { isVehicleVisible } from './vehicleVisibility'
+import { isSelectedVehicleCurrent } from './vehicleVisibility'
 import type { SearchableRoute } from './routeSearch'
 
 export default function App() {
@@ -55,10 +55,10 @@ export default function App() {
   )
 
   useEffect(() => {
-    if (selectedVehicle && !isVehicleVisible(selectedVehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)) {
+    if (selectedVehicle && !isSelectedVehicleCurrent(selectedVehicle, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators)) {
       setSelectedVehicle(null)
     }
-  }, [selectedBusOperators, selectedLineIds, selectedRouteIds, selectedVehicle])
+  }, [selectedBusOperators, selectedLineIds, selectedRouteIds, selectedVehicle, vehicles])
 
   function toggleLine(lineId: string) {
     const next = new Set(selectedLineIds)
