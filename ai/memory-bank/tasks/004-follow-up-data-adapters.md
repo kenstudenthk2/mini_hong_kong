@@ -307,3 +307,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/layers/vehicleShapes.test.ts` covers the closed seven-vertex aircraft footprint and low-profile height; full suite has 53 passing tests, lint/build/diff checks pass. Commit: `f67b4bc`.
 - Known limitation: browser visual verification remains pending; the silhouette is not an aircraft model or proof of real flight behavior.
 - Next task: add focused UI/browser harness coverage for aircraft selection and locale rendering.
+
+## Compact handoff: stale vehicle selection cleanup
+- Complete: `App` now clears the selected vehicle whenever Rail, Ferry/Tram route, or Bus operator filters hide it; flight replay vehicles remain always visible under the current model.
+- Contract: the pure `isVehicleVisible` predicate centralizes mode visibility rules and covers Citybus, Ferry, Rail, and Flight cases.
+- Evidence: `src/app/vehicleVisibility.test.ts` passes; full suite has 54 passing tests, lint/build/diff checks pass. Commit: `1948211`.
+- Known limitation: browser interaction verification remains unavailable because the integrated browser connection failed; no UI harness package was added.
+- Next task: verify filter/reset/selection workflows in a working browser harness before expanding route controls.
