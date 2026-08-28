@@ -5,6 +5,7 @@ import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
 import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
 import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
+import { loadHkgFlights } from '../dataAdapters/flight'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
 interface TransitDataState {
@@ -187,6 +188,10 @@ export function useTransitData(): TransitDataState {
         loadGtfsSchedules().then(scheduleFeed => {
           if (cancelled) return
           setState(current => current.data ? { ...current, data: { ...current.data, ...scheduleFeed } } : current)
+        }).catch(() => undefined)
+        loadHkgFlights().then(flights => {
+          if (cancelled) return
+          setState(current => current.data ? { ...current, data: { ...current.data, flights } } : current)
         }).catch(() => undefined)
       } catch (err) {
         if (!cancelled) {

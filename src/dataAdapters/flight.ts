@@ -120,3 +120,54 @@ export function mergeHkgFlightLocales(feeds: AirportFlight[][]): AirportFlight[]
   }
   return [...merged.values()]
 }
+
+const HKG_FLIGHT_LANGUAGES: FlightSourceLanguage[] = ['en', 'zh_HK', 'zh_CN']
+
+function previousHongKongDate(now: Date): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Hong_Kong',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now)
+  const values = new Map(parts.filter(part => part.type !== 'literal').map(part => [part.type, part.value]))
+  const date = new Date(Date.UTC(Number(values.get('year')), Number(values.get('month')) - 1, Number(values.get('day')) - 1))
+  return date.toISOString().slice(0, 10)
+}
+
+async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = []
+  let nextIndex = 0
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++
+      results[index] = await mapper(items[index])
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, () => worker()))
+  return results
+}
+
+export async function loadHkgFlights(
+  fetcher: (input: string) => Promise<Response> = fetch,
+  now: Date = new Date(),
+): Promise<AirportFlight[]> {
+  const date = previousHongKongDate(now)
+  const queries = HKG_FLIGHT_LANGUAGES.flatMap(lang => [false, true].flatMap(arrival => [false, true].map(cargo => ({ lang, arrival, cargo }))))
+  const feeds = await mapWithConcurrency(queries, 4, async ({ lang, arrival, cargo }) => {
+    const params = new URLSearchParams({
+      date,
+      lang,
+      cargo: String(cargo),
+      arrival: String(arrival),
+    })
+    try {
+      const response = await fetcher(`https://www.hongkongairport.com/flightinfo-rest/rest/flights/past?${params}`)
+      if (!response.ok) return []
+      return normalizeHkgFlightResponse(await response.json() as HkgFlightApiResponse, lang)
+    } catch {
+      return []
+    }
+  })
+  return mergeHkgFlightLocales(feeds)
+}
