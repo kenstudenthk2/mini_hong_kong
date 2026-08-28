@@ -395,3 +395,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 64 passing tests, lint/build/diff checks pass. Commit: `ff5d502`.
 - Known limitation: browser toggle interaction, late optional-feed hydration, and visible mode-state confirmation remain unverified because the integrated browser harness is unavailable.
 - Next task: validate the toggle in a working browser and add a focused state test if the UI harness becomes available.
+
+## Compact handoff: selected ferry and tram details
+- Complete: selected Ferry and Tram vehicles now resolve their route records and show localized route name, operator, route number, journey duration, and progress in the information panel.
+- Localization: confirmed source files are UTF-8; Traditional Chinese panel labels use stable Unicode escapes, avoiding console-decoding ambiguity.
+- Scope: information presentation only; route geometry, schedules, vehicle positions, and selection/focus behavior are unchanged.
+- Evidence: `src/components/map/InfoPanel.test.ts` covers Ferry and Tram route resolution; full suite has 65 passing tests, lint/build/diff checks pass. Commit: `50e887a`.
+- Known limitation: browser selection and panel layout across three locales remain unverified because the integrated browser harness is unavailable.
+- Next task: validate all selected-vehicle information panels in a working browser before further feature expansion.
