@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection, LineString, Point, Polygon } from 'geojson'
-import type { RailLine, Station, VehiclePosition } from '../types'
+import type { BusRoute, RailLine, Station, VehiclePosition } from '../types'
 
 const M_PER_DEG = 111320
 
@@ -52,6 +52,25 @@ export function linesToGeoJson(lines: RailLine[], selectedIds: Set<string>): Fea
         selected: selectedIds.has(line.id),
         nameEn: line.nameEn,
         nameZh: line.nameZh,
+      },
+    })),
+  }
+}
+
+export function busRoutesToGeoJson(routes: BusRoute[]): FeatureCollection<LineString> {
+  return {
+    type: 'FeatureCollection',
+    features: routes.map(route => ({
+      type: 'Feature',
+      id: route.id,
+      geometry: { type: 'LineString', coordinates: route.geometry },
+      properties: {
+        id: route.id,
+        color: route.color,
+        operator: route.operator,
+        routeNumber: route.routeNumber,
+        nameEn: route.nameEn,
+        nameZh: route.nameZh,
       },
     })),
   }
