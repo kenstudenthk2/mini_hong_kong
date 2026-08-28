@@ -39,7 +39,7 @@ export default function App() {
   )
   const [manualRouteIds, setManualRouteIds] = useState<Set<string> | null>(null)
   const selectedRouteIds = manualRouteIds ?? allRouteIds
-  const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus']), [])
+  const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus', 'NLB']), [])
   const [manualBusOperators, setManualBusOperators] = useState<Set<string> | null>(null)
   const selectedBusOperators = manualBusOperators ?? allBusOperators
 

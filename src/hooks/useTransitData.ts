@@ -5,6 +5,7 @@ import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
 import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
 import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
+import { nlbFeaturedRouteIds, normalizeNlbRoutes, type NlbRouteSnapshot } from '../dataAdapters/nlb'
 import { loadHkgFlights } from '../dataAdapters/flight'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -148,6 +149,17 @@ async function loadTramRoutes(): Promise<TransitData['tramRoutes']> {
   return normalizeTramGeoJson(raw)
 }
 
+async function loadNlbRoutes(): Promise<TransitData['busRoutes']> {
+  const rawRoutes = await loadJson('https://rt.data.gov.hk/v2/transport/nlb/route.php?action=list') as { routes: NlbRouteSnapshot['routes'] }
+  const featuredIds = new Set<string>(nlbFeaturedRouteIds)
+  const routes = rawRoutes.routes.filter(route => featuredIds.has(route.routeId))
+  const stopEntries = await mapWithConcurrency(routes, 2, async route => {
+    const rawStops = await loadJson(`https://rt.data.gov.hk/v2/transport/nlb/stop.php?action=list&routeId=${encodeURIComponent(route.routeId)}`) as { stops: NlbRouteSnapshot['stopsByRoute'][string] }
+    return [route.routeId, rawStops.stops] as const
+  })
+  return normalizeNlbRoutes({ routes, stopsByRoute: Object.fromEntries(stopEntries) })
+}
+
 async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
   const [routes, trips, stopTimes, calendar] = await Promise.all([
     loadText('https://static.data.gov.hk/td/pt-headway-en/routes.txt'),
@@ -163,16 +175,17 @@ async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
 }
 
 async function loadOptionalTransitFeed(): Promise<OptionalTransitFeed> {
-  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, busFeed] = await Promise.all([
+  const [kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, nlbRoutes, busFeed] = await Promise.all([
     loadKmbRoutes().catch(() => []),
     loadCitybusRoutes().catch(() => []),
     loadCitybusArrivals().catch(() => []),
     loadFerryRoutes().catch(() => []),
     loadTramRoutes().catch(() => []),
+    loadNlbRoutes().catch(() => []),
     loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
   ])
   return {
-    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
+    busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? []), ...(nlbRoutes ?? [])],
     busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
     busDataTimestamp: busFeed.generatedAt,
     ferryRoutes: ferryRoutes ?? [],
