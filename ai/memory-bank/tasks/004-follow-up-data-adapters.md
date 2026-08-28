@@ -128,3 +128,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Regression: a 23:30 ferry departure with a 40-minute duration remains active and progresses at 00:10 on the next operational day.
 - Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `ee146a8`.
 - Next task: load the approved ferry GTFS schedules into `App`, selecting a bounded route set or staged hydration strategy to avoid blocking initial map rendering.
+
+## Compact handoff: staged ferry schedule wiring
+- Complete: ferry GTFS files are loaded after the initial transit state resolves; normalized schedules are added to `TransitData` and passed to `computeFerryVehiclePositions` in `App`.
+- Performance policy: schedule loading is optional and staged, so route geometry and the initial rail/bus experience do not wait for the large GTFS files.
+- Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `c21d1d4`.
+- Known limitation: `MapView` currently treats only buses and selected rail lines as visible vehicles; a follow-up must include ferry vehicles in the visibility filter and menu counts.
