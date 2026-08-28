@@ -54,3 +54,8 @@
 - Current verification: 88 Vitest tests, ESLint, production build, and `git diff --check` pass. Local Vite HTTP smoke returned 200 for `/` and `/data/rail-lines.json` on port 5180.
 - Current branch: `feature/mini-hong-kong-mvp`; `origin` is configured. `origin/main` diverges from the feature branch, so no force push or unsafe merge was performed.
 - Browser status: no current integrated browser/WebGL verification is claimed; historical Playwright screenshots remain historical evidence only.
+
+### R-012: Browser verification attempt (2026-08-28)
+- Started Vite on a temporary port and confirmed the app server was ready.
+- Pencil browser `load-page` failed after three connector retries because the desktop app transport was unavailable.
+- Temporary server stopped; no visual/browser result was recorded as passing.

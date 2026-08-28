@@ -56,3 +56,11 @@
   - 3: schematic overlay added, desktop and mobile screenshots passed
 - Approver for attempts 4-5: not needed
 - Next action: Keep MapLibre base enabled and revisit native layer visibility when a full browser/WebGL environment is available.
+
+### F-006: Current Pencil browser connector unavailable
+- Task: Current UI verification for transport switches and GMB hydration.
+- Command: Pencil browser `load-page` for `http://127.0.0.1:5181/`.
+- Result: Failed to connect to the running Pencil desktop app after three connector retries.
+- Resolution: Stopped the temporary Vite server; retained automated and HTTP verification, with no browser visual claim.
+- Attempts: 1 tool attempt containing 3 connector retries.
+- Next action: Retry only after the integrated browser desktop connection is restored; do not add another browser harness package for this task.
