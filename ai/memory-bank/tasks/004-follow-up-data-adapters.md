@@ -690,3 +690,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: source filtering only; individual line toggles and transport simulation remain unchanged.
 - Evidence: full suite of 88 tests, lint, build, and diff checks pass. Commit: `751dfb6`.
 - Known limitation: browser click interaction and visual confirmation remain unavailable because the integrated Pencil desktop connector cannot connect.
+
+## Compact handoff: reference visual parity
+- Complete: compared Mini Tokyo 3D and Mini Map Macau live reference behavior with the Hong Kong map.
+- Finding: the Hong Kong renderer drew every normalized bus route, unlike the references' active/selected route emphasis; the screenshot's key-required overlay was absent from the current repository source.
+- Fix: bus geometry now follows visible bus vehicles in the current frame; the source remains searchable and the full route count remains in the directory. Raster tiles now use OpenStreetMap with attribution.
+- Evidence: focused visibility test, lint, build, and diff checks pass.
+- Known limitation: no live browser proof of tile delivery because the integrated browser connector remains unavailable.

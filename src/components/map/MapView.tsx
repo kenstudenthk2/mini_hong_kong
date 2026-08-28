@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
 import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures, type AirportGroundFeature } from '../../dataAdapters/airportGround'
-import { isVehicleVisible } from '../../app/vehicleVisibility'
+import { activeBusRouteIds, isVehicleVisible } from '../../app/vehicleVisibility'
 import type { SearchableRoute } from '../../app/routeSearch'
 import type { TransportTool } from '../menu/DirectoryMenu'
 import type { AirportFacility, BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
@@ -224,6 +224,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     () => vehicles.filter(vehicle => isVehicleVisible(vehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)),
     [vehicles, selectedBusOperators, selectedLineIds, selectedRouteIds],
   )
+  const visibleBusRouteIds = useMemo(() => activeBusRouteIds(visibleVehicles), [visibleVehicles])
 
   useEffect(() => {
     vehiclesRef.current = visibleVehicles
@@ -290,9 +291,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         sources: {
           carto: {
             type: 'raster',
-            tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
             tileSize: 256,
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            attribution: '&copy; OpenStreetMap contributors',
           },
         },
         layers: [{ id: 'carto', type: 'raster', source: 'carto' }],
@@ -556,7 +557,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.on('mouseenter', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = '' })
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current.filter(line => activeToolsRef.current.has(lineTool(line))), selectedLineIdsRef.current))
-      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator))))
+      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator) && activeBusRouteIds(vehiclesRef.current).has(route.id))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityIdRef.current))
@@ -581,14 +582,14 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
-    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator))))
+    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator) && visibleBusRouteIds.has(route.id))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityId))
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
     updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureId))
     updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
-  }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
+  }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleBusRouteIds, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current

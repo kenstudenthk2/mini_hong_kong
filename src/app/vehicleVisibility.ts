@@ -31,6 +31,10 @@ export function visibleVehicleCount(
   return vehicles.filter(vehicle => vehicle.type === type && isVehicleVisible(vehicle, selectedLineIds, selectedRouteIds, selectedBusOperators)).length
 }
 
+export function activeBusRouteIds(vehicles: VehiclePosition[]): Set<string> {
+  return new Set(vehicles.filter(vehicle => vehicle.type === 'bus').map(vehicle => vehicle.lineId))
+}
+
 export function isSelectedVehicleCurrent(
   selectedVehicle: VehiclePosition,
   vehicles: VehiclePosition[],

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isSelectedVehicleCurrent, isVehicleVisible, visibleVehicleCount } from './vehicleVisibility'
+import { activeBusRouteIds, isSelectedVehicleCurrent, isVehicleVisible, visibleVehicleCount } from './vehicleVisibility'
 import type { VehiclePosition } from '../types'
 
 const vehicle = (type: VehiclePosition['type'], lineId: string): VehiclePosition => ({
@@ -57,5 +57,13 @@ describe('isVehicleVisible', () => {
     expect(isSelectedVehicleCurrent(selected, [selected], ...filters)).toBe(true)
     expect(isSelectedVehicleCurrent(selected, [], ...filters)).toBe(false)
     expect(isSelectedVehicleCurrent(vehicle('mtr', 'mtr-west'), [selected], ...filters)).toBe(false)
+  })
+})
+
+describe('activeBusRouteIds', () => {
+  it('keeps only bus route IDs with a vehicle in the current frame', () => {
+    const vehicles = [vehicle('bus', 'kmb-1'), vehicle('mtr', 'mtr-east'), vehicle('bus', 'citybus-10')]
+
+    expect(activeBusRouteIds(vehicles)).toEqual(new Set(['kmb-1', 'citybus-10']))
   })
 })
