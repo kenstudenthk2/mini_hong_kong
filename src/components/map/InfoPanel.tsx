@@ -1,5 +1,6 @@
 import { localName, useI18n } from '../../i18n'
 import { openStreetMapMarkerUrl } from '../../app/osmLinks'
+import type { SearchableRoute } from '../../app/routeSearch'
 import type { AirportGroundFeature } from '../../dataAdapters/airportGround'
 import type { AirportFacility, AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
@@ -9,6 +10,7 @@ interface Props {
   station: Station | null
   facility: AirportFacility | null
   groundFeature: AirportGroundFeature | null
+  route: SearchableRoute | null
 }
 
 export function flightForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): AirportFlight | undefined {
@@ -74,7 +76,7 @@ function osmLabel(lang: Lang): string {
   return lang === 'zh' ? '在 OpenStreetMap 開啟' : lang === 'pt' ? 'Abrir no OpenStreetMap' : 'Open in OpenStreetMap'
 }
 
-export function InfoPanel({ data, vehicle, station, facility, groundFeature }: Props) {
+export function InfoPanel({ data, vehicle, station, facility, groundFeature, route: selectedRoute }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
   const line = data?.railLines.find(item => item.id === vehicle?.lineId)
@@ -83,11 +85,11 @@ export function InfoPanel({ data, vehicle, station, facility, groundFeature }: P
   const flight = flightForVehicle(data, vehicle)
   const route = routeForVehicle(data, vehicle)
   const stationLines = stationLineNames(data, station, lang)
-  const selectedCoordinates = vehicle?.coordinates ?? station?.coordinates ?? facility?.coordinates ?? groundFeature?.coordinates
+  const selectedCoordinates = vehicle?.coordinates ?? station?.coordinates ?? facility?.coordinates ?? groundFeature?.coordinates ?? selectedRoute?.geometry[0]
 
   return (
     <section className="info-panel">
-      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : groundFeature ? groundFeature.ref : t.noSelection}</h2>
+      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : facility ? localName(facility, lang) : groundFeature ? groundFeature.ref : selectedRoute ? localName(selectedRoute, lang) : t.noSelection}</h2>
       {selectedCoordinates && (
         <p><a href={openStreetMapMarkerUrl(selectedCoordinates)} target="_blank" rel="noreferrer">{osmLabel(lang)}</a></p>
       )}
@@ -152,6 +154,16 @@ export function InfoPanel({ data, vehicle, station, facility, groundFeature }: P
           <p>{routeLabel(lang, 'routeNumber')}: <strong>{route.routeNumber}</strong></p>
           {'journeyTimeMinutes' in route && <p>{routeLabel(lang, 'journey')}: <strong>{route.journeyTimeMinutes} min</strong></p>}
           <p>{routeLabel(lang, 'progress')}: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
+        </div>
+      )}
+      {!vehicle && !station && !facility && !groundFeature && selectedRoute && (
+        <div className="info-grid">
+          <span className="line-chip" style={{ borderColor: selectedRoute.color, color: selectedRoute.color }}>
+            {localName(selectedRoute, lang)}
+          </span>
+          <p>{routeLabel(lang, 'operator')}: <strong>{selectedRoute.operator}</strong></p>
+          {'routeNumber' in selectedRoute && <p>{routeLabel(lang, 'routeNumber')}: <strong>{selectedRoute.routeNumber}</strong></p>}
+          <p>{infoLabel(lang, 'coordinates')}: <strong>{selectedRoute.geometry[0]?.map(value => value.toFixed(5)).join(', ') || '-'}</strong></p>
         </div>
       )}
     </section>

@@ -25,6 +25,15 @@ export default function App() {
   const [selectedGroundFeature, setSelectedGroundFeature] = useState<AirportGroundFeature | null>(null)
   const [routeSearchQuery, setRouteSearchQuery] = useState('')
   const [selectedRouteSearchId, setSelectedRouteSearchId] = useState<string | null>(null)
+  const selectedRoute = useMemo(() => {
+    const routes: SearchableRoute[] = [
+      ...(transitData.data?.railLines ?? []),
+      ...(transitData.data?.busRoutes ?? []),
+      ...(transitData.data?.ferryRoutes ?? []),
+      ...(transitData.data?.tramRoutes ?? []),
+    ]
+    return routes.find(route => route.id === selectedRouteSearchId) ?? null
+  }, [selectedRouteSearchId, transitData.data])
   const allLineIds = useMemo(
     () => new Set(transitData.data?.railLines.map(line => line.id) ?? []),
     [transitData.data],
@@ -174,7 +183,13 @@ export default function App() {
         routeSearchQuery={routeSearchQuery}
         onRouteSearchQueryChange={setRouteSearchQuery}
         selectedRouteSearchId={selectedRouteSearchId}
-        onSelectRouteSearch={(route: SearchableRoute | null) => setSelectedRouteSearchId(route?.id ?? null)}
+        onSelectRouteSearch={(route: SearchableRoute | null) => {
+          setSelectedRouteSearchId(route?.id ?? null)
+          setSelectedVehicle(null)
+          setSelectedStation(null)
+          setSelectedFacility(null)
+          setSelectedGroundFeature(null)
+        }}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}
@@ -228,7 +243,7 @@ export default function App() {
           followSelectedVehicle={followSelectedVehicle}
           onToggleFollowSelectedVehicle={() => setFollowSelectedVehicle(value => !value)}
         />
-        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} groundFeature={selectedGroundFeature} />
+        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} facility={selectedFacility} groundFeature={selectedGroundFeature} route={selectedRoute} />
       </section>
     </main>
   )
