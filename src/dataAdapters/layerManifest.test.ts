@@ -13,4 +13,15 @@ describe('layer manifest', () => {
     expect(layerManifest.find(entry => entry.id === 'buses')?.dataClass).toBe('live')
     expect(layerManifest.find(entry => entry.id === 'hkia-aip')?.dataClass).toBe('static')
   })
+
+  it('provides labels and source names for every supported locale', () => {
+    for (const entry of layerManifest) {
+      expect(entry.labelEn).toBeTruthy()
+      expect(entry.labelZh).toBeTruthy()
+      expect(entry.labelPt).toBeTruthy()
+      expect(entry.sourceLabelEn).toBeTruthy()
+      expect(entry.sourceLabelZh).toBeTruthy()
+      expect(entry.sourceLabelPt).toBeTruthy()
+    }
+  })
 })

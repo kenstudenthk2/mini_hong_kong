@@ -67,7 +67,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
 }
 
 export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters }: Props) {
-  const { t } = useI18n()
+  const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
@@ -181,7 +181,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
           {layerManifest.map(entry => (
             <p key={entry.id}>
-              {entry.label}: {entry.dataClass} · {entry.sourceUrl ? <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{entry.sourceLabel}</a> : entry.sourceLabel}
+              {lang === 'zh' ? entry.labelZh : lang === 'pt' ? entry.labelPt : entry.labelEn}: {entry.dataClass} · {entry.sourceUrl ? <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{lang === 'zh' ? entry.sourceLabelZh : lang === 'pt' ? entry.sourceLabelPt : entry.sourceLabelEn}</a> : lang === 'zh' ? entry.sourceLabelZh : lang === 'pt' ? entry.sourceLabelPt : entry.sourceLabelEn}
             </p>
           ))}
           <p>KMB ETA: {kmbFreshness}</p>
