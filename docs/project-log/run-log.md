@@ -164,3 +164,9 @@
 ### R-031: Quality-gate record reconciliation (2026-08-28)
 - Added an authoritative current gate section while preserving older snapshots for history.
 - Current record includes 98 passing tests, HTTP smoke evidence, synchronized remote branches, MapLibre-only rendering, and the latest browser blocker.
+
+### R-032: Station visibility contract (2026-08-28)
+- Rail and Light Rail OFF states now filter station markers using the station's enabled line IDs.
+- Shared interchange stations remain visible when at least one associated line is active and disappear when all associated lines are disabled.
+- Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
+- Browser limitation: live station visibility remains unverified because the browser runtime cannot create a tab.

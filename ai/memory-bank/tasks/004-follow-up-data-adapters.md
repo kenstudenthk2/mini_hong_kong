@@ -771,3 +771,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Selection rule: Reset also clears selected vehicle, station, route search result, HKIA facility, and airport ground feature state.
 - Evidence: full suite has 98 passing tests, lint/build/diff checks pass.
 - Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
+
+## Compact handoff: station visibility with rail tools
+- Complete: station markers now derive visibility from active Rail/Light Rail tools and selected line IDs.
+- Interchange rule: a station remains visible if any associated line is active; it is hidden only when all associated lines are disabled.
+- Evidence: `MapView.test.ts` covers shared, rail-only, and light-rail-only stations; full suite has 99 passing tests, lint/build/diff checks pass.
+- Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
