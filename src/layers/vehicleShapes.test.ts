@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { busRoutesToGeoJson } from './vehicleShapes'
+import { busRoutesToGeoJson, vehiclesToExtrusionGeoJson } from './vehicleShapes'
 
 describe('busRoutesToGeoJson', () => {
   it('converts normalized bus geometry and route metadata to LineStrings', () => {
@@ -30,5 +30,28 @@ describe('busRoutesToGeoJson', () => {
         },
       }],
     })
+  })
+})
+
+describe('vehiclesToExtrusionGeoJson', () => {
+  it('uses a pointed low-profile footprint for aircraft', () => {
+    const result = vehiclesToExtrusionGeoJson([{
+      id: 'flight-replay',
+      type: 'flight',
+      lineId: 'hkg-rwy-07l-25r',
+      tripId: 'flight-1',
+      color: '#f97316',
+      coordinates: [113.9, 22.31],
+      bearing: 90,
+      progress: 0.5,
+      labelEn: 'HKIA movement replay',
+      labelZh: '\u9999\u6e2f\u570b\u969b\u6a5f\u5834\u79fb\u52d5\u91cd\u64ad',
+      labelPt: 'Repeticao de movimento HKIA',
+      nextStopId: null,
+      destinationId: null,
+    }])
+
+    expect(result.features[0].geometry.coordinates[0]).toHaveLength(7)
+    expect(result.features[0].properties).toMatchObject({ mode: 'flight', height: 1.5 })
   })
 })

@@ -569,6 +569,21 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         })}
         {visibleVehicles.map(vehicle => {
           const point = project(vehicle.coordinates)
+          if (vehicle.type === 'flight') {
+            return (
+              <polygon
+                key={vehicle.id}
+                className="vehicle-hotspot"
+                points="0,-15 -7,1 -4,9 0,5 4,9 7,1"
+                transform={`translate(${point.x} ${point.y}) rotate(${vehicle.bearing})`}
+                fill={vehicle.color}
+                stroke="#f8fafc"
+                strokeWidth="2"
+                onClick={() => onSelectVehicle(vehicle)}
+                aria-label={vehicle.labelEn}
+              />
+            )
+          }
           return (
             <circle
               key={vehicle.id}

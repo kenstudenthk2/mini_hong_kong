@@ -17,15 +17,26 @@ function offset(lng: number, lat: number, bearingDeg: number, sideM: number, for
 
 function vehiclePolygon(vehicle: VehiclePosition): Feature<Polygon> {
   const [lng, lat] = vehicle.coordinates
+  const isFlight = vehicle.type === 'flight'
   const length = vehicle.type === 'light_rail' ? 32 : 46
   const width = vehicle.type === 'light_rail' ? 6 : 7
-  const coords = [
-    offset(lng, lat, vehicle.bearing, -width / 2, -length / 2),
-    offset(lng, lat, vehicle.bearing, width / 2, -length / 2),
-    offset(lng, lat, vehicle.bearing, width / 2, length / 2),
-    offset(lng, lat, vehicle.bearing, -width / 2, length / 2),
-    offset(lng, lat, vehicle.bearing, -width / 2, -length / 2),
-  ]
+  const coords = isFlight
+    ? [
+        offset(lng, lat, vehicle.bearing, 0, 37),
+        offset(lng, lat, vehicle.bearing, -14, 0),
+        offset(lng, lat, vehicle.bearing, -7, -5),
+        offset(lng, lat, vehicle.bearing, -4, -18),
+        offset(lng, lat, vehicle.bearing, 7, -5),
+        offset(lng, lat, vehicle.bearing, 14, 0),
+        offset(lng, lat, vehicle.bearing, 0, 37),
+      ]
+    : [
+        offset(lng, lat, vehicle.bearing, -width / 2, -length / 2),
+        offset(lng, lat, vehicle.bearing, width / 2, -length / 2),
+        offset(lng, lat, vehicle.bearing, width / 2, length / 2),
+        offset(lng, lat, vehicle.bearing, -width / 2, length / 2),
+        offset(lng, lat, vehicle.bearing, -width / 2, -length / 2),
+      ]
   return {
     type: 'Feature',
     geometry: { type: 'Polygon', coordinates: [coords] },
@@ -33,8 +44,8 @@ function vehiclePolygon(vehicle: VehiclePosition): Feature<Polygon> {
       id: vehicle.id,
       color: vehicle.color,
       mode: vehicle.type,
-      height: vehicle.type === 'light_rail' ? 5 : 7,
-      base: vehicle.type === 'light_rail' ? 0.2 : 0.4,
+      height: isFlight ? 1.5 : vehicle.type === 'light_rail' ? 5 : 7,
+      base: isFlight ? 0.8 : vehicle.type === 'light_rail' ? 0.2 : 0.4,
     },
   }
 }
