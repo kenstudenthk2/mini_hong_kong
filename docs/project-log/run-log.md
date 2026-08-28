@@ -155,3 +155,8 @@
 - Started Vite on port 5185 successfully.
 - Pencil browser failed before page creation with `failed to connect to running Pencil app: desktop` after three internal retries.
 - Stopped the temporary server; no screenshot, canvas-pixel, or interaction pass is claimed.
+
+### R-030: Complete reset selection behavior (2026-08-28)
+- Reset now restores all transport filters and clears selected vehicle, station, route, HKIA facility, and airport ground feature state.
+- Evidence: 25 test files and 98 tests pass, lint, build, and diff checks pass.
+- Browser limitation: reset interaction remains unverified because the browser runtime cannot create a tab.

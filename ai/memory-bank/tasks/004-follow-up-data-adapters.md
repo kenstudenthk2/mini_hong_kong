@@ -765,3 +765,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Mapping: rail/light rail use line mode, bus routes use the buses tool, and `ferry-*` / `tram-*` IDs map to their respective tools.
 - Evidence: `MapView.test.ts` covers the OFF/ON rail route contract; full suite has 98 passing tests, lint/build/diff checks pass.
 - Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
+
+## Compact handoff: complete reset behavior
+- Complete: the directory Reset control restores all transport filters and enables every transport tool.
+- Selection rule: Reset also clears selected vehicle, station, route search result, HKIA facility, and airport ground feature state.
+- Evidence: full suite has 98 passing tests, lint/build/diff checks pass.
+- Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
