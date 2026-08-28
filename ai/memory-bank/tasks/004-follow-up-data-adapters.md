@@ -90,3 +90,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Request policy: route-stop requests are capped at four concurrent calls and stop lookups at eight concurrent calls; Citybus remains optional and cannot block rail/KMB fallback data.
 - Evidence: live read-only smoke check found 407 published routes, selected all eight configured routes, 16 route-stop requests, and 366 unique stops; full suite has 30 passing tests and build passes. Commit: `307378f`.
 - Known risk: the current eight-route geometry load can add startup latency and may encounter provider rate limits; Citybus ETA and asynchronous post-load hydration are separate follow-up tasks.
+
+## Compact handoff: Citybus route-1 ETA simulation
+- Complete: Citybus ETA records are normalized into the shared `BusArrival` contract and route-1 inbound/outbound predictions are loaded into the existing bus movement engine.
+- Request policy: only route 1 ETA stop requests are made, with eight concurrent requests; empty ETA values are filtered and failed Citybus requests remain optional.
+- Evidence: official route-1 ETA sample returned HTTP 200 with six records; full suite has 31 passing tests, lint/build/diff checks pass. Commit: `6e7517e`.
+- Known risk: Citybus feed timestamp is not yet surfaced independently from the KMB freshness field; route coverage and asynchronous hydration remain follow-up tasks.
