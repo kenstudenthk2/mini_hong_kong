@@ -1,9 +1,28 @@
 import { localName, useI18n } from '../../i18n'
-import type { Station, TransitData, VehiclePosition } from '../../types'
+import type { AirportFlight, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
   vehicle: VehiclePosition | null
+}
+
+export function flightForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): AirportFlight | undefined {
+  if (!data || vehicle?.type !== 'flight') return undefined
+  return data.flights?.find(flight => flight.id === vehicle.tripId)
+}
+
+function localizedFlightValue(values: Partial<Record<'en' | 'zh_HK' | 'zh_CN', string>>, lang: Lang, fallback: string | null): string {
+  const keys = lang === 'zh' ? ['zh_HK', 'zh_CN', 'en'] : ['en', 'zh_HK', 'zh_CN']
+  return keys.map(key => values[key as keyof typeof values]).find(Boolean) ?? fallback ?? '-'
+}
+
+function flightLabel(lang: Lang, key: 'flight' | 'airline' | 'route' | 'scheduled' | 'status' | 'progress' | 'cargo'): string {
+  const labels = {
+    en: { flight: 'Flight', airline: 'Airline', route: 'Route', scheduled: 'Scheduled', status: 'Status', progress: 'Progress', cargo: 'Cargo' },
+    zh: { flight: '航班', airline: '航空公司', route: '航線', scheduled: '預定時間', status: '狀態', progress: '進度', cargo: '貨運' },
+    pt: { flight: 'Voo', airline: 'Companhia', route: 'Rota', scheduled: 'Agendado', status: 'Estado', progress: 'Progresso', cargo: 'Carga' },
+  } as const
+  return labels[lang][key]
 }
 
 export function InfoPanel({ data, vehicle }: Props) {
@@ -12,6 +31,7 @@ export function InfoPanel({ data, vehicle }: Props) {
   const line = data?.railLines.find(item => item.id === vehicle?.lineId)
   const nextStop: Station | undefined = vehicle?.nextStopId ? stationById.get(vehicle.nextStopId) : undefined
   const destination: Station | undefined = vehicle?.destinationId ? stationById.get(vehicle.destinationId) : undefined
+  const flight = flightForVehicle(data, vehicle)
 
   return (
     <section className="info-panel">
@@ -21,8 +41,15 @@ export function InfoPanel({ data, vehicle }: Props) {
           <span className="line-chip" style={{ borderColor: vehicle.color, color: vehicle.color }}>
             {lang === 'zh' ? vehicle.labelZh : lang === 'pt' ? vehicle.labelPt : vehicle.labelEn}
           </span>
-          <p>{t.destination}: <strong>{lang === 'zh' ? '\u9999\u6e2f\u570b\u969b\u6a5f\u5834' : lang === 'pt' ? 'Aeroporto Internacional de Hong Kong' : 'Hong Kong International Airport'}</strong></p>
-          <p>Progress: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
+          {flight && <>
+            <p>{flightLabel(lang, 'flight')}: <strong>{flight.flightNumbers.join(' / ')}</strong></p>
+            <p>{flightLabel(lang, 'airline')}: <strong>{flight.airlineCode ?? '-'}</strong></p>
+            <p>{flightLabel(lang, 'route')}: <strong>{localizedFlightValue(flight.localized.origin, lang, flight.origin) || 'HKIA'} {flight.direction === 'arrival' ? '<-' : '->'} {localizedFlightValue(flight.localized.destination, lang, flight.destination) || 'HKIA'}</strong></p>
+            <p>{flightLabel(lang, 'scheduled')}: <strong>{flight.scheduledTime}</strong></p>
+            <p>{flightLabel(lang, 'status')}: <strong>{localizedFlightValue(flight.localized.status, lang, flight.status)}</strong></p>
+            {flight.cargo && <p>{flightLabel(lang, 'cargo')}</p>}
+          </>}
+          <p>{flightLabel(lang, 'progress')}: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
         </div>
       )}
       {vehicle && line && (
