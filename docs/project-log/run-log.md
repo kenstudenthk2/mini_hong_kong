@@ -110,3 +110,8 @@
 - Route directory selection now clears competing vehicle/station/facility selections and becomes the active information-panel selection.
 - The panel shows localized route name, operator, route number when available, coordinates, and an OSM marker link; map focus/highlight behavior remains active.
 - Evidence: focused MapView and InfoPanel tests, lint, and production build pass.
+
+### R-022: Moving vehicle route trails (2026-08-28)
+- Added a derived `vehicle-trails` MapLibre layer for visible flights, rail, buses, ferries, and trams.
+- Each trail uses the known route geometry up to the vehicle's current progress and terminates at its current coordinate; no history feed or extra persistence was introduced.
+- Evidence: focused vehicle-shape test, lint, and production build pass.

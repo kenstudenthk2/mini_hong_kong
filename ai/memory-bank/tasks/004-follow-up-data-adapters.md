@@ -740,3 +740,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: selected route state now flows from the directory to map focus and the information panel.
 - Behavior: selecting a route clears competing object selections, highlights/fits the route, and displays localized metadata plus an OSM marker link.
 - Evidence: focused MapView and InfoPanel tests, lint, and build pass.
+
+## Compact handoff: moving vehicle route trails
+- Complete: a separate MapLibre trail layer now renders progress behind each visible moving vehicle using existing route geometry.
+- Modes: flights, MTR, Light Rail, buses, ferries, and trams share the same derived trail contract with mode-aware styling.
+- Evidence: focused vehicle-shape test, lint, and build pass.
+- Known limitation: trail appearance remains unverified in a live browser because the browser runtime cannot create a tab.
