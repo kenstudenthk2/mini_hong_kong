@@ -7,6 +7,7 @@ describe('hkiaFacility', () => {
       id: 'hkg-hkia',
       iataCode: 'HKG',
       icaoCode: 'VHHH',
+      namePt: 'Aeroporto Internacional de Hong Kong',
       coordinates: [113.9147222, 22.3088889],
       sourceUrl: HKG_AIP_SOURCE,
     })

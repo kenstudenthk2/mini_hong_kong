@@ -115,6 +115,7 @@ function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
         id: hkiaFacility.id,
         nameEn: hkiaFacility.nameEn,
         nameZh: hkiaFacility.nameZh,
+        namePt: hkiaFacility.namePt,
         iataCode: hkiaFacility.iataCode,
         icaoCode: hkiaFacility.icaoCode,
       },
@@ -482,7 +483,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.setLayoutProperty('vehicles-label', 'text-field', ['get', lang === 'zh' ? 'labelZh' : lang === 'pt' ? 'labelPt' : 'labelEn'])
     }
     if (map.getLayer('airport-facilities-label')) {
-      map.setLayoutProperty('airport-facilities-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : 'nameEn'])
+      map.setLayoutProperty('airport-facilities-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : lang === 'pt' ? 'namePt' : 'nameEn'])
     }
     if (map.getLayer('airport-ground-label')) {
       map.setLayoutProperty('airport-ground-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : lang === 'pt' ? 'namePt' : 'nameEn'])
