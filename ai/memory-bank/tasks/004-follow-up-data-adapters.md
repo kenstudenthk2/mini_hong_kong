@@ -328,3 +328,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `2505601`.
 - Known limitation: Vite starts successfully, but both Pencil and Node/Playwright browser paths are unavailable in this environment; no browser claim is made.
 - Next task: run the directory filter, reset, aircraft selection, and locale workflows in a working browser harness.
+
+## Compact handoff: HKIA provenance status
+- Complete: Data Status now exposes the current HKIA AIP revision, pinned OSM snapshot date, and direct links to both source contracts.
+- Scope: provenance visibility only; no runtime fetch, geometry, or simulation behavior changed.
+- Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `9963750`.
+- Known limitation: the source labels are intentionally compact and browser link verification remains pending because browser tooling is unavailable.
+- Next task: verify the source links and filter/reset/aircraft workflows in a working browser harness.
