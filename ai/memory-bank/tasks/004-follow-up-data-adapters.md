@@ -134,3 +134,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Performance policy: schedule loading is optional and staged, so route geometry and the initial rail/bus experience do not wait for the large GTFS files.
 - Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `c21d1d4`.
 - Known limitation: `MapView` currently treats only buses and selected rail lines as visible vehicles; a follow-up must include ferry vehicles in the visibility filter and menu counts.
+
+## Compact handoff: ferry vehicle visibility
+- Complete: `MapView` now includes `ferry` vehicles in the always-visible vehicle filter, covering both MapLibre points/extrusions and schematic hotspots.
+- Scope: visibility only; ferry menu counts and labels remain a separate UI task.
+- Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `95ed296`.
