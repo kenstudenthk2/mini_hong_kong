@@ -1,4 +1,5 @@
 import { localName, useI18n } from '../../i18n'
+import { classifyFreshness } from '../../dataAdapters/freshness'
 import type { RailLine, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
@@ -23,6 +24,9 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
   const { t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
+  const kmbFreshness = data?.busDataTimestamp
+    ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
+    : 'invalid'
 
   return (
     <aside className="directory-menu" aria-label="Transit directory">
@@ -75,6 +79,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
           <p>{t.simulation}: MTR + Light Rail</p>
+          <p>KMB ETA: {kmbFreshness}</p>
           <p>{t.source}: {t.dataGov} seed-ready contracts</p>
         </div>
       </details>

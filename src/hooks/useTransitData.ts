@@ -20,6 +20,11 @@ interface KmbEnvelope {
   data: Record<string, unknown>[]
 }
 
+interface KmbArrivalFeed {
+  arrivals: NonNullable<TransitData['busArrivals']>
+  generatedAt: string
+}
+
 async function loadKmbRoutes(): Promise<TransitData['busRoutes']> {
   const [rawRoutes, rawRouteStops, rawStops] = await Promise.all([
     loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route/') as Promise<KmbEnvelope>,
@@ -34,9 +39,12 @@ async function loadKmbRoutes(): Promise<TransitData['busRoutes']> {
   })
 }
 
-async function loadKmbArrivals(): Promise<TransitData['busArrivals']> {
-  const raw = await loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route-eta/1/1')
-  return normalizeKmbEta(raw)
+async function loadKmbArrivals(): Promise<KmbArrivalFeed> {
+  const raw = await loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route-eta/1/1') as KmbEnvelope
+  return {
+    arrivals: normalizeKmbEta(raw),
+    generatedAt: raw.generated_timestamp,
+  }
 }
 
 export function useTransitData(): TransitDataState {
@@ -46,13 +54,13 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes, busArrivals] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes, busFeed] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
           loadKmbRoutes().catch(() => []),
-          loadKmbArrivals().catch(() => []),
+          loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
         const data = assertValidTransitData({
@@ -63,7 +71,8 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
           busRoutes,
-          busArrivals,
+          busArrivals: busFeed.arrivals,
+          busDataTimestamp: busFeed.generatedAt,
         })
         setState({
           loading: false,

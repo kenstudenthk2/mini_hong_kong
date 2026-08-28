@@ -76,6 +76,7 @@ export interface TransitData {
   trips: Trip[]
   busRoutes?: BusRoute[]
   busArrivals?: BusArrival[]
+  busDataTimestamp?: string
   ferryRoutes?: unknown[]
   tramRoutes?: unknown[]
   flights?: unknown[]
