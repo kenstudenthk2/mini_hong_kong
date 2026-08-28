@@ -498,3 +498,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/ControlPanel.test.ts` covers all three locale mappings; full suite has 74 passing tests, lint/build/diff checks pass. Commit: `d11a61b`.
 - Known limitation: browser locale switching and rendered date formatting remain unverified because the integrated browser harness is unavailable.
 - Next task: validate locale switching and route-search interactions in a working browser.
+
+## Compact handoff: searched route highlight
+- Complete: selecting a route-search result now highlights the route with a dedicated MapLibre line source/layer and a matching SVG schematic stroke.
+- Lifecycle: route selection is synchronized through the MapLibre initialization ref and reactive source update, avoiding stale highlight state or hook warnings.
+- Scope: visual confirmation only; route search remains navigation/focus and does not change visibility filters.
+- Evidence: `src/components/map/MapView.test.ts` covers selected-route geometry lookup; full suite has 74 passing tests, lint/build/diff checks pass. Commit: `4f80d7d`.
+- Known limitation: browser search, highlight visibility, touch behavior, and locale layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate route search and highlight in a working browser before broader route-level filtering.
