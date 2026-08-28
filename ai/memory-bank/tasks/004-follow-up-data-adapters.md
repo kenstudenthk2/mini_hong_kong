@@ -228,3 +228,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: static runway context only; no taxi routes, flight paths, or aircraft positions are inferred.
 - Evidence: `src/dataAdapters/airport.test.ts` covers all runway designators and the exact `07R/25L` conversion; full suite has 48 passing tests, lint/build/diff checks pass. Commit: `49af735`.
 - Next task: add static terminal/aircraft-stand context only if an authoritative source is approved, then build a flight replay model with explicit route provenance.
+
+## Compact handoff: HKIA movement replay
+- Complete: AAHK historical flight records now produce clock-driven `flight` vehicles during a six-minute airport movement window; they render in MapLibre/schematic views and expose localized selection details.
+- Provenance boundary: movement is constrained to the current AIP runway centerlines and is explicitly labeled `HKIA movement replay`; no destination, en-route path, live position, or real runway assignment is inferred.
+- Timing contract: the adapter uses the record's Hong Kong scheduled time-of-day, tolerates midnight wraparound, and suppresses records outside the movement window.
+- Evidence: `src/dataAdapters/airportReplay.test.ts` covers interpolation and outside-window suppression; full suite has 50 passing tests, lint/build/diff checks pass. Commits: `7196a9b`, `625311a`.
+- Next task: add a static terminal/stand layer only after an authoritative geometry source is approved, then improve aircraft visual treatment without widening the telemetry claim.
