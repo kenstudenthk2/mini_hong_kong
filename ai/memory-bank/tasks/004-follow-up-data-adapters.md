@@ -45,6 +45,12 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrails: incomplete stop pairs, missing routes, invalid time order, and pre-first-stop predictions produce no invented vehicle position.
 - Evidence: full test, lint, and build gates pass; runtime ETA fetch/wiring remains the next task.
 
+## Compact handoff: KMB ETA runtime wiring
+- Complete: the app requests the route-level ETA feed for KMB route 1 and prefers ETA-based vehicle placement when valid arrivals are available.
+- Scope: route-level ETA is currently limited to route 1 to control request volume; other KMB routes and operators remain separate increments.
+- Fallback: an explicit replay schedule is used only when the ETA request fails or returns no records.
+- Evidence: full test, lint, and build gates passed; live browser rendering still needs a connected-data visual check.
+
 ## Compact handoff: bus geometry utility
 - Complete: `busRoutesToGeoJson` converts normalized KMB routes to MapLibre `LineString` features with route metadata.
 - Evidence: `src/layers/vehicleShapes.test.ts` passes; map wiring and bus vehicle simulation remain separate tasks.
