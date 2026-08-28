@@ -151,3 +151,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrails: non-tram features and incomplete route groups are omitted; no runtime fetch or generated output was added in this slice.
 - Evidence: `src/dataAdapters/tram.test.ts` covers direction grouping, coordinate ordering, localization, and filtering; full suite has 39 passing tests, lint/build/diff checks pass. Commit: `9be47e2`.
 - Next task: load tram geometry into the map, add tram schedule/vehicle movement, and promote Trams in the directory menu.
+
+## Compact handoff: tram route rendering
+- Complete: official tram GeoJSON is loaded as optional transit data and rendered through a dedicated `tram-routes` MapLibre line layer plus dashed schematic paths.
+- Scope: route geometry only; tram vehicles and schedule data are not generated yet.
+- Evidence: full suite has 39 passing tests, lint/build/diff checks pass. Commit: `92abd1c`.
+- Known risk: tram route loading is part of the initial optional feed batch and may contribute network latency; schedule and menu integration remain separate tasks.
