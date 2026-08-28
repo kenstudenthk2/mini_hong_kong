@@ -777,3 +777,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Interchange rule: a station remains visible if any associated line is active; it is hidden only when all associated lines are disabled.
 - Evidence: `MapView.test.ts` covers shared, rail-only, and light-rail-only stations; full suite has 99 passing tests, lint/build/diff checks pass.
 - Known limitation: browser interaction remains unverified because the runtime cannot create a tab.
+
+## Compact handoff: hidden-selection cleanup
+- Complete: App clears selected stations and route-search results when their associated transport tool is disabled.
+- Contract: the information panel cannot continue presenting a route or station hidden by the current layer filters.
+- Evidence: full suite has 99 passing tests, lint/build/diff checks pass.
+- Known limitation: browser interaction remains unverified because the runtime cannot create a tab.

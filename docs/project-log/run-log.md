@@ -170,3 +170,9 @@
 - Shared interchange stations remain visible when at least one associated line is active and disappear when all associated lines are disabled.
 - Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
 - Browser limitation: live station visibility remains unverified because the browser runtime cannot create a tab.
+
+### R-033: Hidden-selection cleanup (2026-08-28)
+- Clearing a transport tool now also clears a selected station or route when its layer is no longer visible.
+- This keeps the information panel consistent with the MapLibre layer state after Rail, Light Rail, Bus, Ferry, or Tram toggles.
+- Evidence: 25 test files and 99 tests pass, lint, build, and diff checks pass.
+- Browser limitation: live selection interaction remains unverified because the browser runtime cannot create a tab.
