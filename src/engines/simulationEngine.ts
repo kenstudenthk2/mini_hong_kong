@@ -1,3 +1,4 @@
+import type { KmbArrival } from '../dataAdapters/kmb'
 import type { BusRoute, BusSchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
 import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
 import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
@@ -230,6 +231,58 @@ export function computeBusVehiclePositions(routes: BusRoute[], schedules: BusSch
         nextStopId: position.nextStopId,
         destinationId: route.stopIds[route.stopIds.length - 1] ?? null,
       })
+    }
+  }
+
+  return vehicles
+}
+
+export function computeBusVehiclePositionsFromEta(routes: BusRoute[], arrivals: KmbArrival[], time: Date): VehiclePosition[] {
+  const routeById = new Map(routes.map(route => [route.id, route]))
+  const groups = new Map<string, KmbArrival[]>()
+  for (const arrival of arrivals) {
+    const key = `${arrival.routeId}|${arrival.destinationEn}|${arrival.arrivalSequence}`
+    const group = groups.get(key) ?? []
+    group.push(arrival)
+    groups.set(key, group)
+  }
+
+  const now = time.getTime()
+  const vehicles: VehiclePosition[] = []
+  for (const group of groups.values()) {
+    const ordered = [...group].sort((a, b) => a.stopSequence - b.stopSequence)
+    const route = routeById.get(ordered[0]?.routeId ?? '')
+    if (!route) continue
+
+    for (let index = 0; index < ordered.length - 1; index += 1) {
+      const from = ordered[index]
+      const to = ordered[index + 1]
+      if (to.stopSequence !== from.stopSequence + 1) continue
+      const fromTime = Date.parse(from.eta)
+      const toTime = Date.parse(to.eta)
+      if (now < fromTime || now > toTime || toTime <= fromTime) continue
+      const fromIndex = from.stopSequence - 1
+      const toIndex = to.stopSequence - 1
+      const segment = route.geometry.slice(fromIndex, toIndex + 1)
+      if (segment.length < 2) continue
+      const ratio = (now - fromTime) / (toTime - fromTime)
+      const position = interpolateOnLine(segment, ratio)
+      vehicles.push({
+        id: `${route.id}-eta-${from.arrivalSequence}`,
+        type: 'bus',
+        lineId: route.id,
+        tripId: `${route.id}-eta-${from.arrivalSequence}`,
+        color: route.color,
+        coordinates: position.coordinates,
+        bearing: position.bearing,
+        progress: (fromIndex + ratio) / Math.max(route.stopIds.length - 1, 1),
+        labelEn: route.nameEn,
+        labelZh: route.nameZh,
+        labelPt: route.namePt || route.nameEn,
+        nextStopId: route.stopIds[toIndex] ?? null,
+        destinationId: route.stopIds[route.stopIds.length - 1] ?? null,
+      })
+      break
     }
   }
 

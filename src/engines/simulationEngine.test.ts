@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { BusRoute, BusSchedule, TransitData } from '../types'
-import { computeBusVehiclePositions, computeVehiclePositions, getScheduleType } from './simulationEngine'
+import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeVehiclePositions, getScheduleType } from './simulationEngine'
 import { hongKongWallToInstant } from './hongKongTime'
 import { interpolateOnLine } from './geometry'
 
@@ -123,6 +123,28 @@ describe('computeBusVehiclePositions', () => {
 
   it('does not start a weekday schedule on a weekend', () => {
     const vehicles = computeBusVehiclePositions([busRoute], [busSchedule], hongKongWallToInstant(2026, 7, 23, 6, 10))
+    expect(vehicles).toHaveLength(0)
+  })
+})
+
+describe('computeBusVehiclePositionsFromEta', () => {
+  it('interpolates a predicted bus between adjacent stop ETAs', () => {
+    const vehicles = computeBusVehiclePositionsFromEta([busRoute], [
+      { id: 'a', routeId: busRoute.id, stopSequence: 1, arrivalSequence: 1, destinationEn: 'STAR FERRY', destinationZh: '尖沙咀碼頭', eta: '2026-08-28T06:00:00+08:00', remarkEn: '', dataTimestamp: '2026-08-28T05:59:00+08:00' },
+      { id: 'b', routeId: busRoute.id, stopSequence: 2, arrivalSequence: 1, destinationEn: 'STAR FERRY', destinationZh: '尖沙咀碼頭', eta: '2026-08-28T06:10:00+08:00', remarkEn: '', dataTimestamp: '2026-08-28T05:59:00+08:00' },
+      { id: 'c', routeId: busRoute.id, stopSequence: 3, arrivalSequence: 1, destinationEn: 'STAR FERRY', destinationZh: '尖沙咀碼頭', eta: '2026-08-28T06:20:00+08:00', remarkEn: '', dataTimestamp: '2026-08-28T05:59:00+08:00' },
+    ], hongKongWallToInstant(2026, 7, 28, 6, 15))
+
+    expect(vehicles).toHaveLength(1)
+    expect(vehicles[0].coordinates[0]).toBeCloseTo(114.15)
+    expect(vehicles[0].nextStopId).toBe('c')
+    expect(vehicles[0].destinationId).toBe('c')
+  })
+
+  it('skips predictions that do not yet have a following stop ETA', () => {
+    const vehicles = computeBusVehiclePositionsFromEta([busRoute], [{
+      id: 'a', routeId: busRoute.id, stopSequence: 1, arrivalSequence: 1, destinationEn: 'STAR FERRY', destinationZh: '尖沙咀碼頭', eta: '2026-08-28T06:10:00+08:00', remarkEn: '', dataTimestamp: '2026-08-28T05:59:00+08:00',
+    }], hongKongWallToInstant(2026, 7, 24, 6, 15))
     expect(vehicles).toHaveLength(0)
   })
 })
