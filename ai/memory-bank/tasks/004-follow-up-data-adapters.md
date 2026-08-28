@@ -364,3 +364,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/engines/hongKongDateTime.test.ts` covers round-trip conversion and invalid input; full suite has 59 passing tests, lint/build/diff checks pass. Commit: `eec1697`.
 - Known limitation: browser keyboard/input interaction and locale-specific control rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate date/time, locale, filter, and source-link workflows in a working browser harness; then address remaining reference-derived follow/focus interactions.
+
+## Compact handoff: selected-vehicle map focus
+- Complete: selecting a visible vehicle now recenters the MapLibre view on its current coordinates as the schedule simulation advances; clearing or losing the selection stops recentering.
+- Contract: `selectedVehicleCenter` is a pure lookup over visible vehicles, so hidden filtered vehicles cannot move the map.
+- Evidence: `src/components/map/MapView.test.ts` covers selected, missing, and cleared IDs; full suite has 61 passing tests, lint/build/diff checks pass. Commit: `c7cfa33`.
+- Test note: the MapLibre-focused jsdom test supplies the missing `URL.createObjectURL` browser API before module import.
+- Known limitation: real browser camera movement, touch behavior, and user pan-versus-follow ergonomics remain unverified because the integrated browser harness is unavailable.
+- Next task: validate selection/focus in a working browser, then add an explicit follow toggle only if automatic focus proves too intrusive.
