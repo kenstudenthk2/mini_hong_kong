@@ -170,7 +170,7 @@ function airportRunwaysToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
+function airportGroundToGeoJson(selectedGroundFeatureId: string | null): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
     features: hkiaGroundFeatures.map(feature => ({
@@ -184,6 +184,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
         nameEn: feature.nameEn,
         nameZh: feature.nameZh,
         namePt: feature.namePt,
+        selected: feature.id === selectedGroundFeatureId,
       },
     })),
   }
@@ -207,6 +208,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const selectedRouteIdsRef = useRef(selectedRouteIds)
   const selectedBusOperatorsRef = useRef(selectedBusOperators)
   const selectedFacilityIdRef = useRef(selectedFacilityId)
+  const selectedGroundFeatureIdRef = useRef(selectedGroundFeatureId)
   const selectedRouteSearchIdRef = useRef(selectedRouteSearchId)
   const { lang } = useI18n()
 
@@ -229,8 +231,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     selectedRouteIdsRef.current = selectedRouteIds
     selectedBusOperatorsRef.current = selectedBusOperators
     selectedFacilityIdRef.current = selectedFacilityId
+    selectedGroundFeatureIdRef.current = selectedGroundFeatureId
     selectedRouteSearchIdRef.current = selectedRouteSearchId
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
 
   useEffect(() => {
       onSelectVehicleRef.current = onSelectVehicle
@@ -389,10 +392,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         type: 'circle',
         source: 'airport-ground',
         paint: {
-          'circle-radius': ['match', ['get', 'kind'], 'terminal', 6, 3],
+          'circle-radius': ['case', ['get', 'selected'], ['match', ['get', 'kind'], 'terminal', 9, 6], ['match', ['get', 'kind'], 'terminal', 6, 3]],
           'circle-color': ['match', ['get', 'kind'], 'terminal', '#f59e0b', '#a78bfa'],
           'circle-stroke-color': '#0f172a',
-          'circle-stroke-width': 1,
+          'circle-stroke-width': ['case', ['get', 'selected'], 3, 1],
           'circle-opacity': 0.88,
         },
       })
@@ -549,7 +552,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityIdRef.current))
       updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
-      updateSource(map, 'airport-ground', airportGroundToGeoJson())
+      updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureIdRef.current))
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -574,9 +577,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityId))
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
-    updateSource(map, 'airport-ground', airportGroundToGeoJson())
+    updateSource(map, 'airport-ground', airportGroundToGeoJson(selectedGroundFeatureId))
     updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
