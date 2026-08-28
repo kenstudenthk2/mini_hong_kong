@@ -4,6 +4,7 @@ import { hkiaFacility, HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures, HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
 import { searchRoutes, type SearchableRoute } from '../../app/routeSearch'
+import { busRouteServiceCount } from '../../app/routeService'
 import { visibleVehicleCount } from '../../app/vehicleVisibility'
 import type { TransitDataState } from '../../hooks/useTransitData'
 import type { AirportFlight, FerryRoute, Lang, RailLine, Station, TransitData, TramRoute, VehiclePosition } from '../../types'
@@ -67,12 +68,12 @@ function LineRow({ line, enabled, onToggle }: { line: DirectoryRoute; enabled: b
   )
 }
 
-function OperatorRow({ operator, enabled, onToggle }: { operator: string; enabled: boolean; onToggle: () => void }) {
+function OperatorRow({ operator, enabled, activeCount, totalCount, onToggle }: { operator: string; enabled: boolean; activeCount: number; totalCount: number; onToggle: () => void }) {
   return (
     <button className="line-row" type="button" onClick={onToggle} aria-pressed={enabled}>
       <span className="line-dot" style={{ background: operator === 'Citybus' ? '#dc2626' : '#0f766e' }} />
       <span>{operator}</span>
-      <span className="line-state">{enabled ? 'ON' : 'OFF'}</span>
+      <span className="line-state">{activeCount}/{totalCount} · {enabled ? 'ON' : 'OFF'}</span>
     </button>
   )
 }
@@ -156,12 +157,10 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
           <div>{visibleBusCount} {t.vehicles}</div>
           <div>{(data?.busRoutes ?? []).filter(route => selectedBusOperators.has(route.operator)).length} normalized routes</div>
           {['KMB/LWB', 'Citybus', 'NLB', 'GMB'].map(operator => (
-            <OperatorRow
-              key={operator}
-              operator={operator}
-              enabled={selectedBusOperators.has(operator)}
-              onToggle={() => onToggleBusOperator(operator)}
-            />
+            (() => {
+              const service = busRouteServiceCount(data?.busRoutes ?? [], vehicles, operator)
+              return <OperatorRow key={operator} operator={operator} activeCount={service.active} totalCount={service.total} enabled={selectedBusOperators.has(operator)} onToggle={() => onToggleBusOperator(operator)} />
+            })()
           ))}
         </div>
       </details>
