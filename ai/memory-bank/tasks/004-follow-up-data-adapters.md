@@ -703,3 +703,20 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Behavior: selected routes are highlighted and temporarily rendered even when inactive; the map fits the selected geometry while preserving room for the directory panel.
 - Evidence: focused MapView tests, lint, and build pass.
 - Known limitation: live click and camera movement remain unverified without the integrated browser connector.
+
+## Compact handoff: OSM-derived 3D buildings
+- Complete: MapLibre now loads an independent OpenFreeMap vector source and extrudes the `building` layer from OSM-derived height fields.
+- Fallback: the existing OSM raster source remains underneath the 3D layer; transit data and route geometry are unchanged.
+- Evidence: focused MapView tests, lint, and build pass.
+- Known limitation: browser runtime failed before tab creation, so live tile delivery and visual framing remain unverified.
+
+## Compact handoff: service-aware route counts
+- Complete: bus operator rows now show active routes over total normalized routes.
+- Semantics: active is derived from the current visible bus vehicles; total is the complete operator feed.
+- Evidence: focused route-service test, lint, and build pass.
+
+## Compact handoff: simulation timeline
+- Complete: a bottom timeline scrubber now drives the existing simulation clock and supports time-of-day selection on the current Hong Kong calendar day.
+- Layout: desktop center-bottom placement; mobile placement above the info panel.
+- Evidence: focused ControlPanel test, lint, and build pass.
+- Known limitation: rendered interaction remains unverified because the browser runtime failed before tab creation.

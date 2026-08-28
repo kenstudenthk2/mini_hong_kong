@@ -73,3 +73,20 @@
 - Fix: both MapLibre and SVG bus rendering now use active routes plus the selected route; route selection computes geometry bounds and fits the map with a side-panel-safe padding.
 - Evidence: focused MapView tests, lint, and production build pass. The existing bundle-size warning remains.
 - Browser limitation: live click-and-camera confirmation remains pending because the integrated browser connector is unavailable.
+
+### R-015: OSM-derived 3D building layer (2026-08-28)
+- Added a separate OpenFreeMap vector source and MapLibre `fill-extrusion` building layer using OSM-derived building height fields.
+- Buildings begin extruding at zoom 12.5 and remain independent from transit GeoJSON; the OSM raster source remains the base fallback.
+- Evidence: focused MapView tests, lint, and production build pass.
+- Browser limitation: local rendered verification was attempted but the browser runtime failed to start before tab creation; no screenshot pass is claimed.
+
+### R-016: Service-aware route counts (2026-08-28)
+- Added active/total bus route counts per operator to the directory rows, matching the reference layer-panel convention.
+- Active means a route has a bus vehicle in the current simulation frame; total remains the complete normalized operator dataset.
+- Evidence: focused route-service test, lint, and production build pass.
+
+### R-017: Simulation timeline (2026-08-28)
+- Added a bottom timeline scrubber connected to the existing `SimulationClock`; changing the slider pauses at the selected Hong Kong minute while preserving the current simulation date.
+- Added responsive placement above the info panel on narrow screens.
+- Evidence: focused ControlPanel test, lint, and production build pass.
+- Browser limitation: rendered interaction and 3D tile delivery remain unverified because the browser runtime failed before tab creation.
