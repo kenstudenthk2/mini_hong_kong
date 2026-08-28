@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import { isClearSelectionShortcut, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -36,6 +36,11 @@ describe('selected vehicle map focus', () => {
   it('clears selection only when empty map space was clicked', () => {
     expect(shouldClearVehicleSelection(0)).toBe(true)
     expect(shouldClearVehicleSelection(1)).toBe(false)
+  })
+
+  it('recognizes Escape as the clear-selection shortcut', () => {
+    expect(isClearSelectionShortcut({ code: 'Escape' })).toBe(true)
+    expect(isClearSelectionShortcut({ code: 'Space' })).toBe(false)
   })
 
   it('returns the first geometry point for a selected route', () => {

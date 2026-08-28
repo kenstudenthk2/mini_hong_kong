@@ -22,6 +22,7 @@ interface Props {
   pitchEnabled: boolean
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
   onSelectStation: (station: Station | null) => void
+  onClearRouteSearch: () => void
   selectedVehicleId: string | null
   selectedStationId: string | null
   selectedRouteSearchId: string | null
@@ -106,6 +107,10 @@ export function shouldClearVehicleSelection(vehicleFeatureCount: number): boolea
   return vehicleFeatureCount === 0
 }
 
+export function isClearSelectionShortcut(event: Pick<KeyboardEvent, 'code'>): boolean {
+  return event.code === 'Escape'
+}
+
 export function selectedRouteCenter(routes: SearchableRoute[], selectedRouteId: string | null): [number, number] | null {
   const route = routes.find(item => item.id === selectedRouteId)
   return route?.geometry[0] ?? null
@@ -179,12 +184,13 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, selectedVehicleId, selectedStationId, selectedRouteSearchId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedRouteSearchId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
   const onSelectStationRef = useRef(onSelectStation)
+  const onClearRouteSearchRef = useRef(onClearRouteSearch)
   const linesRef = useRef(lines)
   const busRoutesRef = useRef(busRoutes)
   const ferryRoutesRef = useRef(ferryRoutes)
@@ -224,6 +230,21 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     onSelectStationRef.current = onSelectStation
   }, [onSelectStation])
+
+  useEffect(() => {
+    onClearRouteSearchRef.current = onClearRouteSearch
+  }, [onClearRouteSearch])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isClearSelectionShortcut(event)) return
+      onSelectVehicleRef.current(null)
+      onSelectStationRef.current(null)
+      onClearRouteSearchRef.current()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   useEffect(() => {
     if (!mapNode.current || mapRef.current) return
