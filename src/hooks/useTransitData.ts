@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
 import { normalizeCitybusEta, normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
 import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
-import { normalizeFerryGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
+import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
 import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
@@ -42,6 +42,11 @@ interface CitybusEnvelope {
 
 interface CitybusStopResponse {
   data: Record<string, unknown>
+}
+
+interface GtfsScheduleFeed {
+  ferrySchedules: NonNullable<TransitData['ferrySchedules']>
+  tramSchedules: NonNullable<TransitData['tramSchedules']>
 }
 
 async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper: (item: T) => Promise<R>): Promise<R[]> {
@@ -127,14 +132,18 @@ async function loadTramRoutes(): Promise<TransitData['tramRoutes']> {
   return normalizeTramGeoJson(raw)
 }
 
-async function loadFerrySchedules(): Promise<NonNullable<TransitData['ferrySchedules']>> {
+async function loadGtfsSchedules(): Promise<GtfsScheduleFeed> {
   const [routes, trips, stopTimes, calendar] = await Promise.all([
     loadText('https://static.data.gov.hk/td/pt-headway-en/routes.txt'),
     loadText('https://static.data.gov.hk/td/pt-headway-en/trips.txt'),
     loadText('https://static.data.gov.hk/td/pt-headway-en/stop_times.txt'),
     loadText('https://static.data.gov.hk/td/pt-headway-en/calendar.txt'),
   ])
-  return normalizeFerryGtfsSchedules({ routes, trips, stopTimes, calendar } satisfies FerryGtfsSnapshot)
+  const snapshot = { routes, trips, stopTimes, calendar } satisfies FerryGtfsSnapshot
+  return {
+    ferrySchedules: normalizeFerryGtfsSchedules(snapshot),
+    tramSchedules: normalizeTramGtfsSchedules(snapshot),
+  }
 }
 
 export function useTransitData(): TransitDataState {
@@ -175,9 +184,9 @@ export function useTransitData(): TransitDataState {
           error: null,
           data,
         })
-        loadFerrySchedules().then(ferrySchedules => {
+        loadGtfsSchedules().then(scheduleFeed => {
           if (cancelled) return
-          setState(current => current.data ? { ...current, data: { ...current.data, ferrySchedules } } : current)
+          setState(current => current.data ? { ...current, data: { ...current.data, ...scheduleFeed } } : current)
         }).catch(() => undefined)
       } catch (err) {
         if (!cancelled) {
