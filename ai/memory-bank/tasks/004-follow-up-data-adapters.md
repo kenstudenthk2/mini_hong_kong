@@ -357,3 +357,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/layerManifest.test.ts` asserts all three locale values for every entry; full suite has 57 passing tests, lint/build/diff checks pass. Commit: `5f9c338`.
 - Known limitation: browser locale switching and source-link rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: perform browser verification for all three locales and continue the remaining reference-derived interaction gaps.
+
+## Compact handoff: Hong Kong simulation time control
+- Complete: the control panel now exposes a `datetime-local` input that jumps the schedule simulation to Hong Kong wall time and pauses it at the selected instant.
+- Correctness: parsing uses the fixed Asia/Hong_Kong UTC+8 conversion and rejects malformed or impossible calendar values; `Now` and playback controls remain unchanged.
+- Evidence: `src/engines/hongKongDateTime.test.ts` covers round-trip conversion and invalid input; full suite has 59 passing tests, lint/build/diff checks pass. Commit: `eec1697`.
+- Known limitation: browser keyboard/input interaction and locale-specific control rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate date/time, locale, filter, and source-link workflows in a working browser harness; then address remaining reference-derived follow/focus interactions.
