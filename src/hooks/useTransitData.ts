@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
 import { normalizeCitybusEta, normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
+import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -108,6 +109,11 @@ async function loadCitybusArrivals(): Promise<TransitData['busArrivals']> {
   return arrivals.flat()
 }
 
+async function loadFerryRoutes(): Promise<TransitData['ferryRoutes']> {
+  const raw = await loadJson('https://static.data.gov.hk/td/routes-fares-geojson/JSON_FERRY.json')
+  return normalizeFerryGeoJson(raw)
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -115,7 +121,7 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, busFeed] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, busFeed] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
@@ -123,6 +129,7 @@ export function useTransitData(): TransitDataState {
           loadKmbRoutes().catch(() => []),
           loadCitybusRoutes().catch(() => []),
           loadCitybusArrivals().catch(() => []),
+          loadFerryRoutes().catch(() => []),
           loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
@@ -136,6 +143,7 @@ export function useTransitData(): TransitDataState {
           busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
           busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
           busDataTimestamp: busFeed.generatedAt,
+          ferryRoutes,
         })
         setState({
           loading: false,

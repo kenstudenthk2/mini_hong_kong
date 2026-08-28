@@ -52,6 +52,7 @@ export default function App() {
         <MapView
           lines={transitData.data?.railLines ?? []}
           busRoutes={transitData.data?.busRoutes ?? []}
+          ferryRoutes={transitData.data?.ferryRoutes ?? []}
           stations={transitData.data?.stations ?? []}
           vehicles={vehicles}
           selectedLineIds={selectedLineIds}
