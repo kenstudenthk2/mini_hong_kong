@@ -476,3 +476,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/app/routeSearch.test.ts` covers operator, localized-name, and empty-query behavior; full suite has 72 passing tests, lint/build/diff checks pass. Commit: `f7c213a`.
 - Known limitation: the helper is not yet exposed in the UI, and browser search interaction remains unavailable for verification.
 - Next task: wire the search contract into one compact directory control and connect route selection to map focus.
+
+## Compact handoff: route search UI
+- Complete: the directory now exposes a trilingual route search input covering MTR, Light Rail, Bus, Ferry, and Tram routes; results are capped at eight for compact scanning.
+- Interaction: selecting a result focuses the MapLibre view on the route geometry while preserving existing visibility toggles and filter state.
+- Scope: navigation/focus only; route search does not enable or disable a route.
+- Evidence: full suite has 72 passing tests, lint/build/diff checks pass. Commit: `2ccb02a`.
+- Known limitation: browser typing, result selection, map focus, touch behavior, and three-locale layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate route search in a working browser before adding broader route-level filtering.
