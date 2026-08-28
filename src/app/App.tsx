@@ -39,7 +39,7 @@ export default function App() {
   )
   const [manualRouteIds, setManualRouteIds] = useState<Set<string> | null>(null)
   const selectedRouteIds = manualRouteIds ?? allRouteIds
-  const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus', 'NLB']), [])
+  const allBusOperators = useMemo(() => new Set(['KMB/LWB', 'Citybus', 'NLB', 'GMB']), [])
   const [manualBusOperators, setManualBusOperators] = useState<Set<string> | null>(null)
   const selectedBusOperators = manualBusOperators ?? allBusOperators
   const [activeTools, setActiveTools] = useState<Set<TransportTool>>(() => new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams', 'flights']))
@@ -113,7 +113,7 @@ export default function App() {
     if (tool === 'buses') {
       setManualBusOperators(previous => {
         const next = new Set(previous ?? allBusOperators)
-        for (const operator of ['KMB/LWB', 'Citybus', 'NLB']) {
+        for (const operator of ['KMB/LWB', 'Citybus', 'NLB', 'GMB']) {
           if (enabled) next.delete(operator)
           else next.add(operator)
         }

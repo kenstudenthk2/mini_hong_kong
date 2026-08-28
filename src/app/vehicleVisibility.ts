@@ -8,7 +8,13 @@ export function isVehicleVisible(
 ): boolean {
   if (vehicle.type === 'flight') return true
   if (vehicle.type === 'bus') {
-    const operator = vehicle.lineId.startsWith('citybus-') ? 'Citybus' : 'KMB/LWB'
+    const operator = vehicle.lineId.startsWith('citybus-')
+      ? 'Citybus'
+      : vehicle.lineId.startsWith('nlb-')
+        ? 'NLB'
+        : vehicle.lineId.startsWith('gmb-')
+          ? 'GMB'
+          : 'KMB/LWB'
     return selectedBusOperators.has(operator)
   }
   if (vehicle.type === 'ferry' || vehicle.type === 'tram') return selectedRouteIds.has(vehicle.lineId)

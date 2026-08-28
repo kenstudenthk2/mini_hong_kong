@@ -155,7 +155,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         <div className="section-body muted-body">
           <div>{visibleBusCount} {t.vehicles}</div>
           <div>{(data?.busRoutes ?? []).filter(route => selectedBusOperators.has(route.operator)).length} normalized routes</div>
-          {['KMB/LWB', 'Citybus', 'NLB'].map(operator => (
+          {['KMB/LWB', 'Citybus', 'NLB', 'GMB'].map(operator => (
             <OperatorRow
               key={operator}
               operator={operator}
