@@ -170,3 +170,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Contract: `VehiclePosition.type` now includes `tram`; no timetable fetch or app wiring was changed in this slice.
 - Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `3eb6729`.
 - Next task: stage tram GTFS schedule loading into `TransitData`, feed schedules into `App`, and include tram vehicles in the map/menu visibility state.
+
+## Compact handoff: staged tram schedule wiring
+- Complete: one staged GTFS download now derives both ferry and tram schedules; tram schedules hydrate into `TransitData` and feed `computeTramVehiclePositions` in `App`.
+- Performance policy: ferry and tram schedule files are fetched once after the initial transit state resolves; failures remain optional and do not invalidate rail/bus data.
+- Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `d057b7c`.
+- Known limitation: `MapView` and the directory menu still need explicit tram vehicle visibility/count treatment; tram source geometry is already rendered.
