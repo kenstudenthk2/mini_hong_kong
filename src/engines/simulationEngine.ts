@@ -6,8 +6,23 @@ function wrapServiceEnd(endMinutes: number): number {
   return endMinutes < 1440 ? endMinutes : endMinutes
 }
 
+function adjustedNowMinutes(
+  trip: Pick<Trip, 'startMinutes' | 'endMinutes' | 'durationMinutes'>,
+  nowMinutes: number,
+): number {
+  const crossesMidnight = trip.endMinutes >= 1440
+    || (trip.startMinutes === trip.endMinutes && trip.startMinutes + trip.durationMinutes >= 1440)
+  return nowMinutes < trip.startMinutes && crossesMidnight ? nowMinutes + 1440 : nowMinutes
+}
+
 function activeStarts(trip: Pick<Trip, 'startMinutes' | 'endMinutes' | 'headwayMinutes' | 'durationMinutes'>, nowMinutes: number): number[] {
   const starts: number[] = []
+  if (trip.startMinutes === trip.endMinutes) {
+    const adjustedNow = adjustedNowMinutes(trip, nowMinutes)
+    return adjustedNow >= trip.startMinutes && adjustedNow <= trip.startMinutes + trip.durationMinutes
+      ? [trip.startMinutes]
+      : starts
+  }
   const end = wrapServiceEnd(trip.endMinutes)
   for (let start = trip.startMinutes; start <= end; start += trip.headwayMinutes) {
     const normalizedNow = nowMinutes < trip.startMinutes && end >= 1440 ? nowMinutes + 1440 : nowMinutes
@@ -124,7 +139,7 @@ export function computeVehiclePositions(transitData: TransitData, time: Date): V
     const line = lines.get(trip.lineId)
     if (!line) continue
     for (const start of activeStarts(trip, nowMinutes)) {
-      const adjustedNow = nowMinutes < trip.startMinutes && trip.endMinutes >= 1440 ? nowMinutes + 1440 : nowMinutes
+    const adjustedNow = adjustedNowMinutes(trip, nowMinutes)
       const elapsed = adjustedNow - start
       const tripLine = orientedLine(line, trip)
       const tripPosition = positionFromElapsed(tripLine, trip, elapsed)
@@ -215,9 +230,7 @@ export function computeBusVehiclePositions(routes: BusRoute[], schedules: BusSch
     const route = routeById.get(schedule.routeId)
     if (!route) continue
     for (const start of activeStarts(schedule, nowMinutes)) {
-      const adjustedNow = nowMinutes < schedule.startMinutes && schedule.endMinutes >= 1440
-        ? nowMinutes + 1440
-        : nowMinutes
+      const adjustedNow = adjustedNowMinutes(schedule, nowMinutes)
       const position = scheduledRoutePositionFromElapsed(route, schedule, adjustedNow - start)
       vehicles.push({
         id: `${schedule.id}-${start}`,
@@ -251,9 +264,7 @@ export function computeFerryVehiclePositions(routes: FerryRoute[], schedules: Fe
     const route = routeById.get(schedule.routeId)
     if (!route) continue
     for (const start of activeStarts(schedule, nowMinutes)) {
-      const adjustedNow = nowMinutes < schedule.startMinutes && schedule.endMinutes >= 1440
-        ? nowMinutes + 1440
-        : nowMinutes
+      const adjustedNow = adjustedNowMinutes(schedule, nowMinutes)
       const position = scheduledRoutePositionFromElapsed(route, schedule, adjustedNow - start)
       vehicles.push({
         id: `${schedule.id}-${start}`,

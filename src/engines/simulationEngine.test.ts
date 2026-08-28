@@ -183,4 +183,18 @@ describe('computeFerryVehiclePositions', () => {
     expect(vehicles[0].nextStopId).toBe('pier-b')
     expect(vehicles[0].destinationId).toBe('pier-c')
   })
+
+  it('keeps an explicit late departure active after midnight', () => {
+    const overnightSchedule: FerrySchedule = {
+      ...ferrySchedule,
+      id: 'ferry-7001-1-overnight',
+      startMinutes: 1410,
+      endMinutes: 1410,
+      durationMinutes: 40,
+    }
+    const vehicles = computeFerryVehiclePositions([ferryRoute], [overnightSchedule], hongKongWallToInstant(2026, 7, 25, 0, 10))
+
+    expect(vehicles).toHaveLength(1)
+    expect(vehicles[0].progress).toBeGreaterThan(0)
+  })
 })
