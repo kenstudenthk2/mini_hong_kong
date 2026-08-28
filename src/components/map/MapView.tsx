@@ -127,6 +127,14 @@ export function selectedRouteGeometry(routes: SearchableRoute[], selectedRouteId
   return routes.find(item => item.id === selectedRouteId)?.geometry ?? []
 }
 
+export function selectedRouteBounds(routes: SearchableRoute[], selectedRouteId: string | null): [[number, number], [number, number]] | null {
+  const geometry = selectedRouteGeometry(routes, selectedRouteId)
+  if (!geometry.length) return null
+  const longitudes = geometry.map(([longitude]) => longitude)
+  const latitudes = geometry.map(([, latitude]) => latitude)
+  return [[Math.min(...longitudes), Math.min(...latitudes)], [Math.max(...longitudes), Math.max(...latitudes)]]
+}
+
 function lineTool(line: RailLine): TransportTool {
   return line.mode === 'mtr' ? 'rail' : 'lightRail'
 }
@@ -557,7 +565,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.on('mouseenter', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'airport-facilities-circle', () => { map.getCanvas().style.cursor = '' })
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current.filter(line => activeToolsRef.current.has(lineTool(line))), selectedLineIdsRef.current))
-      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator) && activeBusRouteIds(vehiclesRef.current).has(route.id))))
+      updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current.filter(route => selectedBusOperatorsRef.current.has(route.operator) && (activeBusRouteIds(vehiclesRef.current).has(route.id) || selectedRouteSearchIdRef.current === route.id))))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current.filter(route => selectedRouteIdsRef.current.has(route.id))))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityIdRef.current))
@@ -582,7 +590,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
-    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator) && visibleBusRouteIds.has(route.id))))
+    updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator) && (visibleBusRouteIds.has(route.id) || selectedRouteSearchId === route.id))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson(selectedFacilityId))
@@ -630,9 +638,14 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
 
   useEffect(() => {
     const map = mapRef.current
-    const center = selectedRouteCenter([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId)
-    if (!map || !center) return
-    map.easeTo({ center, duration: 220 })
+    const routes = [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes]
+    const bounds = selectedRouteBounds(routes, selectedRouteSearchId)
+    if (!map || !bounds) return
+    if (bounds[0][0] === bounds[1][0] && bounds[0][1] === bounds[1][1]) {
+      map.easeTo({ center: bounds[0], duration: 220 })
+      return
+    }
+    map.fitBounds(bounds, { padding: { top: 90, right: 80, bottom: 120, left: 320 }, maxZoom: 14.5, duration: 450 })
   }, [busRoutes, ferryRoutes, lines, selectedRouteSearchId, tramRoutes])
 
   const selectedRoute = [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes].find(item => item.id === selectedRouteSearchId)
@@ -660,7 +673,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
           </g>
         ))}
-        {busRoutes.filter(route => selectedBusOperators.has(route.operator)).map(route => (
+        {busRoutes.filter(route => selectedBusOperators.has(route.operator) && (visibleBusRouteIds.has(route.id) || selectedRouteSearchId === route.id)).map(route => (
           <path
             key={route.id}
             d={pathForGeometry(route.geometry)}

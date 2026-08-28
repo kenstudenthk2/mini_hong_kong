@@ -697,3 +697,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Fix: bus geometry now follows visible bus vehicles in the current frame; the source remains searchable and the full route count remains in the directory. Raster tiles now use OpenStreetMap with attribution.
 - Evidence: focused visibility test, lint, build, and diff checks pass.
 - Known limitation: no live browser proof of tile delivery because the integrated browser connector remains unavailable.
+
+## Compact handoff: route directory map focus
+- Complete: route directory selections now return focus to the map in both MapLibre and SVG rendering.
+- Behavior: selected routes are highlighted and temporarily rendered even when inactive; the map fits the selected geometry while preserving room for the directory panel.
+- Evidence: focused MapView tests, lint, and build pass.
+- Known limitation: live click and camera movement remain unverified without the integrated browser connector.
