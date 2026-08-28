@@ -195,3 +195,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: the query date is the previous Hong Kong calendar day because the official endpoint is historical; this is not represented as live aircraft telemetry.
 - Evidence: loader test covers request matrix, bounded result count, and localized merge; full focused gates pass. Commit: `5b030b5`.
 - Next task: render an airport/flight directory and information surface, then decide whether a documented airport geometry source is available before adding aircraft motion.
+
+## Compact handoff: flight directory activation
+- Complete: Flights are now an active directory section with localized English, Traditional Chinese, and Portuguese labels, loaded-record count, historical source date, and DATA.GOV.HK attribution.
+- Semantics: the section remains feed-backed status only; it does not imply live aircraft positions or schedule-driven flight motion.
+- Evidence: full suite has 45 passing tests, lint/build/diff checks pass. Commit: `ec428cb`.
+- Next task: add a focused flight information surface and investigate an authoritative airport/route geometry source before introducing aircraft visualization.
