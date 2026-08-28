@@ -58,6 +58,16 @@ export interface BusSchedule {
   dwellMinutes: number
 }
 
+export interface FerryRoute extends LocalizedName {
+  id: string
+  operator: string
+  routeNumber: string
+  color: string
+  stopIds: string[]
+  geometry: Coordinate[]
+  journeyTimeMinutes: number
+}
+
 export interface BusArrival {
   id: string
   routeId: string
@@ -77,7 +87,7 @@ export interface TransitData {
   busRoutes?: BusRoute[]
   busArrivals?: BusArrival[]
   busDataTimestamp?: string
-  ferryRoutes?: unknown[]
+  ferryRoutes?: FerryRoute[]
   tramRoutes?: unknown[]
   flights?: unknown[]
 }
