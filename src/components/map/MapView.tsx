@@ -303,6 +303,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             tileSize: 256,
             attribution: '&copy; OpenStreetMap contributors',
           },
+          openfreemap: {
+            type: 'vector',
+            url: 'https://tiles.openfreemap.org/planet',
+          },
         },
         layers: [{ id: 'carto', type: 'raster', source: 'carto' }],
       },
@@ -320,6 +324,35 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
       map.addSource('route-focus', { type: 'geojson', data: emptyCollection })
+
+      map.addLayer({
+        id: '3d-buildings',
+        type: 'fill-extrusion',
+        source: 'openfreemap',
+        'source-layer': 'building',
+        minzoom: 12.5,
+        filter: ['!=', ['get', 'hide_3d'], true],
+        paint: {
+          'fill-extrusion-color': [
+            'interpolate',
+            ['linear'],
+            ['coalesce', ['get', 'render_height'], ['get', 'height'], 0],
+            0, '#cbd5e1',
+            80, '#94a3b8',
+            220, '#64748b',
+          ],
+          'fill-extrusion-height': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            12.5, 0,
+            15, ['coalesce', ['get', 'render_height'], ['get', 'height'], 0],
+          ],
+          'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
+          'fill-extrusion-opacity': 0.74,
+          'fill-extrusion-vertical-gradient': true,
+        },
+      })
 
       map.addLayer({
         id: 'rail-lines-glow',
