@@ -514,3 +514,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/MapView.test.ts` covers Escape recognition; full suite has 75 passing tests, lint/build/diff checks pass. Commit: `a6a5acc`.
 - Known limitation: browser keyboard focus, touch behavior, and route-highlight clearing remain unverified because the integrated browser harness is unavailable.
 - Next task: validate keyboard and route-search workflows in a working browser.
+
+## Compact handoff: optional feed status
+- Complete: Data Status now distinguishes pending, ready, and unavailable for optional transit feeds, GTFS schedules, and HKG flights during progressive hydration.
+- Semantics: status is phase-level observability; an empty successful normalized feed is unavailable, and base-rail failure marks optional phases unavailable.
+- Scope: status reporting only; source loaders and simulation behavior are unchanged.
+- Evidence: full suite has 75 passing tests, lint/build/diff checks pass. Commit: `91aa37f`.
+- Known limitation: browser hydration timing and localized status rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate feed status in a working browser before adding further data-source controls.
