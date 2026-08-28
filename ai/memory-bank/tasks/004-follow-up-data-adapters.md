@@ -440,3 +440,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/InfoPanel.test.ts` covers localized resolution and ID fallback; full suite has 68 passing tests, lint/build/diff checks pass. Commit: `ce73346`.
 - Known limitation: browser locale switching and station-panel layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate localized station and vehicle information panels in a working browser.
+
+## Compact handoff: active bus data mode
+- Complete: Data Status now reports the effective bus mode in English, Traditional Chinese, and Portuguese: Live ETA when the feed is loaded and selected, otherwise Schedule replay.
+- Scope: observability only; the existing toggle and fallback vehicle-generation behavior are unchanged.
+- Evidence: full suite has 68 passing tests, lint/build/diff checks pass. Commit: `f14d00b`.
+- Known limitation: browser hydration timing, toggle state, and localized status rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate Data Status mode reporting and the full bus toggle workflow in a working browser.
