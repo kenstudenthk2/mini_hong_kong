@@ -11,9 +11,13 @@ interface Props {
   onToggleLiveBusMode: () => void
 }
 
+export function simulationTimeLocale(lang: Lang): string {
+  return lang === 'zh' ? 'zh-HK' : lang === 'pt' ? 'pt-PT' : 'en-GB'
+}
+
 export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, hasLiveBusData, onToggleLiveBusMode }: Props) {
   const { lang, setLang, t } = useI18n()
-  const formatted = new Intl.DateTimeFormat('en-GB', {
+  const formatted = new Intl.DateTimeFormat(simulationTimeLocale(lang), {
     timeZone: 'Asia/Hong_Kong',
     hour: '2-digit',
     minute: '2-digit',
