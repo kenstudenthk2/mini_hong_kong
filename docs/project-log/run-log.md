@@ -105,3 +105,8 @@
 - Added two presentation layers over the same OSM raster source: readable light 2D mode and darkened 3D mode, switched with the existing 2D/3D control.
 - This mirrors the light Tokyo and dark Macau presentation modes without introducing another key-dependent provider.
 - Evidence: focused MapView tests, lint, build, and diff check pass.
+
+### R-021: Route selection detail workflow (2026-08-28)
+- Route directory selection now clears competing vehicle/station/facility selections and becomes the active information-panel selection.
+- The panel shows localized route name, operator, route number when available, coordinates, and an OSM marker link; map focus/highlight behavior remains active.
+- Evidence: focused MapView and InfoPanel tests, lint, and production build pass.

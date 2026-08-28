@@ -735,3 +735,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: the existing 2D/3D control now switches between a readable light OSM raster and a darkened raster presentation for the 3D scene.
 - Data boundary: both modes reuse the same raster tiles; building vectors and transit data remain separate.
 - Evidence: focused MapView tests, lint, build, and diff checks pass.
+
+## Compact handoff: route selection detail workflow
+- Complete: selected route state now flows from the directory to map focus and the information panel.
+- Behavior: selecting a route clears competing object selections, highlights/fits the route, and displays localized metadata plus an OSM marker link.
+- Evidence: focused MapView and InfoPanel tests, lint, and build pass.
