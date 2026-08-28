@@ -88,8 +88,11 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
       </details>
 
       <details open className="menu-section">
-        <summary>{t.buses}<span>{data?.busRoutes?.length ?? 0}</span></summary>
-        <div className="section-body muted-body">KMB/LWB normalized routes</div>
+        <summary>{t.buses}<span>{vehicles.filter(vehicle => vehicle.type === 'bus').length}</span></summary>
+        <div className="section-body muted-body">
+          <div>{vehicles.filter(vehicle => vehicle.type === 'bus').length} {t.vehicles}</div>
+          <div>{data?.busRoutes?.length ?? 0} normalized KMB/LWB and Citybus routes</div>
+        </div>
       </details>
 
       <details open className="menu-section">
