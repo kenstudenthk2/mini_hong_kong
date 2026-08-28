@@ -97,6 +97,12 @@ export default function App() {
         onResetFilters={resetFilters}
         liveBusMode={liveBusMode}
         hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
+        stations={transitData.data?.stations ?? []}
+        selectedStationId={selectedStation?.id ?? null}
+        onSelectStation={station => {
+          setSelectedStation(station)
+          setSelectedVehicle(null)
+        }}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}
@@ -116,6 +122,7 @@ export default function App() {
             setSelectedVehicle(null)
           }}
           selectedVehicleId={selectedVehicle?.id ?? null}
+          selectedStationId={selectedStation?.id ?? null}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
         />

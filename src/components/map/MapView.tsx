@@ -22,6 +22,7 @@ interface Props {
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
   onSelectStation: (station: Station | null) => void
   selectedVehicleId: string | null
+  selectedStationId: string | null
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
@@ -152,7 +153,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, selectedVehicleId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, selectedVehicleId, selectedStationId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -500,6 +501,13 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     if (!map || !center) return
     map.easeTo({ center, duration: 220 })
   }, [selectedVehicleId, visibleVehicles])
+
+  useEffect(() => {
+    const map = mapRef.current
+    const station = stations.find(item => item.id === selectedStationId)
+    if (!map || !station) return
+    map.easeTo({ center: station.coordinates, duration: 220 })
+  }, [selectedStationId, stations])
 
   return (
     <div className="map-frame">

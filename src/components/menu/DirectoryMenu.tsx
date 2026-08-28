@@ -3,7 +3,7 @@ import { classifyFreshness } from '../../dataAdapters/freshness'
 import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
-import type { AirportFlight, FerryRoute, Lang, RailLine, TransitData, TramRoute, VehiclePosition } from '../../types'
+import type { AirportFlight, FerryRoute, Lang, RailLine, Station, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
@@ -17,6 +17,9 @@ interface Props {
   onResetFilters: () => void
   liveBusMode: boolean
   hasLiveBusData: boolean
+  stations: Station[]
+  selectedStationId: string | null
+  onSelectStation: (station: Station | null) => void
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -68,7 +71,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation }: Props) {
   const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -192,6 +195,16 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
           <p>{t.source}: HKIA AIP {aipRevision}</p>
           <p>{t.source}: OSM snapshot {HKIA_OSM_TIMESTAMP.slice(0, 10)}</p>
           <p><a href={HKG_AIP_SOURCE} target="_blank" rel="noreferrer">HKIA AIP</a> · <a href={HKIA_OSM_SOURCE} target="_blank" rel="noreferrer">OSM snapshot</a></p>
+        </div>
+      </details>
+
+      <details className="menu-section">
+        <summary>{lang === 'zh' ? '\u8eca\u7ad9\u641c\u5c0b' : lang === 'pt' ? 'Pesquisa de estacoes' : 'Station search'}<span>{stations.length}</span></summary>
+        <div className="section-body">
+          <select className="station-select" value={selectedStationId ?? ''} onChange={event => onSelectStation(stations.find(station => station.id === event.target.value) ?? null)}>
+            <option value="">{lang === 'zh' ? '\u9078\u64c7\u8eca\u7ad9' : lang === 'pt' ? 'Selecionar estacao' : 'Select a station'}</option>
+            {stations.map(station => <option key={station.id} value={station.id}>{localName(station, lang)}</option>)}
+          </select>
         </div>
       </details>
     </aside>
