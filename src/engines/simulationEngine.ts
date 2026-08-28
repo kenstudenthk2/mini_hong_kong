@@ -1,5 +1,4 @@
-import type { KmbArrival } from '../dataAdapters/kmb'
-import type { BusRoute, BusSchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
+import type { BusRoute, BusArrival, BusSchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
 import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
 import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
 
@@ -237,9 +236,9 @@ export function computeBusVehiclePositions(routes: BusRoute[], schedules: BusSch
   return vehicles
 }
 
-export function computeBusVehiclePositionsFromEta(routes: BusRoute[], arrivals: KmbArrival[], time: Date): VehiclePosition[] {
+export function computeBusVehiclePositionsFromEta(routes: BusRoute[], arrivals: BusArrival[], time: Date): VehiclePosition[] {
   const routeById = new Map(routes.map(route => [route.id, route]))
-  const groups = new Map<string, KmbArrival[]>()
+  const groups = new Map<string, BusArrival[]>()
   for (const arrival of arrivals) {
     const key = `${arrival.routeId}|${arrival.destinationEn}|${arrival.arrivalSequence}`
     const group = groups.get(key) ?? []

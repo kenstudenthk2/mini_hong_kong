@@ -58,6 +58,18 @@ export interface BusSchedule {
   dwellMinutes: number
 }
 
+export interface BusArrival {
+  id: string
+  routeId: string
+  stopSequence: number
+  arrivalSequence: number
+  destinationEn: string
+  destinationZh: string
+  eta: string
+  remarkEn: string
+  dataTimestamp: string
+}
+
 export interface TransitData {
   railLines: RailLine[]
   stations: Station[]

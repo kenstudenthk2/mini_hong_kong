@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { BusRoutesSchema } from '../dataSchemas'
-import type { BusSchedule, Coordinate } from '../types'
+import type { BusArrival, BusSchedule, Coordinate } from '../types'
 
 const KmbRouteSchema = z.object({
   route: z.string(),
@@ -66,19 +66,7 @@ export const kmbReplaySchedules: BusSchedule[] = [{
   dwellMinutes: 1,
 }]
 
-export interface KmbArrival {
-  id: string
-  routeId: string
-  stopSequence: number
-  arrivalSequence: number
-  destinationEn: string
-  destinationZh: string
-  eta: string
-  remarkEn: string
-  dataTimestamp: string
-}
-
-export function normalizeKmbEta(raw: unknown): KmbArrival[] {
+export function normalizeKmbEta(raw: unknown): BusArrival[] {
   const envelope = z.object({
     generated_timestamp: z.string().datetime({ offset: true }),
     data: z.array(KmbEtaRecordSchema),
