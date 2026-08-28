@@ -209,9 +209,9 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
-          <p>{lang === 'zh' ? '\u4ea4\u901a\u8cc7\u6599' : lang === 'pt' ? 'Transito' : 'Transit feeds'}: {feedStatusLabel(feedStatus.optionalTransit)}</p>
-          <p>GTFS: {feedStatusLabel(feedStatus.gtfsSchedules)}</p>
-          <p>{lang === 'zh' ? '\u822a\u73ed\u8cc7\u6599' : lang === 'pt' ? 'Voos' : 'Flight feed'}: {feedStatusLabel(feedStatus.flights)}</p>
+          <p>{lang === 'zh' ? '\u4ea4\u901a\u8cc7\u6599' : lang === 'pt' ? 'Transito' : 'Transit feeds'}: <span className={`feed-status feed-status-${feedStatus.optionalTransit}`}>{feedStatusLabel(feedStatus.optionalTransit)}</span></p>
+          <p>GTFS: <span className={`feed-status feed-status-${feedStatus.gtfsSchedules}`}>{feedStatusLabel(feedStatus.gtfsSchedules)}</span></p>
+          <p>{lang === 'zh' ? '\u822a\u73ed\u8cc7\u6599' : lang === 'pt' ? 'Voos' : 'Flight feed'}: <span className={`feed-status feed-status-${feedStatus.flights}`}>{feedStatusLabel(feedStatus.flights)}</span></p>
           <p>{lang === 'zh' ? '\u5df4\u58eb\u6a21\u5f0f' : lang === 'pt' ? 'Modo dos autocarros' : 'Bus mode'}: {hasLiveBusData && liveBusMode ? (lang === 'zh' ? '\u5373\u6642 ETA' : lang === 'pt' ? 'ETA ao vivo' : 'Live ETA') : (lang === 'zh' ? '\u6642\u523b\u8868\u91cd\u64ad' : lang === 'pt' ? 'Replay de horario' : 'Schedule replay')}</p>
           {layerManifest.map(entry => (
             <p key={entry.id}>
