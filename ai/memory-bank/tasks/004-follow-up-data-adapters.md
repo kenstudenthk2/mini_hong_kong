@@ -746,3 +746,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Modes: flights, MTR, Light Rail, buses, ferries, and trams share the same derived trail contract with mode-aware styling.
 - Evidence: focused vehicle-shape test, lint, and build pass.
 - Known limitation: trail appearance remains unverified in a live browser because the browser runtime cannot create a tab.
+
+## Compact handoff: directory and map layer authority
+- Complete: the transport directory can collapse to a narrow control rail and expand again without changing filter state.
+- Complete: the legacy SVG schematic overlay is hidden; the MapLibre OSM-backed map and data layers are the visible authority.
+- Fallback: schematic JSX remains available in source for a future recovery decision, but it cannot cover the live map.
+- Evidence: 25 test files and 96 tests pass, lint, build, and diff checks pass.
+- Known limitation: browser visual QA remains blocked by the runtime failing before tab creation.

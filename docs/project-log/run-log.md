@@ -115,3 +115,10 @@
 - Added a derived `vehicle-trails` MapLibre layer for visible flights, rail, buses, ferries, and trams.
 - Each trail uses the known route geometry up to the vehicle's current progress and terminates at its current coordinate; no history feed or extra persistence was introduced.
 - Evidence: focused vehicle-shape test, lint, and production build pass.
+
+### R-023: Directory collapse and schematic overlay disable (2026-08-28)
+- Added a collapse/expand control to the transport directory so the map can use the full viewport when the menu is not needed.
+- Disabled the legacy SVG schematic overlay. MapLibre OSM raster, vector buildings, transit routes, vehicles, and trails are now the authoritative visible layers.
+- The schematic JSX remains in place as a fallback implementation, but CSS prevents it from obscuring or diverging from the map.
+- Evidence: 25 test files and 96 tests pass, lint passes, production build passes, and `git diff --check` passes.
+- Browser limitation: live visual confirmation remains unavailable because the browser runtime fails before tab creation with an OS path error.
