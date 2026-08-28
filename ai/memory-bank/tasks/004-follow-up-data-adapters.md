@@ -157,3 +157,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: route geometry only; tram vehicles and schedule data are not generated yet.
 - Evidence: full suite has 39 passing tests, lint/build/diff checks pass. Commit: `92abd1c`.
 - Known risk: tram route loading is part of the initial optional feed batch and may contribute network latency; schedule and menu integration remain separate tasks.
+
+## Compact handoff: tram GTFS schedule adapter
+- Complete: the shared GTFS schedule parser now exposes `normalizeTramGtfsSchedules`, filtering official tram routes with `route_type=0` and producing `tram-*` route IDs while retaining weekday/weekend service calendars.
+- Source contract: `https://static.data.gov.hk/td/pt-headway-en/routes.txt`, `trips.txt`, `stop_times.txt`, and `calendar.txt`; the live route check found six tram routes.
+- Scope: adapter/type contract only; tram schedules are not yet loaded into `TransitData` or passed to a tram vehicle engine.
+- Evidence: new tram schedule fixture passes; full suite has 40 passing tests, lint/build/diff checks pass. Commit: `f1894d7`.
+- Next task: add `computeTramVehiclePositions`, wire staged tram schedules into `App`, and include tram vehicles in `MapView` visibility.
