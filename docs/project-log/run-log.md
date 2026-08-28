@@ -90,3 +90,8 @@
 - Added responsive placement above the info panel on narrow screens.
 - Evidence: focused ControlPanel test, lint, and production build pass.
 - Browser limitation: rendered interaction and 3D tile delivery remain unverified because the browser runtime failed before tab creation.
+
+### R-018: Urban 3D default camera (2026-08-28)
+- Changed the initial map view from territory-wide zoom to a central Hong Kong urban transit focus at zoom 12.4, allowing the 3D building layer to contribute in the first viewport.
+- Route selection and airport/feature selection remain responsible for moving to other network areas.
+- Evidence: focused MapView test, lint, and production build pass.

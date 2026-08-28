@@ -720,3 +720,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Layout: desktop center-bottom placement; mobile placement above the info panel.
 - Evidence: focused ControlPanel test, lint, and build pass.
 - Known limitation: rendered interaction remains unverified because the browser runtime failed before tab creation.
+
+## Compact handoff: urban 3D default camera
+- Complete: the initial camera now focuses central Hong Kong at zoom 12.4 with 58-degree pitch so the OSM-derived building layer can appear immediately.
+- Navigation: route and feature selection still re-centre or fit the map as before.
+- Evidence: focused MapView test, lint, and build pass.
