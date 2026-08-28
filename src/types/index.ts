@@ -121,6 +121,14 @@ export interface AirportFlight {
   localized: FlightLocalizedFields
 }
 
+export interface AirportFacility extends LocalizedName {
+  id: string
+  iataCode: string
+  icaoCode: string
+  coordinates: Coordinate
+  sourceUrl: string
+}
+
 export interface TransitData {
   railLines: RailLine[]
   stations: Station[]
@@ -133,6 +141,7 @@ export interface TransitData {
   tramRoutes?: TramRoute[]
   tramSchedules?: TramSchedule[]
   flights?: AirportFlight[]
+  airportFacilities?: AirportFacility[]
 }
 
 export interface VehiclePosition {
