@@ -4,6 +4,7 @@ import type { AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, V
 interface Props {
   data: TransitData | null
   vehicle: VehiclePosition | null
+  station: Station | null
 }
 
 export function flightForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): AirportFlight | undefined {
@@ -41,7 +42,7 @@ function routeLabel(lang: Lang, key: 'operator' | 'routeNumber' | 'journey' | 'p
   return labels[lang][key]
 }
 
-export function InfoPanel({ data, vehicle }: Props) {
+export function InfoPanel({ data, vehicle, station }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
   const line = data?.railLines.find(item => item.id === vehicle?.lineId)
@@ -52,7 +53,14 @@ export function InfoPanel({ data, vehicle }: Props) {
 
   return (
     <section className="info-panel">
-      <h2>{vehicle ? t.selectedVehicle : t.noSelection}</h2>
+      <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : t.noSelection}</h2>
+      {!vehicle && station && (
+        <div className="info-grid">
+          <p>{t.destination}: <strong>{localName(station, lang)}</strong></p>
+          <p>Lines: <strong>{station.lineIds.join(', ') || '-'}</strong></p>
+          <p>Coordinates: <strong>{station.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
+        </div>
+      )}
       {vehicle?.type === 'flight' && (
         <div className="info-grid">
           <span className="line-chip" style={{ borderColor: vehicle.color, color: vehicle.color }}>

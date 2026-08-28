@@ -8,7 +8,7 @@ import { computeAirportFlightVehiclePositions } from '../dataAdapters/airportRep
 import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeTramVehiclePositions, computeVehiclePositions } from '../engines/simulationEngine'
 import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
-import type { VehiclePosition } from '../types'
+import type { Station, VehiclePosition } from '../types'
 import { isVehicleVisible } from './vehicleVisibility'
 
 export default function App() {
@@ -17,6 +17,7 @@ export default function App() {
   const [pitchEnabled, setPitchEnabled] = useState(true)
   const [liveBusMode, setLiveBusMode] = useState(true)
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const allLineIds = useMemo(
     () => new Set(transitData.data?.railLines.map(line => line.id) ?? []),
     [transitData.data],
@@ -108,6 +109,10 @@ export default function App() {
           selectedLineIds={selectedLineIds}
           pitchEnabled={pitchEnabled}
           onSelectVehicle={setSelectedVehicle}
+          onSelectStation={station => {
+            setSelectedStation(station)
+            setSelectedVehicle(null)
+          }}
           selectedVehicleId={selectedVehicle?.id ?? null}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
@@ -120,7 +125,7 @@ export default function App() {
           hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
           onToggleLiveBusMode={() => setLiveBusMode(value => !value)}
         />
-        <InfoPanel data={transitData.data} vehicle={selectedVehicle} />
+        <InfoPanel data={transitData.data} vehicle={selectedVehicle} station={selectedStation} />
       </section>
     </main>
   )

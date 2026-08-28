@@ -20,6 +20,7 @@ interface Props {
   selectedBusOperators: Set<string>
   pitchEnabled: boolean
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
+  onSelectStation: (station: Station | null) => void
   selectedVehicleId: string | null
 }
 
@@ -151,11 +152,12 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, selectedVehicleId }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, selectedVehicleId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
   const onSelectVehicleRef = useRef(onSelectVehicle)
+  const onSelectStationRef = useRef(onSelectStation)
   const linesRef = useRef(lines)
   const busRoutesRef = useRef(busRoutes)
   const ferryRoutesRef = useRef(ferryRoutes)
@@ -189,6 +191,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
   }, [onSelectVehicle])
+
+  useEffect(() => {
+    onSelectStationRef.current = onSelectStation
+  }, [onSelectStation])
 
   useEffect(() => {
     if (!mapNode.current || mapRef.current) return
@@ -413,11 +419,22 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.on('click', 'vehicles-circle', event => {
         const id = event.features?.[0]?.properties?.id
         const vehicle = vehiclesRef.current.find(item => item.id === id)
+        onSelectStationRef.current(null)
         onSelectVehicleRef.current(vehicle ?? null)
+      })
+      map.on('click', 'stations-circle', event => {
+        const id = event.features?.[0]?.properties?.id
+        const station = stationsRef.current.find(item => item.id === id)
+        onSelectVehicleRef.current(null)
+        onSelectStationRef.current(station ?? null)
       })
       map.on('click', event => {
         const vehicleFeatures = map.queryRenderedFeatures(event.point, { layers: ['vehicles-circle'] })
-        if (shouldClearVehicleSelection(vehicleFeatures.length)) onSelectVehicleRef.current(null)
+        const stationFeatures = map.queryRenderedFeatures(event.point, { layers: ['stations-circle'] })
+        if (shouldClearVehicleSelection(vehicleFeatures.length) && shouldClearVehicleSelection(stationFeatures.length)) {
+          onSelectVehicleRef.current(null)
+          onSelectStationRef.current(null)
+        }
       })
       map.on('mouseenter', 'vehicles-circle', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'vehicles-circle', () => { map.getCanvas().style.cursor = '' })
@@ -544,12 +561,18 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           return (
             <circle
               key={station.id}
+              className="station-hotspot"
               cx={point.x}
               cy={point.y}
               r="7"
               fill="#f8fafc"
               stroke="#0f172a"
               strokeWidth="2"
+              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+              onClick={() => {
+                onSelectVehicle(null)
+                onSelectStation(station)
+              }}
             />
           )
         })}
