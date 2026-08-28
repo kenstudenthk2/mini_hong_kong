@@ -343,3 +343,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `f618a64`.
 - Known risk: browser/network timing verification remains pending; optional feeds may appear after the base map and should be treated as hydration states.
 - Next task: verify progressive loading and source-link behavior in a working browser harness.
+
+## Compact handoff: visible data-layer manifest
+- Complete: the Data Status directory now reads from one typed manifest covering MTR, Light Rail, buses, ferries, trams, flights, HKIA AIP geometry, and HKIA ground context.
+- Semantics: entries classify current behavior as static, scheduled, live, or replay; the registry documents existing sources only and does not add runtime fetches.
+- Evidence: `src/dataAdapters/layerManifest.test.ts` covers unique registration and representative classifications; full suite has 56 passing tests, lint/build/diff checks pass. Commit: `cd22af7`.
+- Known limitation: browser rendering and link-click verification remain pending because the integrated browser harness is unavailable; the manifest is not a freshness monitor.
+- Next task: validate the Data Status links and progressive-loading states in a working browser harness before adding more layer controls.
