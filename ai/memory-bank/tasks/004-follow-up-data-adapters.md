@@ -201,3 +201,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: the section remains feed-backed status only; it does not imply live aircraft positions or schedule-driven flight motion.
 - Evidence: full suite has 45 passing tests, lint/build/diff checks pass. Commit: `ec428cb`.
 - Next task: add a focused flight information surface and investigate an authoritative airport/route geometry source before introducing aircraft visualization.
+
+## Compact handoff: HKG flight information board
+- Complete: the Flights directory now shows up to six compact arrival/departure records with localized route text, flight number, cargo marker, scheduled time, and status.
+- Localization: English and Chinese values use the merged AAHK fields; Portuguese falls back to the English source because the official API languages are `en`, `zh_HK`, and `zh_CN`.
+- Geometry decision: the reviewed official DATA.GOV.HK, AAHK, CAD, and CSDI results expose flight schedule/status or general airport documentation, but no authoritative machine-readable flight route-coordinate feed was found for this task. Do not invent aircraft paths.
+- Evidence: full suite has 45 passing tests, lint/build/diff checks pass. Commit: `6d3eba0`.
+- Next task: if aircraft visualization is required, add a clearly labeled static HKIA hub/airport geometry source or an approved external route dataset, then build a separate animation model with explicit provenance.
