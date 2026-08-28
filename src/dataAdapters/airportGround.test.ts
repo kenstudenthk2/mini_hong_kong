@@ -5,6 +5,7 @@ describe('hkiaGroundFeatures', () => {
   it('contains pinned terminal and gate context from the OSM snapshot', () => {
     expect(hkiaGroundFeatures.filter(feature => feature.kind === 'terminal').map(feature => feature.ref)).toEqual(['T1', 'T2'])
     expect(hkiaGroundFeatures.filter(feature => feature.kind === 'gate')).toHaveLength(8)
+    expect(hkiaGroundFeatures.map(feature => feature.namePt)).toEqual(['Terminal 1', 'Terminal 2', 'Porta 1', 'Porta 2', 'Porta 3', 'Porta 4', 'Porta 5', 'Porta 6', 'Porta 7', 'Porta 8'])
     expect(hkiaGroundFeatures.every(feature => feature.sourceUrl === HKIA_OSM_SOURCE && feature.sourceTimestamp === HKIA_OSM_TIMESTAMP)).toBe(true)
   })
 

@@ -9,6 +9,7 @@ export interface AirportGroundFeature {
   ref: string
   nameEn: string
   nameZh: string
+  namePt: string
   coordinates: Coordinate
   sourceUrl: string
   sourceTimestamp: string
@@ -23,6 +24,7 @@ export const hkiaGroundFeatures: AirportGroundFeature[] = [
     ref: 'T1',
     nameEn: 'Terminal 1',
     nameZh: '\u4e00\u865f\u5ba2\u904b\u5927\u6a13',
+    namePt: 'Terminal 1',
     coordinates: [113.9265103, 22.3127230],
     sourceUrl: HKIA_OSM_SOURCE,
     sourceTimestamp: HKIA_OSM_TIMESTAMP,
@@ -33,6 +35,7 @@ export const hkiaGroundFeatures: AirportGroundFeature[] = [
     ref: 'T2',
     nameEn: 'Terminal 2',
     nameZh: '\u4e8c\u865f\u5ba2\u904b\u5927\u6a13',
+    namePt: 'Terminal 2',
     coordinates: [113.9385142, 22.3165529],
     sourceUrl: HKIA_OSM_SOURCE,
     sourceTimestamp: HKIA_OSM_TIMESTAMP,
@@ -52,6 +55,7 @@ export const hkiaGroundFeatures: AirportGroundFeature[] = [
     ref: String(ref),
     nameEn: `Gate ${ref}`,
     nameZh: `\u767b\u6a5f\u9580 ${ref}`,
+    namePt: `Porta ${ref}`,
     coordinates: [Number(longitude), Number(latitude)] as Coordinate,
     sourceUrl: HKIA_OSM_SOURCE,
     sourceTimestamp: HKIA_OSM_TIMESTAMP,

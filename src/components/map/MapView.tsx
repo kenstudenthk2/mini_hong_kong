@@ -132,6 +132,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
         ref: feature.ref,
         nameEn: feature.nameEn,
         nameZh: feature.nameZh,
+        namePt: feature.namePt,
       },
     })),
   }
@@ -445,7 +446,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.setLayoutProperty('airport-facilities-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : 'nameEn'])
     }
     if (map.getLayer('airport-ground-label')) {
-      map.setLayoutProperty('airport-ground-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : 'nameEn'])
+      map.setLayoutProperty('airport-ground-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : lang === 'pt' ? 'namePt' : 'nameEn'])
     }
   }, [lang])
 
