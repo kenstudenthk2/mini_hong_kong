@@ -36,28 +36,6 @@ interface Props {
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
-const HONG_KONG_BOUNDS = {
-  minLng: 113.88,
-  maxLng: 114.28,
-  minLat: 22.23,
-  maxLat: 22.49,
-}
-
-function project([lng, lat]: [number, number]): { x: number; y: number } {
-  const x = ((lng - HONG_KONG_BOUNDS.minLng) / (HONG_KONG_BOUNDS.maxLng - HONG_KONG_BOUNDS.minLng)) * 1000
-  const y = (1 - (lat - HONG_KONG_BOUNDS.minLat) / (HONG_KONG_BOUNDS.maxLat - HONG_KONG_BOUNDS.minLat)) * 1000
-  return { x, y }
-}
-
-function pathForGeometry(geometry: [number, number][]): string {
-  return geometry
-    .map((coord, index) => {
-      const point = project(coord)
-      return `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
-    })
-    .join(' ')
-}
-
 export const DEFAULT_MAP_VIEW = {
   center: [114.16, 22.32] as [number, number],
   zoom: 12.4,
@@ -69,10 +47,6 @@ export function basemapVisibilityForPitch(pitchEnabled: boolean): { light: 'visi
   return pitchEnabled
     ? { light: 'none', dark: 'visible' }
     : { light: 'visible', dark: 'none' }
-}
-
-function pathForLine(line: RailLine): string {
-  return pathForGeometry(line.geometry)
 }
 
 function ferryRoutesToGeoJson(routes: FerryRoute[]): GeoJSON.FeatureCollection {
@@ -726,177 +700,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     map.fitBounds(bounds, { padding: { top: 90, right: 80, bottom: 120, left: 320 }, maxZoom: 14.5, duration: 450 })
   }, [busRoutes, ferryRoutes, lines, selectedRouteSearchId, tramRoutes])
 
-  const selectedRoute = [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes].find(item => item.id === selectedRouteSearchId)
-
   return (
     <div className="map-frame">
       <div className="map-view" ref={mapNode} />
-      <svg className="schematic-overlay" viewBox="0 0 1000 1000" role="img" aria-label="Hong Kong rail schematic">
-        <defs>
-          <pattern id="harbour-grid" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(148, 163, 184, 0.08)" strokeWidth="1" />
-          </pattern>
-        </defs>
-        <rect width="1000" height="1000" fill="url(#harbour-grid)" />
-        <path
-          d="M 80 680 C 220 590 390 630 500 560 C 650 470 760 500 900 430"
-          fill="none"
-          stroke="rgba(14, 165, 233, 0.16)"
-          strokeWidth="72"
-          strokeLinecap="round"
-        />
-        {lines.filter(line => activeTools.has(lineTool(line))).map(line => (
-          <g key={line.id} opacity={selectedLineIds.has(line.id) ? 1 : 0.18}>
-            <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
-            <path d={pathForLine(line)} fill="none" stroke={line.color} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-          </g>
-        ))}
-        {busRoutes.filter(route => selectedBusOperators.has(route.operator) && (visibleBusRouteIds.has(route.id) || selectedRouteSearchId === route.id)).map(route => (
-          <path
-            key={route.id}
-            d={pathForGeometry(route.geometry)}
-            fill="none"
-            stroke={route.color}
-            strokeWidth="2"
-            strokeDasharray="8 8"
-            opacity="0.42"
-          />
-        ))}
-        {ferryRoutes.filter(route => selectedRouteIds.has(route.id)).map(route => (
-          <path
-            key={route.id}
-            d={pathForGeometry(route.geometry)}
-            fill="none"
-            stroke={route.color}
-            strokeWidth="3"
-            opacity="0.72"
-          />
-        ))}
-        {tramRoutes.filter(route => selectedRouteIds.has(route.id)).map(route => (
-          <path
-            key={route.id}
-            d={pathForGeometry(route.geometry)}
-            fill="none"
-            stroke={route.color}
-            strokeWidth="3"
-            strokeDasharray="3 5"
-            opacity="0.74"
-          />
-        ))}
-        {selectedRoute && selectedRoute.geometry.length > 1 && (
-          <path
-            d={pathForGeometry(selectedRoute.geometry)}
-            fill="none"
-            stroke={selectedRoute.color}
-            strokeWidth="8"
-            strokeOpacity="0.95"
-            strokeLinecap="round"
-          />
-        )}
-        {stations.map(station => {
-          const point = project(station.coordinates)
-          return (
-            <circle
-              key={station.id}
-              className="station-hotspot"
-              cx={point.x}
-              cy={point.y}
-              r="7"
-              fill="#f8fafc"
-              stroke="#0f172a"
-              strokeWidth="2"
-              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
-              onClick={() => {
-                onSelectVehicle(null)
-                onSelectStation(station)
-                onSelectFacility(null)
-                onSelectGroundFeature(null)
-              }}
-            />
-          )
-        })}
-        {(() => {
-          const point = project(hkiaFacility.coordinates)
-          return (
-            <g className="airport-hotspot">
-              <circle cx={point.x} cy={point.y} r={selectedFacilityId === hkiaFacility.id ? 16 : 12} fill="#38bdf8" stroke="#f8fafc" strokeWidth={selectedFacilityId === hkiaFacility.id ? 5 : 3} style={{ pointerEvents: 'auto', cursor: 'pointer' }} onClick={() => {
-                onSelectVehicle(null)
-                onSelectStation(null)
-                onSelectFacility(hkiaFacility)
-                onSelectGroundFeature(null)
-              }} />
-              <text x={point.x} y={point.y - 18} textAnchor="middle" fill="#bae6fd" fontSize="16" fontWeight="700">HKIA</text>
-            </g>
-          )
-        })()}
-        {hkiaRunways.map(runway => (
-          <path
-            key={runway.id}
-            d={pathForGeometry(runway.geometry)}
-            fill="none"
-            stroke="#cbd5e1"
-            strokeWidth="4"
-            strokeDasharray="8 4"
-            opacity="0.72"
-          />
-        ))}
-        {hkiaGroundFeatures.map(feature => {
-          const point = project(feature.coordinates)
-          return (
-            <g key={feature.id}>
-              <circle cx={point.x} cy={point.y} r={selectedGroundFeatureId === feature.id ? (feature.kind === 'terminal' ? 13 : 8) : (feature.kind === 'terminal' ? 9 : 5)} fill={feature.kind === 'terminal' ? '#f59e0b' : '#a78bfa'} stroke="#0f172a" strokeWidth={selectedGroundFeatureId === feature.id ? 4 : 2} style={{ pointerEvents: 'auto', cursor: 'pointer' }} onClick={() => {
-                onSelectVehicle(null)
-                onSelectStation(null)
-                onSelectFacility(null)
-                onSelectGroundFeature(feature)
-              }} />
-              <text x={point.x} y={point.y - (feature.kind === 'terminal' ? 13 : 8)} textAnchor="middle" fill="#fcd34d" fontSize={feature.kind === 'terminal' ? 12 : 8}>{feature.ref}</text>
-            </g>
-          )
-        })}
-        {visibleVehicles.map(vehicle => {
-          const point = project(vehicle.coordinates)
-          if (vehicle.type === 'flight') {
-            return (
-              <polygon
-                key={vehicle.id}
-                className="vehicle-hotspot"
-                points="0,-15 -7,1 -4,9 0,5 4,9 7,1"
-                transform={`translate(${point.x} ${point.y}) rotate(${vehicle.bearing})`}
-                fill={vehicle.color}
-                stroke="#f8fafc"
-                strokeWidth="2"
-                onClick={() => {
-                  onSelectStation(null)
-                  onSelectFacility(null)
-                  onSelectGroundFeature(null)
-                  onSelectVehicle(vehicle)
-                }}
-                aria-label={vehicle.labelEn}
-              />
-            )
-          }
-          return (
-            <circle
-              key={vehicle.id}
-              className="vehicle-hotspot"
-              cx={point.x}
-              cy={point.y}
-              r="8"
-              fill="#f8fafc"
-              stroke={vehicle.color}
-              strokeWidth="4"
-              onClick={() => {
-                onSelectStation(null)
-                onSelectFacility(null)
-                onSelectGroundFeature(null)
-                onSelectVehicle(vehicle)
-              }}
-              aria-label={vehicle.labelEn}
-            />
-          )
-        })}
-      </svg>
     </div>
   )
 }
