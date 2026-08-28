@@ -604,3 +604,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/nlb.test.ts` covers localized normalization, coordinate coercion, and incomplete-route omission; full suite has 80 passing tests, lint/build/diff checks pass. Commit: `09d7c3c`.
 - Known limitation: runtime loading and NLB ETA integration remain pending; Portuguese currently uses the shared fallback because the official NLB response has no Portuguese field.
 - Next task: add bounded NLB route/stop loading and operator visibility wiring with an explicit request-volume limit.
+
+## Compact handoff: staged NLB route feed
+- Complete: optional hydration now loads the NLB route catalog and stops for the four approved featured route IDs, normalizes them into bus route geometry, and exposes `NLB` in the bus operator directory filter.
+- Request budget: one route-catalog request plus at most four stop requests, with stop requests capped at concurrency two; any failure remains isolated from the rail baseline and other optional feeds.
+- Scope: route geometry and operator visibility only; NLB ETA loading, vehicle movement, and timetable replay were not added.
+- Evidence: pure adapter tests remain green; full suite has 80 passing tests, lint/build/diff checks pass. Commit: `c66e35b`.
+- Known limitation: runtime network hydration and directory rendering remain unverified in a browser; NLB Portuguese names use the shared English fallback because the official response has no Portuguese field.
+- Next task: add bounded NLB ETA normalization and decide whether a single featured route can support live vehicle visualization without excessive requests.
