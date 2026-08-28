@@ -96,3 +96,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Request policy: only route 1 ETA stop requests are made, with eight concurrent requests; empty ETA values are filtered and failed Citybus requests remain optional.
 - Evidence: official route-1 ETA sample returned HTTP 200 with six records; full suite has 31 passing tests, lint/build/diff checks pass. Commit: `6e7517e`.
 - Known risk: Citybus feed timestamp is not yet surfaced independently from the KMB freshness field; route coverage and asynchronous hydration remain follow-up tasks.
+
+## Compact handoff: ferry GeoJSON adapter
+- Complete: `normalizeFerryGeoJson` validates Transport Department ferry GeoJSON, filters ferry route types, groups ordered pier points by route/direction, and preserves English/Traditional Chinese names and journey time.
+- Source contract: `https://static.data.gov.hk/td/routes-fares-geojson/JSON_FERRY.json`; DATA.GOV.HK lists this route/fare source as multilingual GeoJSON with biweekly updates.
+- Guardrails: non-ferry features and route groups with fewer than two piers are omitted; no network loader, generated file, or schedule replay was added.
+- Evidence: `src/dataAdapters/ferry.test.ts` covers route grouping, coordinate ordering, localization, and filtering; full suite has 33 passing tests, lint/build/diff checks pass. Commit: `a08b238`.
+- Next task: load the ferry GeoJSON into the map and add a bounded timetable-driven ferry movement model.
