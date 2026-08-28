@@ -181,3 +181,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: tram vehicles are always visible in MapLibre/schematic views, and Trams are promoted from Planned to an active directory section with route and vehicle counts.
 - Scope: visibility and menu state only; flight mode remains planned.
 - Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `5225867`.
+
+## Compact handoff: HKG flight response adapter
+- Complete: `normalizeHkgFlightResponse` validates and normalizes Airport Authority Hong Kong's documented historical JSON response into typed arrival/departure flight records, including cargo flag, flight numbers, airline code, time, status, and source language.
+- Source contract: DATA.GOV.HK dataset `aahk-team1-flight-info`, backed by `https://www.hongkongairport.com/flightinfo-rest/rest/flights/past`; the official specification documents `en`, `zh_HK`, and `zh_CN` responses updated through the previous calendar day.
+- Guardrails: incomplete records and invalid dates/sequences are omitted; no live-flight claim, fabricated airport geometry, or generated schedule was added.
+- Evidence: `src/dataAdapters/flight.test.ts` covers passenger departure normalization plus arrival/cargo filtering; full suite has 43 passing tests, lint/build/diff checks pass. Commit: `d900bd9`.
+- Next task: add an optional staged runtime loader for the three language feeds, then render airport/flight state without blocking the existing transit map.
