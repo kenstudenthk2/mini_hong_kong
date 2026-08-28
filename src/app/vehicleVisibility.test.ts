@@ -25,6 +25,8 @@ describe('isVehicleVisible', () => {
 
   it('applies the matching visibility set for each mode', () => {
     expect(isVehicleVisible(vehicle('bus', 'citybus-1'), rail, routes, operators)).toBe(false)
+    expect(isVehicleVisible(vehicle('bus', 'nlb-1'), rail, routes, new Set(['NLB']))).toBe(true)
+    expect(isVehicleVisible(vehicle('bus', 'gmb-hki-1-1'), rail, routes, new Set(['GMB']))).toBe(true)
     expect(isVehicleVisible(vehicle('ferry', 'ferry-central'), rail, routes, operators)).toBe(true)
     expect(isVehicleVisible(vehicle('mtr', 'mtr-east'), rail, routes, operators)).toBe(true)
     expect(isVehicleVisible(vehicle('mtr', 'mtr-west'), rail, routes, operators)).toBe(false)
