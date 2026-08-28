@@ -1,5 +1,7 @@
 import { localName, useI18n } from '../../i18n'
 import { classifyFreshness } from '../../dataAdapters/freshness'
+import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
+import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import type { AirportFlight, FerryRoute, Lang, RailLine, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
@@ -77,6 +79,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
   const kmbFreshness = data?.busDataTimestamp
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
     : 'invalid'
+  const aipRevision = HKG_AIP_SOURCE.match(/eaip_(\d{8})/)?.[1] ?? '-'
 
   return (
     <aside className="directory-menu" aria-label="Transit directory">
@@ -177,6 +180,9 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
           <p>{t.simulation}: MTR + Light Rail + Buses + Ferries + Trams + Flights</p>
           <p>KMB ETA: {kmbFreshness}</p>
           <p>{t.source}: {t.dataGov} seed-ready contracts</p>
+          <p>{t.source}: HKIA AIP {aipRevision}</p>
+          <p>{t.source}: OSM snapshot {HKIA_OSM_TIMESTAMP.slice(0, 10)}</p>
+          <p><a href={HKG_AIP_SOURCE} target="_blank" rel="noreferrer">HKIA AIP</a> · <a href={HKIA_OSM_SOURCE} target="_blank" rel="noreferrer">OSM snapshot</a></p>
         </div>
       </details>
     </aside>
