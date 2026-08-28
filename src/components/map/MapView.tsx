@@ -2,13 +2,14 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from 'maplibre-gl'
 import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
-import type { BusRoute, FerryRoute, RailLine, Station, VehiclePosition } from '../../types'
+import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
 interface Props {
   lines: RailLine[]
   busRoutes: BusRoute[]
   ferryRoutes: FerryRoute[]
+  tramRoutes: TramRoute[]
   stations: Station[]
   vehicles: VehiclePosition[]
   selectedLineIds: Set<string>
@@ -62,12 +63,31 @@ function ferryRoutesToGeoJson(routes: FerryRoute[]): GeoJSON.FeatureCollection {
   }
 }
 
+function tramRoutesToGeoJson(routes: TramRoute[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: routes.map(route => ({
+      type: 'Feature',
+      id: route.id,
+      geometry: { type: 'LineString', coordinates: route.geometry },
+      properties: {
+        id: route.id,
+        color: route.color,
+        operator: route.operator,
+        routeNumber: route.routeNumber,
+        nameEn: route.nameEn,
+        nameZh: route.nameZh,
+      },
+    })),
+  }
+}
+
 function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollection) {
   const source = map.getSource(id) as GeoJSONSource | undefined
   source?.setData(data)
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -75,6 +95,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
   const linesRef = useRef(lines)
   const busRoutesRef = useRef(busRoutes)
   const ferryRoutesRef = useRef(ferryRoutes)
+  const tramRoutesRef = useRef(tramRoutes)
   const stationsRef = useRef(stations)
   const selectedLineIdsRef = useRef(selectedLineIds)
   const { lang } = useI18n()
@@ -92,9 +113,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
     linesRef.current = lines
     busRoutesRef.current = busRoutes
     ferryRoutesRef.current = ferryRoutes
+    tramRoutesRef.current = tramRoutes
     stationsRef.current = stations
     selectedLineIdsRef.current = selectedLineIds
-  }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations])
+  }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations, tramRoutes])
 
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
@@ -126,6 +148,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
       map.addSource('rail-lines', { type: 'geojson', data: emptyCollection })
       map.addSource('bus-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('ferry-routes', { type: 'geojson', data: emptyCollection })
+      map.addSource('tram-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
@@ -168,6 +191,16 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
         paint: {
           'line-color': ['get', 'color'],
           'line-width': 2.4,
+          'line-opacity': 0.78,
+        },
+      })
+      map.addLayer({
+        id: 'tram-routes',
+        type: 'line',
+        source: 'tram-routes',
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': 2.2,
           'line-opacity': 0.78,
         },
       })
@@ -249,6 +282,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
       updateSource(map, 'rail-lines', linesToGeoJson(linesRef.current, selectedLineIdsRef.current))
       updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutesRef.current))
       updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutesRef.current))
+      updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current))
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -269,7 +303,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
     updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes))
-  }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations, visibleVehicles])
+    updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes))
+  }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -330,6 +365,17 @@ export function MapView({ lines, busRoutes, ferryRoutes, stations, vehicles, sel
             stroke={route.color}
             strokeWidth="3"
             opacity="0.72"
+          />
+        ))}
+        {tramRoutes.map(route => (
+          <path
+            key={route.id}
+            d={pathForGeometry(route.geometry)}
+            fill="none"
+            stroke={route.color}
+            strokeWidth="3"
+            strokeDasharray="3 5"
+            opacity="0.74"
           />
         ))}
         {stations.map(station => {

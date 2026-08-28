@@ -54,6 +54,7 @@ export default function App() {
           lines={transitData.data?.railLines ?? []}
           busRoutes={transitData.data?.busRoutes ?? []}
           ferryRoutes={transitData.data?.ferryRoutes ?? []}
+          tramRoutes={transitData.data?.tramRoutes ?? []}
           stations={transitData.data?.stations ?? []}
           vehicles={vehicles}
           selectedLineIds={selectedLineIds}

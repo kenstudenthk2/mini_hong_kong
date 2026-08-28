@@ -3,6 +3,7 @@ import type { TransitData } from '../types'
 import { normalizeCitybusEta, normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
 import { normalizeFerryGeoJson } from '../dataAdapters/ferry'
 import { normalizeFerryGtfsSchedules, type FerryGtfsSnapshot } from '../dataAdapters/ferrySchedule'
+import { normalizeTramGeoJson } from '../dataAdapters/tram'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -121,6 +122,11 @@ async function loadFerryRoutes(): Promise<TransitData['ferryRoutes']> {
   return normalizeFerryGeoJson(raw)
 }
 
+async function loadTramRoutes(): Promise<TransitData['tramRoutes']> {
+  const raw = await loadJson('https://static.data.gov.hk/td/routes-fares-geojson/JSON_TRAM.json')
+  return normalizeTramGeoJson(raw)
+}
+
 async function loadFerrySchedules(): Promise<NonNullable<TransitData['ferrySchedules']>> {
   const [routes, trips, stopTimes, calendar] = await Promise.all([
     loadText('https://static.data.gov.hk/td/pt-headway-en/routes.txt'),
@@ -138,7 +144,7 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, busFeed] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, ferryRoutes, tramRoutes, busFeed] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
@@ -147,6 +153,7 @@ export function useTransitData(): TransitDataState {
           loadCitybusRoutes().catch(() => []),
           loadCitybusArrivals().catch(() => []),
           loadFerryRoutes().catch(() => []),
+          loadTramRoutes().catch(() => []),
           loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
@@ -161,6 +168,7 @@ export function useTransitData(): TransitDataState {
           busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
           busDataTimestamp: busFeed.generatedAt,
           ferryRoutes,
+          tramRoutes,
         })
         setState({
           loading: false,
