@@ -666,3 +666,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: GMB markers use ETA interpolation only when adjacent-stop predictions are available; no fixed timetable is fabricated.
 - Evidence: mocked official payload-shape coverage plus full suite of 87 passing tests and passing build. Commit: `75820f3`.
 - Known limitation: live network hydration, marker movement, and ETA freshness behavior remain unverified in a working browser.
+
+## Compact handoff: GMB ETA resilience and freshness
+- Complete: individual GMB ETA request failures now degrade to empty arrivals while retaining successful route geometry and other ETA records.
+- Freshness: the optional bus timestamp now considers the latest valid GMB arrival timestamp alongside the KMB feed timestamp.
+- Evidence: regression coverage verifies route retention after one ETA failure; full suite has 88 passing tests, lint, build, and diff checks pass. Commit: `af0012f`.
+- Known limitation: live provider behavior and browser marker movement remain unverified; no retry loop or polling was added.
