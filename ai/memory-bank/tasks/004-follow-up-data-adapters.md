@@ -115,3 +115,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Contract: `FerrySchedule` carries explicit service window, headway, duration, and dwell values; route `journeyTimeMinutes` can seed an approved schedule but is not itself treated as a timetable.
 - Evidence: full suite has 34 passing tests, lint/build/diff checks pass. Commit: `b1ec6d9`.
 - Next task: provide an approved ferry timetable source/output and wire schedules into `App`; do not invent service frequencies from route geometry alone.
+
+## Compact handoff: ferry GTFS schedule adapter
+- Complete: `normalizeFerryGtfsSchedules` parses quoted CSV fields, strips a UTF-8 BOM, filters GTFS ferry routes (`route_type=4`), maps service calendars to weekday/weekend, and emits one explicit departure per trip.
+- Source contract: `https://static.data.gov.hk/td/pt-headway-en/routes.txt`, `trips.txt`, `stop_times.txt`, and `calendar.txt`; the live route list check found 59 ferry routes and the trip check found 2,494 ferry trips.
+- Semantics: `headwayMinutes=1` with equal start/end minutes represents a single scheduled departure; duration comes from first departure to last arrival, including GTFS times beyond 24:00.
+- Evidence: `src/dataAdapters/ferrySchedule.test.ts` covers weekday service, weekend service, non-ferry filtering, malformed trips, BOM handling, and post-midnight duration; full suite has 36 passing tests. Commit: `2a7daf9`.
+- Next task: add explicit-departure handling for post-midnight trips in the engine, then wire approved schedules into `App`; no generated timetable file was added.
