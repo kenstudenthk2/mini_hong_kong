@@ -10,6 +10,7 @@ import { useSimulationClock } from '../hooks/useSimulationClock'
 import { useTransitData } from '../hooks/useTransitData'
 import type { Station, VehiclePosition } from '../types'
 import { isVehicleVisible } from './vehicleVisibility'
+import type { SearchableRoute } from './routeSearch'
 
 export default function App() {
   const transitData = useTransitData()
@@ -18,6 +19,8 @@ export default function App() {
   const [liveBusMode, setLiveBusMode] = useState(true)
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null)
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
+  const [routeSearchQuery, setRouteSearchQuery] = useState('')
+  const [selectedRouteSearchId, setSelectedRouteSearchId] = useState<string | null>(null)
   const allLineIds = useMemo(
     () => new Set(transitData.data?.railLines.map(line => line.id) ?? []),
     [transitData.data],
@@ -103,6 +106,10 @@ export default function App() {
           setSelectedStation(station)
           setSelectedVehicle(null)
         }}
+        routeSearchQuery={routeSearchQuery}
+        onRouteSearchQueryChange={setRouteSearchQuery}
+        selectedRouteSearchId={selectedRouteSearchId}
+        onSelectRouteSearch={(route: SearchableRoute | null) => setSelectedRouteSearchId(route?.id ?? null)}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}
@@ -123,6 +130,7 @@ export default function App() {
           }}
           selectedVehicleId={selectedVehicle?.id ?? null}
           selectedStationId={selectedStation?.id ?? null}
+          selectedRouteSearchId={selectedRouteSearchId}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
         />

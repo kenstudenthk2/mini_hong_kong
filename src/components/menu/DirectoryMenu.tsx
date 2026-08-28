@@ -3,6 +3,7 @@ import { classifyFreshness } from '../../dataAdapters/freshness'
 import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
 import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
+import { searchRoutes, type SearchableRoute } from '../../app/routeSearch'
 import type { AirportFlight, FerryRoute, Lang, RailLine, Station, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
@@ -20,6 +21,10 @@ interface Props {
   stations: Station[]
   selectedStationId: string | null
   onSelectStation: (station: Station | null) => void
+  routeSearchQuery: string
+  onRouteSearchQueryChange: (query: string) => void
+  selectedRouteSearchId: string | null
+  onSelectRouteSearch: (route: SearchableRoute | null) => void
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -71,7 +76,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch }: Props) {
   const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -86,6 +91,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
     ? classifyFreshness(data.busDataTimestamp, new Date(), 1)
     : 'invalid'
   const aipRevision = HKG_AIP_SOURCE.match(/eaip_(\d{8})/)?.[1] ?? '-'
+  const searchableRoutes: SearchableRoute[] = [...mtrLines, ...lightRailLines, ...(data?.busRoutes ?? []), ...(data?.ferryRoutes ?? []), ...(data?.tramRoutes ?? [])]
+  const routeSearchResults = searchRoutes(searchableRoutes, routeSearchQuery, lang).slice(0, 8)
 
   return (
     <aside className="directory-menu" aria-label="Transit directory">
@@ -205,6 +212,25 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
             <option value="">{lang === 'zh' ? '\u9078\u64c7\u8eca\u7ad9' : lang === 'pt' ? 'Selecionar estacao' : 'Select a station'}</option>
             {stations.map(station => <option key={station.id} value={station.id}>{localName(station, lang)}</option>)}
           </select>
+        </div>
+      </details>
+
+      <details className="menu-section">
+        <summary>{lang === 'zh' ? '\u8def\u7dda\u641c\u5c0b' : lang === 'pt' ? 'Pesquisa de rotas' : 'Route search'}<span>{routeSearchResults.length}</span></summary>
+        <div className="section-body">
+          <input
+            type="search"
+            value={routeSearchQuery}
+            placeholder={lang === 'zh' ? '\u641c\u5c0b\u8def\u7dda\u6216\u71df\u8fa6\u5546' : lang === 'pt' ? 'Pesquisar rota ou operador' : 'Search route or operator'}
+            onChange={event => onRouteSearchQueryChange(event.target.value)}
+          />
+          {routeSearchResults.map(route => (
+            <button className="line-row" type="button" key={route.id} aria-pressed={selectedRouteSearchId === route.id} onClick={() => onSelectRouteSearch(route)}>
+              <span className="line-dot" style={{ background: route.color }} />
+              <span>{'routeNumber' in route ? `${route.routeNumber} · ` : ''}{localName(route, lang)}</span>
+              <span className="line-state">{selectedRouteSearchId === route.id ? t.active : route.operator}</span>
+            </button>
+          ))}
         </div>
       </details>
     </aside>
