@@ -111,6 +111,24 @@ export function selectedRouteCenter(routes: SearchableRoute[], selectedRouteId: 
   return route?.geometry[0] ?? null
 }
 
+export function selectedRouteGeometry(routes: SearchableRoute[], selectedRouteId: string | null): [number, number][] {
+  return routes.find(item => item.id === selectedRouteId)?.geometry ?? []
+}
+
+function routeFocusToGeoJson(routes: SearchableRoute[], selectedRouteId: string | null): GeoJSON.FeatureCollection {
+  const route = routes.find(item => item.id === selectedRouteId)
+  if (!route || route.geometry.length < 2) return emptyCollection
+  return {
+    type: 'FeatureCollection',
+    features: [{
+      type: 'Feature',
+      id: `focus-${route.id}`,
+      geometry: { type: 'LineString', coordinates: route.geometry },
+      properties: { color: route.color },
+    }],
+  }
+}
+
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -175,6 +193,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const selectedLineIdsRef = useRef(selectedLineIds)
   const selectedRouteIdsRef = useRef(selectedRouteIds)
   const selectedBusOperatorsRef = useRef(selectedBusOperators)
+  const selectedRouteSearchIdRef = useRef(selectedRouteSearchId)
   const { lang } = useI18n()
 
   const visibleVehicles = useMemo(
@@ -195,7 +214,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     selectedLineIdsRef.current = selectedLineIds
     selectedRouteIdsRef.current = selectedRouteIds
     selectedBusOperatorsRef.current = selectedBusOperators
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, stations, tramRoutes])
+    selectedRouteSearchIdRef.current = selectedRouteSearchId
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes])
 
   useEffect(() => {
     onSelectVehicleRef.current = onSelectVehicle
@@ -238,6 +258,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
+      map.addSource('route-focus', { type: 'geojson', data: emptyCollection })
 
       map.addLayer({
         id: 'rail-lines-glow',
@@ -288,6 +309,17 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           'line-color': ['get', 'color'],
           'line-width': 2.2,
           'line-opacity': 0.78,
+        },
+      })
+      map.addLayer({
+        id: 'route-focus',
+        type: 'line',
+        source: 'route-focus',
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': 6,
+          'line-opacity': 0.95,
+          'line-blur': 0.5,
         },
       })
       map.addLayer({
@@ -457,6 +489,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
+      updateSource(map, 'route-focus', routeFocusToGeoJson([...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current], selectedRouteSearchIdRef.current))
     })
     mapRef.current = map
     return () => {
@@ -478,7 +511,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
     updateSource(map, 'airport-ground', airportGroundToGeoJson())
-  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, stations, tramRoutes, visibleVehicles])
+    updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
+  }, [busRoutes, ferryRoutes, lines, selectedBusOperators, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
     const map = mapRef.current
@@ -523,6 +557,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     if (!map || !center) return
     map.easeTo({ center, duration: 220 })
   }, [busRoutes, ferryRoutes, lines, selectedRouteSearchId, tramRoutes])
+
+  const selectedRoute = [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes].find(item => item.id === selectedRouteSearchId)
 
   return (
     <div className="map-frame">
@@ -579,6 +615,16 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             opacity="0.74"
           />
         ))}
+        {selectedRoute && selectedRoute.geometry.length > 1 && (
+          <path
+            d={pathForGeometry(selectedRoute.geometry)}
+            fill="none"
+            stroke={selectedRoute.color}
+            strokeWidth="8"
+            strokeOpacity="0.95"
+            strokeLinecap="round"
+          />
+        )}
         {stations.map(station => {
           const point = project(station.coordinates)
           return (

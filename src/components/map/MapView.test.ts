@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { selectedRouteCenter, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import { selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -43,5 +43,7 @@ describe('selected vehicle map focus', () => {
     expect(selectedRouteCenter([route], 'mtr-east')).toEqual([114.1, 22.3])
     expect(selectedRouteCenter([route], 'missing')).toBeNull()
     expect(selectedRouteCenter([route], null)).toBeNull()
+    expect(selectedRouteGeometry([route], 'mtr-east')).toEqual([[114.1, 22.3]])
+    expect(selectedRouteGeometry([route], 'missing')).toEqual([])
   })
 })
