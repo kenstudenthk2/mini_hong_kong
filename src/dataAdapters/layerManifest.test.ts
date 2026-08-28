@@ -14,6 +14,12 @@ describe('layer manifest', () => {
     expect(layerManifest.find(entry => entry.id === 'hkia-aip')?.dataClass).toBe('static')
   })
 
+  it('links externally loaded transport layers to their Hong Kong source hubs', () => {
+    expect(layerManifest.find(entry => entry.id === 'buses')?.sourceUrl).toBe('https://data.gov.hk/en/')
+    expect(layerManifest.find(entry => entry.id === 'ferries')?.sourceUrl).toBe('https://static.data.gov.hk/td/pt-headway-en/')
+    expect(layerManifest.find(entry => entry.id === 'trams')?.sourceUrl).toBe('https://static.data.gov.hk/td/pt-headway-en/')
+  })
+
   it('provides labels and source names for every supported locale', () => {
     for (const entry of layerManifest) {
       expect(entry.labelEn).toBeTruthy()
