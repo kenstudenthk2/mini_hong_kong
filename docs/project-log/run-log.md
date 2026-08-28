@@ -146,3 +146,7 @@
 - Turning a transport tool OFF can no longer leave its selected route highlight visible through the dedicated focus source.
 - Evidence: 25 test files and 98 tests pass, lint, build, and diff checks pass.
 - Browser limitation: live interaction remains unverified because the browser runtime fails before tab creation.
+
+### R-028: Local HTTP smoke audit (2026-08-28)
+- Started Vite on port 5184 and received HTTP 200 for the app shell, module entrypoint, rail lines, stations, weekday, and weekend trip assets.
+- Stopped the temporary server after verification; no browser visual claim was made.

@@ -1,8 +1,9 @@
 # Quality Gates
 
 ## Authoritative Update (2026-08-28)
-- Automated gates: 25 test files and 96 tests pass; lint, build, and diff checks pass.
-- Remote: verified commits through `3d38ab7` are synchronized to both `origin/feature/mini-hong-kong-mvp` and `origin/main`.
+- Automated gates: 25 test files and 98 tests pass; lint, build, and diff checks pass.
+- HTTP smoke: local Vite returned HTTP 200 for `/`, `/src/main.tsx`, `/data/rail-lines.json`, `/data/stations.json`, and both trip snapshots on port 5184.
+- Remote: verified commits through `5d54327` are synchronized to both `origin/feature/mini-hong-kong-mvp` and `origin/main`.
 - Renderer: MapLibre is the sole renderer; the retired SVG schematic code has been removed and must not be treated as visual evidence.
 - Browser: desktop/mobile WebGL interaction remains pending because the integrated browser runtime fails before tab creation.
 
@@ -25,7 +26,7 @@
 - Conditions: Remote PR creation remains pending until a Git remote is available. Native MapLibre canvas visibility should be revisited in a full browser/WebGL environment; the MVP has a verified SVG schematic fallback.
 
 ## Current Gate Update (2026-08-28)
-- Automated gates: 88 tests, lint, build, and diff check passed.
+- Automated gates: 98 tests, lint, build, and diff check passed.
 - HTTP smoke: local Vite served `/` and `/data/rail-lines.json` with HTTP 200 on port 5180.
 - Remote: `origin` is configured, but the feature branch and `origin/main` diverge; integration requires an approved merge/rebase decision.
 - Browser: current browser/WebGL interaction remains unverified; prior screenshots are historical evidence only.
