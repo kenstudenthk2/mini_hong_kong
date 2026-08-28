@@ -1,4 +1,4 @@
-import type { BusRoute, BusArrival, BusSchedule, FerryRoute, FerrySchedule, RailLine, Station, TransitData, Trip, VehiclePosition } from '../types'
+import type { BusRoute, BusArrival, BusSchedule, FerryRoute, FerrySchedule, RailLine, Station, TransitData, TramRoute, TramSchedule, Trip, VehiclePosition } from '../types'
 import { getOperationalScheduleType, getScheduleType, hongKongMinutesOfDay } from './hongKongTime'
 import { bearing, cumulativeProgressAtIndex, interpolateOnLine } from './geometry'
 
@@ -269,6 +269,40 @@ export function computeFerryVehiclePositions(routes: FerryRoute[], schedules: Fe
       vehicles.push({
         id: `${schedule.id}-${start}`,
         type: 'ferry',
+        lineId: route.id,
+        tripId: schedule.id,
+        color: route.color,
+        coordinates: position.coordinates,
+        bearing: position.bearing,
+        progress: position.progress,
+        labelEn: route.nameEn,
+        labelZh: route.nameZh,
+        labelPt: route.namePt || route.nameEn,
+        nextStopId: position.nextStopId,
+        destinationId: route.stopIds[route.stopIds.length - 1] ?? null,
+      })
+    }
+  }
+
+  return vehicles
+}
+
+export function computeTramVehiclePositions(routes: TramRoute[], schedules: TramSchedule[], time: Date): VehiclePosition[] {
+  const scheduleType = getOperationalScheduleType(time)
+  const nowMinutes = hongKongMinutesOfDay(time)
+  const routeById = new Map(routes.map(route => [route.id, route]))
+  const vehicles: VehiclePosition[] = []
+
+  for (const schedule of schedules) {
+    if (schedule.scheduleType !== scheduleType) continue
+    const route = routeById.get(schedule.routeId)
+    if (!route) continue
+    for (const start of activeStarts(schedule, nowMinutes)) {
+      const adjustedNow = adjustedNowMinutes(schedule, nowMinutes)
+      const position = scheduledRoutePositionFromElapsed(route, schedule, adjustedNow - start)
+      vehicles.push({
+        id: `${schedule.id}-${start}`,
+        type: 'tram',
         lineId: route.id,
         tripId: schedule.id,
         color: route.color,

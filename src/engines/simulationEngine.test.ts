@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { BusRoute, BusSchedule, FerryRoute, FerrySchedule, TransitData } from '../types'
-import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeVehiclePositions, getScheduleType } from './simulationEngine'
+import type { BusRoute, BusSchedule, FerryRoute, FerrySchedule, TransitData, TramRoute, TramSchedule } from '../types'
+import { computeBusVehiclePositions, computeBusVehiclePositionsFromEta, computeFerryVehiclePositions, computeTramVehiclePositions, computeVehiclePositions, getScheduleType } from './simulationEngine'
 import { hongKongWallToInstant } from './hongKongTime'
 import { interpolateOnLine } from './geometry'
 
@@ -78,6 +78,20 @@ const ferrySchedule: FerrySchedule = {
   headwayMinutes: 20,
   durationMinutes: ferryRoute.journeyTimeMinutes,
   dwellMinutes: 1,
+}
+
+const tramRoute: TramRoute = {
+  ...ferryRoute,
+  id: 'tram-4001-1',
+  operator: 'Hong Kong Tramways',
+  color: '#f59e0b',
+}
+
+const tramSchedule: TramSchedule = {
+  ...ferrySchedule,
+  id: 'tram-4001-1-schedule',
+  routeId: tramRoute.id,
+  durationMinutes: 20,
 }
 
 describe('Hong Kong schedule type', () => {
@@ -196,5 +210,17 @@ describe('computeFerryVehiclePositions', () => {
 
     expect(vehicles).toHaveLength(1)
     expect(vehicles[0].progress).toBeGreaterThan(0)
+  })
+})
+
+describe('computeTramVehiclePositions', () => {
+  it('creates scheduled tram vehicles using the shared route interpolator', () => {
+    const vehicles = computeTramVehiclePositions([tramRoute], [tramSchedule], hongKongWallToInstant(2026, 7, 24, 6, 5))
+
+    expect(vehicles).toHaveLength(1)
+    expect(vehicles[0].type).toBe('tram')
+    expect(vehicles[0].coordinates[0]).toBeGreaterThan(114)
+    expect(vehicles[0].nextStopId).toBe('pier-b')
+    expect(vehicles[0].destinationId).toBe('pier-c')
   })
 })

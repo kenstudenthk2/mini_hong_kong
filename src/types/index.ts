@@ -111,7 +111,7 @@ export interface TransitData {
 
 export interface VehiclePosition {
   id: string
-  type: TransitMode | 'bus' | 'ferry'
+  type: TransitMode | 'bus' | 'ferry' | 'tram'
   lineId: string
   tripId: string
   color: string
