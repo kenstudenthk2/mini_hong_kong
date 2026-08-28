@@ -1,6 +1,6 @@
 import type { Lang, SimulationClock } from '../../types'
 import { useI18n } from '../../i18n'
-import { hongKongDateTimeInputToInstant, hongKongDateTimeInputValue } from '../../engines/hongKongTime'
+import { hongKongDateTimeInputToInstant, hongKongDateTimeInputValue, hongKongMinutesOfDay, hongKongWallToInstant, hongKongYmd } from '../../engines/hongKongTime'
 
 interface Props {
   clock: SimulationClock
@@ -17,6 +17,11 @@ export function simulationTimeLocale(lang: Lang): string {
   return lang === 'zh' ? 'zh-HK' : lang === 'pt' ? 'pt-PT' : 'en-GB'
 }
 
+export function timelineTimeFromMinute(currentTime: Date, minute: number): Date {
+  const [year, month, day] = hongKongYmd(currentTime).split('-').map(Number)
+  return hongKongWallToInstant(year, month - 1, day, Math.floor(minute / 60), minute % 60)
+}
+
 export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, hasLiveBusData, onToggleLiveBusMode, followSelectedVehicle, onToggleFollowSelectedVehicle }: Props) {
   const { lang, setLang, t } = useI18n()
   const formatted = new Intl.DateTimeFormat(simulationTimeLocale(lang), {
@@ -26,8 +31,9 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
     second: '2-digit',
     weekday: 'short',
   }).format(clock.currentTime)
+  const timelineMinute = Math.floor(hongKongMinutesOfDay(clock.currentTime))
 
-  return (
+  return <>
     <div className="control-panel">
       <div className="time-readout">{formatted}</div>
       <label className="select-row">
@@ -78,5 +84,13 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
         </select>
       </label>
     </div>
-  )
+    <div className="timeline-panel" aria-label="Simulation timeline">
+      <div className="timeline-head">
+        <span>{t.simulation}</span>
+        <strong>{String(Math.floor(timelineMinute / 60)).padStart(2, '0')}:{String(timelineMinute % 60).padStart(2, '0')}</strong>
+      </div>
+      <input type="range" min="0" max="1439" value={timelineMinute} aria-label="Simulation time of day" onChange={event => clock.setTime(timelineTimeFromMinute(clock.currentTime, Number(event.target.value)))} />
+      <div className="timeline-scale" aria-hidden="true"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+    </div>
+  </>
 }
