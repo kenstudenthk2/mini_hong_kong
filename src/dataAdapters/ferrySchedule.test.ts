@@ -1,5 +1,32 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeFerryGtfsSchedules } from './ferrySchedule'
+import { normalizeFerryGtfsSchedules, normalizeTramGtfsSchedules } from './ferrySchedule'
+
+describe('normalizeTramGtfsSchedules', () => {
+  it('filters GTFS tram routes and uses tram route IDs', () => {
+    const result = normalizeTramGtfsSchedules({
+      routes: [
+        'route_id,agency_id,route_short_name,route_long_name,route_type',
+        '4001,TRAM,,SHAU KEI WAN - WESTERN MARKET,0',
+        '7005,FERRY,,CENTRAL - CHEUNG CHAU,4',
+      ].join('\n'),
+      trips: [
+        'route_id,service_id,trip_id',
+        '4001,weekday,4001-1-weekday-0800',
+      ].join('\n'),
+      calendar: [
+        'service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date',
+        'weekday,1,1,1,1,1,0,0,20200101,20991231',
+      ].join('\n'),
+      stopTimes: [
+        'trip_id,arrival_time,departure_time,stop_id,stop_sequence',
+        '4001-1-weekday-0800,08:00:00,08:00:00,401,1',
+        '4001-1-weekday-0800,08:20:00,08:20:00,402,2',
+      ].join('\n'),
+    })
+
+    expect(result[0]).toMatchObject({ routeId: 'tram-4001-1', durationMinutes: 20 })
+  })
+})
 
 describe('normalizeFerryGtfsSchedules', () => {
   it('converts ferry GTFS trips into explicit weekday and weekend departures', () => {

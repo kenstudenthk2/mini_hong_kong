@@ -66,12 +66,12 @@ function serviceTypes(calendar: z.infer<typeof CalendarRow>): ScheduleType[] {
   return [weekday ? 'weekday' : null, weekend ? 'weekend' : null].filter((type): type is ScheduleType => type !== null)
 }
 
-export function normalizeFerryGtfsSchedules(snapshot: FerryGtfsSnapshot): FerrySchedule[] {
-  const ferryRouteIds = new Set(
+function normalizeGtfsSchedules(snapshot: FerryGtfsSnapshot, routeType: string, routePrefix: string): FerrySchedule[] {
+  const routeIds = new Set(
     parseCsv(snapshot.routes)
       .map(row => RouteRow.safeParse(row))
       .filter((result): result is { success: true; data: z.infer<typeof RouteRow> } => result.success)
-      .filter(result => result.data.route_type === '4')
+      .filter(result => result.data.route_type === routeType)
       .map(result => result.data.route_id),
   )
   const calendars = new Map(
@@ -90,7 +90,7 @@ export function normalizeFerryGtfsSchedules(snapshot: FerryGtfsSnapshot): FerryS
 
   const schedules: FerrySchedule[] = []
   for (const result of parseCsv(snapshot.trips).map(row => TripRow.safeParse(row))) {
-    if (!result.success || !ferryRouteIds.has(result.data.route_id)) continue
+    if (!result.success || !routeIds.has(result.data.route_id)) continue
     const direction = result.data.trip_id.match(/^[^-]+-(\d+)-/)?.[1]
     if (!direction) continue
     const rows = [...(stopTimes.get(result.data.trip_id) ?? [])]
@@ -103,7 +103,7 @@ export function normalizeFerryGtfsSchedules(snapshot: FerryGtfsSnapshot): FerryS
     for (const scheduleType of calendars.get(result.data.service_id) ?? []) {
       schedules.push({
         id: `${result.data.trip_id}-${scheduleType}`,
-        routeId: `ferry-${result.data.route_id}-${direction}`,
+        routeId: `${routePrefix}-${result.data.route_id}-${direction}`,
         scheduleType,
         startMinutes,
         endMinutes: startMinutes,
@@ -114,6 +114,14 @@ export function normalizeFerryGtfsSchedules(snapshot: FerryGtfsSnapshot): FerryS
     }
   }
   return schedules
+}
+
+export function normalizeFerryGtfsSchedules(snapshot: FerryGtfsSnapshot): FerrySchedule[] {
+  return normalizeGtfsSchedules(snapshot, '4', 'ferry')
+}
+
+export function normalizeTramGtfsSchedules(snapshot: FerryGtfsSnapshot): FerrySchedule[] {
+  return normalizeGtfsSchedules(snapshot, '0', 'tram')
 }
 
 export type { FerryGtfsSnapshot }

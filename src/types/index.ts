@@ -81,6 +81,8 @@ export interface FerrySchedule {
   dwellMinutes: number
 }
 
+export type TramSchedule = FerrySchedule
+
 export interface BusArrival {
   id: string
   routeId: string
@@ -103,6 +105,7 @@ export interface TransitData {
   ferryRoutes?: FerryRoute[]
   ferrySchedules?: FerrySchedule[]
   tramRoutes?: TramRoute[]
+  tramSchedules?: TramSchedule[]
   flights?: unknown[]
 }
 
