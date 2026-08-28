@@ -653,3 +653,16 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Interaction: switches reuse the existing line, route, operator, and flight visibility state; Reset restores all transport tools.
 - Evidence: full suite of 83 passing tests and passing build. Commit: `cdbb60f`.
 - Known limitation: browser interaction, responsive layout, and localized labels remain unverified because the integrated browser harness is unavailable.
+
+## Compact handoff: GMB ETA normalizer
+- Complete: `normalizeGmbEta` validates official GMB route-stop ETA responses, preserves absolute timestamps and English remarks, and maps ETA sequence/context into shared `BusArrival` records.
+- Guardrails: disabled entries and invalid timestamps are omitted; no timetable headway is inferred.
+- Evidence: `src/dataAdapters/gmb.test.ts` covers multiple arrivals and invalid/disabled records. Full suite has 86 passing tests. Commit: `ee3441c`.
+- Next task: wire a bounded GMB ETA request sample into the runtime only after preserving route/stop request limits.
+
+## Compact handoff: bounded GMB ETA runtime
+- Complete: optional hydration now loads ETA for the sampled GMB route directions and sampled stops, then merges normalized records into the shared bus-arrival feed.
+- Request policy: ETA requests reuse the six-stop-per-direction cap and concurrency-two worker pool; failures remain optional.
+- Semantics: GMB markers use ETA interpolation only when adjacent-stop predictions are available; no fixed timetable is fabricated.
+- Evidence: mocked official payload-shape coverage plus full suite of 87 passing tests and passing build. Commit: `75820f3`.
+- Known limitation: live network hydration, marker movement, and ETA freshness behavior remain unverified in a working browser.
