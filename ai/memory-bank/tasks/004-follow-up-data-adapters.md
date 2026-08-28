@@ -271,3 +271,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `71eed0a`.
 - Known limitation: browser visual verification remains pending; bus route rows are not individually selectable yet.
 - Next task: add per-operator or route-level bus controls only if the directory can remain compact and consistent.
+
+## Compact handoff: ferry and tram route directory
+- Complete: Ferry and Tram menu sections now list each normalized route number and localized route name beneath their active vehicle counts.
+- Scope: directory visibility only; route geometry, schedules, and simulation behavior are unchanged. The larger bus dataset remains summarized by active count and total route count.
+- Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `fd44a03`.
+- Known limitation: ferry/tram rows are informational rather than individually filterable; browser visual verification remains pending.
+- Next task: add route-level filtering only with a bounded control model that preserves the directory's compact layout.
