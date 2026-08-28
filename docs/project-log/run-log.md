@@ -150,3 +150,8 @@
 ### R-028: Local HTTP smoke audit (2026-08-28)
 - Started Vite on port 5184 and received HTTP 200 for the app shell, module entrypoint, rail lines, stations, weekday, and weekend trip assets.
 - Stopped the temporary server after verification; no browser visual claim was made.
+
+### R-029: Rendered browser verification retry (2026-08-28)
+- Started Vite on port 5185 successfully.
+- Pencil browser failed before page creation with `failed to connect to running Pencil app: desktop` after three internal retries.
+- Stopped the temporary server; no screenshot, canvas-pixel, or interaction pass is claimed.

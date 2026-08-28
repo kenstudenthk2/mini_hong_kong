@@ -64,3 +64,11 @@
 - Resolution: Stopped the temporary Vite server; retained automated and HTTP verification, with no browser visual claim.
 - Attempts: 1 tool attempt containing 3 connector retries.
 - Next action: Retry only after the integrated browser desktop connection is restored; do not add another browser harness package for this task.
+
+### F-007: Current Pencil browser connector unavailable
+- Task: Current rendered verification after MapLibre became the sole renderer.
+- Command: Pencil browser `load-page` for `http://127.0.0.1:5185/`.
+- Result: Failed to connect to the running Pencil desktop app after three connector retries; no page or tab was created.
+- Resolution: Stopped the temporary Vite server and retained the command-level and HTTP smoke evidence.
+- Attempts: 1 tool attempt containing 3 connector retries.
+- Next action: Do not retry again in this task pass; resume only after the desktop browser connection changes.
