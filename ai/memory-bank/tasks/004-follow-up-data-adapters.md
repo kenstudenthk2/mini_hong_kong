@@ -506,3 +506,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/MapView.test.ts` covers selected-route geometry lookup; full suite has 74 passing tests, lint/build/diff checks pass. Commit: `4f80d7d`.
 - Known limitation: browser search, highlight visibility, touch behavior, and locale layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate route search and highlight in a working browser before broader route-level filtering.
+
+## Compact handoff: Escape deselection shortcut
+- Complete: pressing Escape now clears selected vehicle, station, and route-search focus, returning the map to neutral exploration without changing visibility filters.
+- Lifecycle: the MapView initialization handler uses synchronized callback refs, so the shortcut remains stable across App renders.
+- Scope: keyboard selection clearing only; playback Space handling and map click selection remain unchanged.
+- Evidence: `src/components/map/MapView.test.ts` covers Escape recognition; full suite has 75 passing tests, lint/build/diff checks pass. Commit: `a6a5acc`.
+- Known limitation: browser keyboard focus, touch behavior, and route-highlight clearing remain unverified because the integrated browser harness is unavailable.
+- Next task: validate keyboard and route-search workflows in a working browser.
