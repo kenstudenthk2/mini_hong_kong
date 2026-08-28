@@ -372,3 +372,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Test note: the MapLibre-focused jsdom test supplies the missing `URL.createObjectURL` browser API before module import.
 - Known limitation: real browser camera movement, touch behavior, and user pan-versus-follow ergonomics remain unverified because the integrated browser harness is unavailable.
 - Next task: validate selection/focus in a working browser, then add an explicit follow toggle only if automatic focus proves too intrusive.
+
+## Compact handoff: empty-map deselection
+- Complete: clicking empty map space now clears the selected vehicle, stopping automatic recentering and restoring manual map exploration; clicking a vehicle remains a selection action.
+- Contract: the map click handler clears only when no vehicle feature is under the pointer; the pure `shouldClearVehicleSelection` helper covers that boundary.
+- Evidence: `src/components/map/MapView.test.ts` covers empty and occupied feature counts; full suite has 62 passing tests, lint/build/diff checks pass. Commit: `2024c81`.
+- Known limitation: actual MapLibre event ordering, touch taps, and camera ergonomics remain unverified because the integrated browser harness is unavailable.
+- Next task: run browser interaction checks before deciding whether automatic focus needs an explicit follow toggle.
