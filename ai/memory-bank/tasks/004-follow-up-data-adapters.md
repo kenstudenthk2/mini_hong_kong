@@ -529,3 +529,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/app/vehicleVisibility.test.ts` covers filtered counts for rail, ferry, bus, and flight modes; full suite has 76 passing tests, lint/build/diff checks pass. Commit: `6d14efd`.
 - Known limitation: browser filter interaction and rendered count updates remain unverified because the integrated browser harness is unavailable.
 - Next task: validate the directory filter workflow in a working browser before adding further controls.
+
+## Compact handoff: selectable airport facility
+- Complete: HKIA is now selectable from both the MapLibre facility layer and the SVG schematic hotspot; the information panel shows localized airport name, IATA, ICAO, coordinates, and the AIP source link.
+- Selection contract: choosing HKIA clears vehicle and station selection; choosing a vehicle or station clears HKIA selection; Escape clears all three selection types.
+- Provenance: the facility remains the static AIP aerodrome reference point and does not imply live airport telemetry or en-route flight geometry.
+- Evidence: full suite has 76 passing tests, lint/build/diff checks pass. Commit: `f6e75cb`.
+- Known limitation: browser hit testing, panel layout, and locale rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate HKIA and aircraft selection workflows in a working browser before adding more airport controls.
