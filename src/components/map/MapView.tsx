@@ -26,6 +26,7 @@ interface Props {
   onSelectFacility: (facility: AirportFacility | null) => void
   onSelectGroundFeature: (feature: AirportGroundFeature | null) => void
   onClearRouteSearch: () => void
+  onSelectRoute: (route: SearchableRoute | null) => void
   selectedVehicleId: string | null
   selectedStationId: string | null
   selectedFacilityId: string | null
@@ -118,6 +119,11 @@ export function selectedRouteGeometry(routes: SearchableRoute[], selectedRouteId
   return routes.find(item => item.id === selectedRouteId)?.geometry ?? []
 }
 
+export function routeFromMapFeatureId(routes: SearchableRoute[], featureId: string | null): SearchableRoute | null {
+  if (!featureId) return null
+  return routes.find(route => route.id === featureId) ?? null
+}
+
 export function selectedRouteBounds(routes: SearchableRoute[], selectedRouteId: string | null): [[number, number], [number, number]] | null {
   const geometry = selectedRouteGeometry(routes, selectedRouteId)
   if (!geometry.length) return null
@@ -208,7 +214,7 @@ function airportGroundToGeoJson(selectedGroundFeatureId: string | null): GeoJSON
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle, activeTools }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, onSelectStation, onSelectFacility, onSelectGroundFeature, onClearRouteSearch, onSelectRoute, selectedVehicleId, selectedStationId, selectedFacilityId, selectedGroundFeatureId, selectedRouteSearchId, followSelectedVehicle, activeTools }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const initialPitchEnabledRef = useRef(pitchEnabled)
@@ -218,6 +224,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   const onSelectFacilityRef = useRef(onSelectFacility)
   const onSelectGroundFeatureRef = useRef(onSelectGroundFeature)
   const onClearRouteSearchRef = useRef(onClearRouteSearch)
+  const onSelectRouteRef = useRef(onSelectRoute)
   const linesRef = useRef(lines)
   const busRoutesRef = useRef(busRoutes)
   const ferryRoutesRef = useRef(ferryRoutes)
@@ -276,6 +283,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
   useEffect(() => {
     onClearRouteSearchRef.current = onClearRouteSearch
   }, [onClearRouteSearch])
+
+  useEffect(() => {
+    onSelectRouteRef.current = onSelectRoute
+  }, [onSelectRoute])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -612,6 +623,20 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         onSelectFacilityRef.current(null)
         onSelectGroundFeatureRef.current(feature ?? null)
       })
+      for (const layerId of ['rail-lines-core', 'bus-routes', 'ferry-routes', 'tram-routes']) {
+        map.on('click', layerId, event => {
+          const id = event.features?.[0]?.properties?.id
+          const route = routeFromMapFeatureId([...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current], id == null ? null : String(id))
+          if (!route) return
+          onSelectVehicleRef.current(null)
+          onSelectStationRef.current(null)
+          onSelectFacilityRef.current(null)
+          onSelectGroundFeatureRef.current(null)
+          onSelectRouteRef.current(route)
+        })
+        map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', layerId, () => { map.getCanvas().style.cursor = '' })
+      }
       map.on('click', event => {
         const vehicleFeatures = map.queryRenderedFeatures(event.point, { layers: ['vehicles-circle'] })
         const stationFeatures = map.queryRenderedFeatures(event.point, { layers: ['stations-circle'] })
