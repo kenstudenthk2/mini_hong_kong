@@ -589,3 +589,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `a31e761`.
 - Known limitation: browser color contrast, hydration transitions, and responsive layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate feed status transitions and directory readability in a working browser.
+
+## Compact handoff: NLB and GMB source contract
+- Complete: official Hong Kong source research now records NLB route/stop/ETA endpoints and GMB route/stop/ETA endpoints, including GMB's documented minute-level ETA cadence.
+- Decision: NLB/GMB remain future adapters; no route geometry, request fan-out, timetable headway, or vehicle replay was invented from ETA data.
+- Acceptance gate for implementation: verify stop-coordinate coverage, choose a bounded sample, record concurrency/freshness policy, and label movement semantics explicitly.
+- Evidence: `docs/data-sources/hong-kong-open-data.md` updated; source pages reviewed on 2026-08-28. No runtime code changed.
+- Known limitation: NLB/GMB are not yet loaded or simulated in the app.
+- Next task: implement one bounded NLB adapter slice only after validating the route-stop response shape and coordinate source.

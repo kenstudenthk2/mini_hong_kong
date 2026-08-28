@@ -13,6 +13,11 @@ https://data.gov.hk/en/
 - Hong Kong Tramways routes: future tram layer.
 - Airport Authority Hong Kong flight information: historical/replay first unless a live source is verified.
 
+## Verified Operator Contracts (2026-08-28)
+- New Lantao Bus (NLB): the official DATA.GOV.HK dataset exposes route list, route-stop list, and estimated-arrival APIs through `rt.data.gov.hk/v2/transport/nlb/`; the route list uses `route.php?action=list`, while stops and ETA are parameterized by route and stop IDs.
+- Green Minibus (GMB): the official Transport Department dataset exposes route, stop, route-stop, and ETA APIs through `data.etagmb.gov.hk`; the route-list contract is `https://data.etagmb.gov.hk/route/{region}` and ETA data is documented as updating every minute.
+- Adapter boundary: NLB/GMB are verified as future operator feeds, not yet loaded by the app. Before implementation, validate stop-coordinate coverage, choose a bounded route/stop sample, record request concurrency, and define whether movement is ETA-driven or an explicitly labeled replay. Do not infer timetable headways from ETA responses.
+
 ## OpenStreetMap Geometry
 - OSM API documentation: https://wiki.openstreetmap.org/wiki/API
 - OSM developer documentation: https://wiki.openstreetmap.org/wiki/Develop
