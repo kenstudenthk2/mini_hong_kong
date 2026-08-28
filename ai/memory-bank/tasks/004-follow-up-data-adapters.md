@@ -188,3 +188,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrails: incomplete records and invalid dates/sequences are omitted; no live-flight claim, fabricated airport geometry, or generated schedule was added.
 - Evidence: `src/dataAdapters/flight.test.ts` covers passenger departure normalization plus arrival/cargo filtering; full suite has 43 passing tests, lint/build/diff checks pass. Commit: `d900bd9`.
 - Next task: add an optional staged runtime loader for the three language feeds, then render airport/flight state without blocking the existing transit map.
+
+## Compact handoff: staged HKG flight feeds
+- Complete: the app asynchronously loads Airport Authority historical passenger/cargo arrivals and departures in `en`, `zh_HK`, and `zh_CN`, then merges records by date/direction/cargo/sequence identity into `TransitData.flights`.
+- Request policy: exactly 12 feed queries are generated per hydration (3 languages x 2 directions x 2 cargo states), with at most four concurrent requests; each failed request degrades to an empty feed and never blocks the base transit map.
+- Semantics: the query date is the previous Hong Kong calendar day because the official endpoint is historical; this is not represented as live aircraft telemetry.
+- Evidence: loader test covers request matrix, bounded result count, and localized merge; full focused gates pass. Commit: `5b030b5`.
+- Next task: render an airport/flight directory and information surface, then decide whether a documented airport geometry source is available before adding aircraft motion.
