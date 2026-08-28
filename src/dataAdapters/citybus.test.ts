@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'vitest'
-import { citybusFeaturedRouteNumbers, normalizeCitybusRoutes, selectCitybusRoutes } from './citybus'
+import { citybusFeaturedRouteNumbers, normalizeCitybusEta, normalizeCitybusRoutes, selectCitybusRoutes } from './citybus'
+
+describe('normalizeCitybusEta', () => {
+  it('normalizes ETA records and skips records without an ETA', () => {
+    expect(normalizeCitybusEta({
+      generated_timestamp: '2026-08-28T10:40:00+08:00',
+      data: [
+        {
+          co: 'CTB', route: '1', dir: 'O', seq: 2, stop: '002737',
+          dest_en: 'Happy Valley (Upper)', dest_tc: '跑馬地 (上)', eta_seq: 1,
+          eta: '2026-08-28T10:45:00+08:00', rmk_en: '',
+          data_timestamp: '2026-08-28T10:40:00+08:00',
+        },
+        {
+          co: 'CTB', route: '1', dir: 'O', seq: 2, stop: '002737',
+          dest_en: 'Happy Valley (Upper)', dest_tc: '跑馬地 (上)', eta_seq: 2,
+          eta: '', rmk_en: 'No GPS data',
+          data_timestamp: '2026-08-28T10:40:00+08:00',
+        },
+      ],
+    })).toEqual([{
+      id: 'citybus-1-o-eta-2-1',
+      routeId: 'citybus-1-o',
+      stopSequence: 2,
+      arrivalSequence: 1,
+      destinationEn: 'Happy Valley (Upper)',
+      destinationZh: '跑馬地 (上)',
+      eta: '2026-08-28T10:45:00+08:00',
+      remarkEn: '',
+      dataTimestamp: '2026-08-28T10:40:00+08:00',
+    }])
+  })
+})
 
 describe('selectCitybusRoutes', () => {
   it('selects the configured representative routes in stable order', () => {

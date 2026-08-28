@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { BusRoutesSchema } from '../dataSchemas'
-import type { Coordinate } from '../types'
+import type { BusArrival, Coordinate } from '../types'
 
 const CitybusRouteSchema = z.object({
   co: z.literal('CTB'),
@@ -27,6 +27,20 @@ const CitybusStopSchema = z.object({
   long: z.coerce.number(),
 })
 
+const CitybusEtaRecordSchema = z.object({
+  co: z.literal('CTB'),
+  route: z.string(),
+  dir: z.enum(['O', 'I']),
+  seq: z.coerce.number().int().positive(),
+  stop: z.string(),
+  dest_en: z.string(),
+  dest_tc: z.string(),
+  eta_seq: z.coerce.number().int().positive(),
+  eta: z.string(),
+  rmk_en: z.string().optional(),
+  data_timestamp: z.string().datetime({ offset: true }),
+})
+
 export interface CitybusRouteSnapshot {
   generatedAt: string
   routes: z.input<typeof CitybusRouteSchema>[]
@@ -42,6 +56,30 @@ export function selectCitybusRoutes(routes: CitybusRouteSnapshot['routes']) {
   return citybusFeaturedRouteNumbers
     .map(routeNumber => byNumber.get(routeNumber))
     .filter((route): route is CitybusRouteSnapshot['routes'][number] => route !== undefined)
+}
+
+export function normalizeCitybusEta(raw: unknown): BusArrival[] {
+  const envelope = z.object({
+    generated_timestamp: z.string().datetime({ offset: true }),
+    data: z.array(CitybusEtaRecordSchema),
+  }).parse(raw)
+
+  return envelope.data
+    .filter(record => record.eta !== '')
+    .map(record => {
+      const routeId = `citybus-${record.route}-${record.dir.toLowerCase()}`
+      return {
+        id: `${routeId}-eta-${record.seq}-${record.eta_seq}`,
+        routeId,
+        stopSequence: record.seq,
+        arrivalSequence: record.eta_seq,
+        destinationEn: record.dest_en,
+        destinationZh: record.dest_tc,
+        eta: record.eta,
+        remarkEn: record.rmk_en ?? '',
+        dataTimestamp: record.data_timestamp,
+      }
+    })
 }
 
 export function normalizeCitybusRoutes(snapshot: CitybusRouteSnapshot) {

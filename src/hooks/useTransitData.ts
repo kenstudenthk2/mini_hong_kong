@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
-import { normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
+import { normalizeCitybusEta, normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -95,6 +95,19 @@ async function loadCitybusRoutes(): Promise<TransitData['busRoutes']> {
   })
 }
 
+async function loadCitybusArrivals(): Promise<TransitData['busArrivals']> {
+  const routeStops = (await Promise.all(['inbound', 'outbound'].map(async direction => {
+    const response = await loadJson(`https://rt.data.gov.hk/v2/transport/citybus/route-stop/CTB/1/${direction}`) as CitybusEnvelope
+    return response.data
+  }))).flat() as CitybusRouteSnapshot['routeStops']
+
+  const arrivals = await mapWithConcurrency(routeStops, 8, async stop => {
+    const raw = await loadJson(`https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/${stop.stop}/1`)
+    return normalizeCitybusEta(raw)
+  })
+  return arrivals.flat()
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -102,13 +115,14 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, busFeed] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, citybusArrivals, busFeed] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
           loadKmbRoutes().catch(() => []),
           loadCitybusRoutes().catch(() => []),
+          loadCitybusArrivals().catch(() => []),
           loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
@@ -120,7 +134,7 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
           busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
-          busArrivals: busFeed.arrivals,
+          busArrivals: [...busFeed.arrivals, ...(citybusArrivals ?? [])],
           busDataTimestamp: busFeed.generatedAt,
         })
         setState({
