@@ -8,7 +8,7 @@ https://data.gov.hk/en/
 - Transport Department GTFS/headway data: static schedule backbone.
 - MTR Next Train: future realtime heavy rail overlay.
 - MTR Light Rail Next Train: future realtime Light Rail overlay.
-- KMB/LWB ETA, Citybus ETA, NLB ETA, GMB ETA: future bus overlays.
+- KMB/LWB ETA, Citybus ETA, NLB ETA, GMB ETA: bounded bus overlays currently loaded by the app.
 - Sun Ferry ETA, HKKF ETA, Star Ferry timetables: future ferry layers.
 - Hong Kong Tramways routes: future tram layer.
 - Airport Authority Hong Kong flight information: historical/replay first unless a live source is verified.
@@ -16,7 +16,8 @@ https://data.gov.hk/en/
 ## Verified Operator Contracts (2026-08-28)
 - New Lantao Bus (NLB): the official DATA.GOV.HK dataset exposes route list, route-stop list, and estimated-arrival APIs through `rt.data.gov.hk/v2/transport/nlb/`; the route list uses `route.php?action=list`, while stops and ETA are parameterized by route and stop IDs.
 - Green Minibus (GMB): the official Transport Department dataset exposes route, stop, route-stop, and ETA APIs through `data.etagmb.gov.hk`; the route-list contract is `https://data.etagmb.gov.hk/route/{region}` and ETA data is documented as updating every minute.
-- Adapter boundary: NLB/GMB are verified as future operator feeds, not yet loaded by the app. Before implementation, validate stop-coordinate coverage, choose a bounded route/stop sample, record request concurrency, and define whether movement is ETA-driven or an explicitly labeled replay. Do not infer timetable headways from ETA responses.
+- Adapter boundary: NLB and GMB route/stop geometry and bounded ETA samples are loaded as optional feeds. NLB uses four featured routes and six ETA stops on route 1; GMB uses HKI route 1, up to six stops per direction, and concurrency-two requests. ETA-driven movement is used only when adjacent predictions are available; no timetable headway is inferred from ETA responses.
+- Current implementation: `src/dataAdapters/nlb.ts` and `src/dataAdapters/gmb.ts` normalize operator data; `src/hooks/useTransitData.ts` performs optional staged hydration. Individual GMB ETA failures degrade to missing arrivals while retaining route geometry.
 
 ## OpenStreetMap Geometry
 - OSM API documentation: https://wiki.openstreetmap.org/wiki/API
