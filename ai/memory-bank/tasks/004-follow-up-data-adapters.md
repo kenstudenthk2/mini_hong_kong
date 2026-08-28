@@ -122,3 +122,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Semantics: `headwayMinutes=1` with equal start/end minutes represents a single scheduled departure; duration comes from first departure to last arrival, including GTFS times beyond 24:00.
 - Evidence: `src/dataAdapters/ferrySchedule.test.ts` covers weekday service, weekend service, non-ferry filtering, malformed trips, BOM handling, and post-midnight duration; full suite has 36 passing tests. Commit: `2a7daf9`.
 - Next task: add explicit-departure handling for post-midnight trips in the engine, then wire approved schedules into `App`; no generated timetable file was added.
+
+## Compact handoff: overnight explicit ferry departures
+- Complete: shared `activeStarts` and caller clock adjustment now support single-departure schedules whose travel continues past midnight; repeating rail and bus schedules retain their prior behavior.
+- Regression: a 23:30 ferry departure with a 40-minute duration remains active and progresses at 00:10 on the next operational day.
+- Evidence: full suite has 37 passing tests, lint/build/diff checks pass. Commit: `ee146a8`.
+- Next task: load the approved ferry GTFS schedules into `App`, selecting a bounded route set or staged hydration strategy to avoid blocking initial map rendering.
