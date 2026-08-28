@@ -1,7 +1,7 @@
 import { localName, useI18n } from '../../i18n'
 import { classifyFreshness } from '../../dataAdapters/freshness'
-import { HKG_AIP_SOURCE } from '../../dataAdapters/airport'
-import { HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
+import { hkiaFacility, HKG_AIP_SOURCE } from '../../dataAdapters/airport'
+import { hkiaGroundFeatures, HKIA_OSM_SOURCE, HKIA_OSM_TIMESTAMP } from '../../dataAdapters/airportGround'
 import { layerManifest } from '../../dataAdapters/layerManifest'
 import { searchRoutes, type SearchableRoute } from '../../app/routeSearch'
 import { visibleVehicleCount } from '../../app/vehicleVisibility'
@@ -28,6 +28,10 @@ interface Props {
   selectedRouteSearchId: string | null
   onSelectRouteSearch: (route: SearchableRoute | null) => void
   feedStatus: TransitDataState['feedStatus']
+  selectedFacilityId: string | null
+  onSelectFacility: (facility: typeof hkiaFacility | null) => void
+  selectedGroundFeatureId: string | null
+  onSelectGroundFeature: (feature: typeof hkiaGroundFeatures[number] | null) => void
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -74,7 +78,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch, feedStatus }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, selectedBusOperators, onToggleBusOperator, onResetFilters, liveBusMode, hasLiveBusData, stations, selectedStationId, onSelectStation, routeSearchQuery, onRouteSearchQueryChange, selectedRouteSearchId, onSelectRouteSearch, feedStatus, selectedFacilityId, onSelectFacility, selectedGroundFeatureId, onSelectGroundFeature }: Props) {
   const { lang, t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -180,6 +184,24 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
           <div>{t.historical}: {flightDate ?? '-'}</div>
           <div>{t.source}: {t.dataGov}</div>
           {flights.length > 0 && <div className="flight-list">{flights.slice(0, 6).map(flight => <FlightRow key={flight.id} flight={flight} />)}</div>}
+        </div>
+      </details>
+
+      <details open className="menu-section">
+        <summary>{lang === 'zh' ? '\u9999\u6e2f\u570b\u969b\u6a5f\u5834' : lang === 'pt' ? 'Aeroporto de Hong Kong' : 'Hong Kong International Airport'}<span>{hkiaGroundFeatures.length + 1}</span></summary>
+        <div className="section-body muted-body">
+          <button className="line-row" type="button" aria-pressed={selectedFacilityId === hkiaFacility.id} onClick={() => onSelectFacility(selectedFacilityId === hkiaFacility.id ? null : hkiaFacility)}>
+            <span className="line-dot" style={{ background: '#38bdf8' }} />
+            <span>{localName(hkiaFacility, lang)}</span>
+            <span className="line-state">{hkiaFacility.iataCode}</span>
+          </button>
+          {hkiaGroundFeatures.map(feature => (
+            <button className="line-row" type="button" key={feature.id} aria-pressed={selectedGroundFeatureId === feature.id} onClick={() => onSelectGroundFeature(selectedGroundFeatureId === feature.id ? null : feature)}>
+              <span className="line-dot" style={{ background: feature.kind === 'terminal' ? '#f59e0b' : '#a78bfa' }} />
+              <span>{localName(feature, lang)}</span>
+              <span className="line-state">{feature.ref}</span>
+            </button>
+          ))}
         </div>
       </details>
 

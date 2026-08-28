@@ -104,6 +104,20 @@ export default function App() {
         liveBusMode={liveBusMode}
         hasLiveBusData={Boolean(transitData.data?.busArrivals?.length)}
         feedStatus={transitData.feedStatus}
+        selectedFacilityId={selectedFacility?.id ?? null}
+        onSelectFacility={facility => {
+          setSelectedFacility(facility)
+          setSelectedGroundFeature(null)
+          setSelectedStation(null)
+          setSelectedVehicle(null)
+        }}
+        selectedGroundFeatureId={selectedGroundFeature?.id ?? null}
+        onSelectGroundFeature={feature => {
+          setSelectedGroundFeature(feature)
+          setSelectedFacility(null)
+          setSelectedStation(null)
+          setSelectedVehicle(null)
+        }}
         stations={transitData.data?.stations ?? []}
         selectedStationId={selectedStation?.id ?? null}
         onSelectStation={station => {
