@@ -130,9 +130,16 @@ function lineTool(line: RailLine): TransportTool {
   return line.mode === 'mtr' ? 'rail' : 'lightRail'
 }
 
-function routeFocusToGeoJson(routes: SearchableRoute[], selectedRouteId: string | null): GeoJSON.FeatureCollection {
+function routeTool(route: SearchableRoute): TransportTool {
+  if ('mode' in route) return lineTool(route)
+  if (route.id.startsWith('ferry-')) return 'ferries'
+  if (route.id.startsWith('tram-')) return 'trams'
+  return 'buses'
+}
+
+export function routeFocusToGeoJson(routes: SearchableRoute[], selectedRouteId: string | null, activeTools: Set<TransportTool>): GeoJSON.FeatureCollection {
   const route = routes.find(item => item.id === selectedRouteId)
-  if (!route || route.geometry.length < 2) return emptyCollection
+  if (!route || !activeTools.has(routeTool(route)) || route.geometry.length < 2) return emptyCollection
   return {
     type: 'FeatureCollection',
     features: [{
@@ -627,7 +634,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-trails', vehiclesToTrailGeoJson(vehiclesRef.current, [...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current, ...hkiaRunways]))
-      updateSource(map, 'route-focus', routeFocusToGeoJson([...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current], selectedRouteSearchIdRef.current))
+      updateSource(map, 'route-focus', routeFocusToGeoJson([...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current], selectedRouteSearchIdRef.current, activeToolsRef.current))
     })
     mapRef.current = map
     return () => {
@@ -651,7 +658,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'airport-facilities', showAirport ? airportFacilitiesToGeoJson(selectedFacilityId) : emptyCollection)
     updateSource(map, 'airport-runways', showAirport ? airportRunwaysToGeoJson() : emptyCollection)
     updateSource(map, 'airport-ground', showAirport ? airportGroundToGeoJson(selectedGroundFeatureId) : emptyCollection)
-    updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId))
+    updateSource(map, 'route-focus', routeFocusToGeoJson([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId, activeTools))
   }, [activeTools, busRoutes, ferryRoutes, lines, selectedBusOperators, selectedFacilityId, selectedGroundFeatureId, selectedLineIds, selectedRouteIds, selectedRouteSearchId, stations, tramRoutes, visibleBusRouteIds, visibleVehicles])
 
   useEffect(() => {

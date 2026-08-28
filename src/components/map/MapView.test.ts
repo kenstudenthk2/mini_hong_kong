@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, routeFocusToGeoJson, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
 import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -27,6 +27,12 @@ describe('selected vehicle map focus', () => {
   it('hides aviation context when the Flights tool is off', () => {
     expect(airportLayersVisible(new Set(['rail', 'lightRail', 'buses', 'ferries', 'trams']))).toBe(false)
     expect(airportLayersVisible(new Set(['flights']))).toBe(true)
+  })
+
+  it('does not keep a selected route highlight when its tool is off', () => {
+    const route: RailLine = { id: 'mtr-east', geometry: [[114.1, 22.3], [114.2, 22.4]], nameEn: 'East Rail', nameZh: '\u6771\u9435', mode: 'mtr', color: '#38bdf8', operator: 'MTR', stationIds: [] }
+    expect(routeFocusToGeoJson([route], 'mtr-east', new Set(['lightRail'])).features).toHaveLength(0)
+    expect(routeFocusToGeoJson([route], 'mtr-east', new Set(['rail'])).features).toHaveLength(1)
   })
 
   it('uses the dark basemap for 3D and the light basemap for 2D', () => {
