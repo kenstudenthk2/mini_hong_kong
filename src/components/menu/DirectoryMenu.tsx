@@ -9,6 +9,7 @@ interface Props {
   onToggleLine: (lineId: string) => void
   selectedRouteIds: Set<string>
   onToggleRoute: (routeId: string) => void
+  onResetFilters: () => void
 }
 
 type DirectoryRoute = RailLine | FerryRoute | TramRoute
@@ -45,7 +46,7 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute }: Props) {
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute, onResetFilters }: Props) {
   const { t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
@@ -61,6 +62,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
       <header className="brand-block">
         <div className="brand-title">{t.appName}</div>
         <div className="brand-subtitle">{t.subtitle}</div>
+        <button className="menu-reset" type="button" onClick={onResetFilters}>{t.reset}</button>
       </header>
 
       <details open className="menu-section">

@@ -57,6 +57,22 @@ input {
   font-size: 0.86rem;
 }
 
+.menu-reset {
+  margin-top: 12px;
+  padding: 7px 10px;
+  color: #dbeafe;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-reset:hover {
+  background: rgba(56, 189, 248, 0.2);
+}
+
 .menu-section {
   margin: 0 0 10px;
   border: 1px solid rgba(148, 163, 184, 0.18);

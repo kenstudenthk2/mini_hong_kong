@@ -58,6 +58,11 @@ export default function App() {
     setManualRouteIds(next)
   }
 
+  function resetFilters() {
+    setManualLineIds(null)
+    setManualRouteIds(null)
+  }
+
   return (
     <main className="app-shell">
       <DirectoryMenu
@@ -67,6 +72,7 @@ export default function App() {
         onToggleLine={toggleLine}
         selectedRouteIds={selectedRouteIds}
         onToggleRoute={toggleRoute}
+        onResetFilters={resetFilters}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}
