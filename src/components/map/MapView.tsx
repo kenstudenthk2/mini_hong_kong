@@ -617,7 +617,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
                 fill={vehicle.color}
                 stroke="#f8fafc"
                 strokeWidth="2"
-                onClick={() => onSelectVehicle(vehicle)}
+                onClick={() => {
+                  onSelectStation(null)
+                  onSelectVehicle(vehicle)
+                }}
                 aria-label={vehicle.labelEn}
               />
             )
@@ -632,7 +635,10 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
               fill="#f8fafc"
               stroke={vehicle.color}
               strokeWidth="4"
-              onClick={() => onSelectVehicle(vehicle)}
+              onClick={() => {
+                onSelectStation(null)
+                onSelectVehicle(vehicle)
+              }}
               aria-label={vehicle.labelEn}
             />
           )
