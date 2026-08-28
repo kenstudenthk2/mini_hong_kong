@@ -215,3 +215,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: no runway, taxiway, terminal footprint, destination coordinate, or aircraft motion was inferred from this single point.
 - Evidence: `src/dataAdapters/airport.test.ts` validates identity, coordinate, and map extent; focused tests, lint/build/diff checks pass. Commit: `4d6dfb2`.
 - Next task: wire the facility into MapLibre and schematic rendering, then separately evaluate an approved runway/terminal geometry extract.
+
+## Compact handoff: HKIA map context
+- Complete: the official HKIA reference point is rendered as a dedicated MapLibre circle/label layer and an `HKIA` schematic marker; the initial camera and schematic bounds now include the airport area.
+- Semantics: this is static aerodrome context only. Historical flight records remain in the information board and are not converted into aircraft positions.
+- Evidence: full suite has 47 passing tests, lint/build/diff checks pass. Commit: `c0b8641`.
+- Next task: evaluate a current static runway/terminal geometry extract, then implement a separately labeled flight replay layer only when route provenance and timing semantics are approved.
