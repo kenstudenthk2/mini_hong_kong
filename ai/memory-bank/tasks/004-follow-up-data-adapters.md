@@ -433,3 +433,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/InfoPanel.test.ts` covers the locale label contract; full suite has 67 passing tests, lint/build/diff checks pass. Commit: `9f8e305`.
 - Known limitation: browser locale switching and panel layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate all localized information panels in a working browser.
+
+## Compact handoff: localized station line names
+- Complete: station details now resolve rail line IDs to localized line names in English, Traditional Chinese, and Portuguese; unknown IDs remain visible as a safe fallback.
+- Scope: station information presentation only; station selection, route filters, and simulation behavior are unchanged.
+- Evidence: `src/components/map/InfoPanel.test.ts` covers localized resolution and ID fallback; full suite has 68 passing tests, lint/build/diff checks pass. Commit: `ce73346`.
+- Known limitation: browser locale switching and station-panel layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate localized station and vehicle information panels in a working browser.
