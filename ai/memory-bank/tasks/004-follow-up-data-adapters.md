@@ -597,3 +597,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `docs/data-sources/hong-kong-open-data.md` updated; source pages reviewed on 2026-08-28. No runtime code changed.
 - Known limitation: NLB/GMB are not yet loaded or simulated in the app.
 - Next task: implement one bounded NLB adapter slice only after validating the route-stop response shape and coordinate source.
+
+## Compact handoff: NLB route normalizer
+- Complete: added a Zod-validated pure NLB adapter that maps official route and route-stop responses into the shared `BusRoute` contract with English/Traditional Chinese names, ordered coordinates, and `NLB` operator identity.
+- Guardrails: routes with fewer than two stops are omitted; no network calls, ETA movement, timetable headway, or UI wiring were added in this slice.
+- Evidence: `src/dataAdapters/nlb.test.ts` covers localized normalization, coordinate coercion, and incomplete-route omission; full suite has 80 passing tests, lint/build/diff checks pass. Commit: `09d7c3c`.
+- Known limitation: runtime loading and NLB ETA integration remain pending; Portuguese currently uses the shared fallback because the official NLB response has no Portuguese field.
+- Next task: add bounded NLB route/stop loading and operator visibility wiring with an explicit request-volume limit.
