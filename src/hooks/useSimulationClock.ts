@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { SimulationClock } from '../types'
 
+export function isPlaybackShortcut(event: Pick<KeyboardEvent, 'code' | 'repeat' | 'target'>): boolean {
+  if (event.code !== 'Space' || event.repeat) return false
+  const target = event.target instanceof HTMLElement ? event.target.tagName : ''
+  return !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(target)
+}
+
 export function useSimulationClock(): SimulationClock {
   const [currentTime, setCurrentTime] = useState(() => new Date())
   const [speed, setSpeedState] = useState(10)
@@ -46,6 +52,16 @@ export function useSimulationClock(): SimulationClock {
     rebase(speedRef.current, nextPaused)
     setPausedState(nextPaused)
   }, [rebase])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isPlaybackShortcut(event)) return
+      event.preventDefault()
+      setPaused(!pausedRef.current)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [setPaused])
 
   const syncToNow = useCallback(() => {
     const now = new Date()
