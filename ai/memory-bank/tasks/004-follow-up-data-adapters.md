@@ -321,3 +321,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/airportReplay.test.ts` asserts the localized `HX246` labels; full suite has 54 passing tests, lint/build/diff checks pass. Commit: `2bcdbee`.
 - Known limitation: browser visual/interaction verification remains pending because the integrated browser connection is unavailable.
 - Next task: verify localized aircraft selection in a working browser harness.
+
+## Compact handoff: shared vehicle visibility predicate
+- Complete: `MapView` now reuses the tested `isVehicleVisible` predicate from `App`, removing duplicated Bus operator and Ferry/Tram route visibility logic.
+- Scope: behavior-preserving refactor; rail, bus, ferry, tram, flight, and stale-selection rules are now represented by one deterministic contract.
+- Evidence: full suite has 54 passing tests, lint/build/diff checks pass. Commit: `2505601`.
+- Known limitation: Vite starts successfully, but both Pencil and Node/Playwright browser paths are unavailable in this environment; no browser claim is made.
+- Next task: run the directory filter, reset, aircraft selection, and locale workflows in a working browser harness.
