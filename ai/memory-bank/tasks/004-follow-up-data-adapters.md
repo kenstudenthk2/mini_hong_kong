@@ -300,3 +300,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `75d476b`.
 - Known limitation: browser interaction verification remains pending; operator controls are not yet covered by component tests.
 - Next task: add focused UI harness coverage or a bounded flight-record visibility control after browser tooling is available.
+
+## Compact handoff: aircraft silhouettes
+- Complete: HKIA replay vehicles now use a pointed directional footprint in the MapLibre extrusion layer and a matching clickable silhouette in the schematic renderer.
+- Scope: visual treatment only; the six-minute runway movement replay, AIP geometry, and no-live-telemetry boundary are unchanged.
+- Evidence: `src/layers/vehicleShapes.test.ts` covers the closed seven-vertex aircraft footprint and low-profile height; full suite has 53 passing tests, lint/build/diff checks pass. Commit: `f67b4bc`.
+- Known limitation: browser visual verification remains pending; the silhouette is not an aircraft model or proof of real flight behavior.
+- Next task: add focused UI/browser harness coverage for aircraft selection and locale rendering.
