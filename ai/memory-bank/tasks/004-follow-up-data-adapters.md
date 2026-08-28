@@ -672,3 +672,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Freshness: the optional bus timestamp now considers the latest valid GMB arrival timestamp alongside the KMB feed timestamp.
 - Evidence: regression coverage verifies route retention after one ETA failure; full suite has 88 passing tests, lint, build, and diff checks pass. Commit: `af0012f`.
 - Known limitation: live provider behavior and browser marker movement remain unverified; no retry loop or polling was added.
+
+## Compact handoff: GMB source provenance
+- Complete: the Data Status layer manifest now identifies GMB as a live bus source with its exact DATA.GOV.HK dataset URL and localized source labels.
+- Scope: provenance presentation and manifest coverage only; feed loading and simulation behavior are unchanged.
+- Evidence: `src/dataAdapters/layerManifest.test.ts` asserts the GMB entry, live classification, URL, and locale labels. Focused test, lint, build, and diff checks pass. Commit: `0a2deb1`.
+- Known limitation: browser link navigation remains unverified because the integrated browser connector is unavailable.
