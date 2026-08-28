@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flightForVehicle, routeForVehicle } from './InfoPanel'
+import { flightForVehicle, infoLabel, routeForVehicle } from './InfoPanel'
 import type { TransitData, VehiclePosition } from '../../types'
 
 const flightVehicle: VehiclePosition = {
@@ -19,6 +19,12 @@ const flightVehicle: VehiclePosition = {
 }
 
 describe('flight info resolution', () => {
+  it('provides localized station and progress labels', () => {
+    expect(infoLabel('en', 'station')).toBe('Station')
+    expect(infoLabel('zh', 'coordinates')).toBe('\u5ea7\u6a19')
+    expect(infoLabel('pt', 'progress')).toBe('Progresso')
+  })
+
   it('resolves the normalized flight record from a replay vehicle', () => {
     const data = { flights: [{ id: flightVehicle.tripId, flightNumbers: ['HX246'] }] } as TransitData
     expect(flightForVehicle(data, flightVehicle)?.flightNumbers).toEqual(['HX246'])

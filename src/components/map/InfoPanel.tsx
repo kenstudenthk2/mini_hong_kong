@@ -42,6 +42,15 @@ function routeLabel(lang: Lang, key: 'operator' | 'routeNumber' | 'journey' | 'p
   return labels[lang][key]
 }
 
+export function infoLabel(lang: Lang, key: 'station' | 'lines' | 'coordinates' | 'progress'): string {
+  const labels = {
+    en: { station: 'Station', lines: 'Lines', coordinates: 'Coordinates', progress: 'Progress' },
+    zh: { station: '\u8eca\u7ad9', lines: '\u8def\u7dda', coordinates: '\u5ea7\u6a19', progress: '\u9032\u5ea6' },
+    pt: { station: 'Estacao', lines: 'Linhas', coordinates: 'Coordenadas', progress: 'Progresso' },
+  } as const
+  return labels[lang][key]
+}
+
 export function InfoPanel({ data, vehicle, station }: Props) {
   const { lang, t } = useI18n()
   const stationById = new Map((data?.stations ?? []).map(station => [station.id, station] as const))
@@ -56,9 +65,9 @@ export function InfoPanel({ data, vehicle, station }: Props) {
       <h2>{vehicle ? t.selectedVehicle : station ? localName(station, lang) : t.noSelection}</h2>
       {!vehicle && station && (
         <div className="info-grid">
-          <p>{t.destination}: <strong>{localName(station, lang)}</strong></p>
-          <p>Lines: <strong>{station.lineIds.join(', ') || '-'}</strong></p>
-          <p>Coordinates: <strong>{station.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
+          <p>{infoLabel(lang, 'station')}: <strong>{localName(station, lang)}</strong></p>
+          <p>{infoLabel(lang, 'lines')}: <strong>{station.lineIds.join(', ') || '-'}</strong></p>
+          <p>{infoLabel(lang, 'coordinates')}: <strong>{station.coordinates.map(value => value.toFixed(5)).join(', ')}</strong></p>
         </div>
       )}
       {vehicle?.type === 'flight' && (
@@ -84,7 +93,7 @@ export function InfoPanel({ data, vehicle, station }: Props) {
           </span>
           <p>{t.destination}: <strong>{localName(destination, lang)}</strong></p>
           <p>{t.nextStop}: <strong>{localName(nextStop, lang)}</strong></p>
-          <p>Progress: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
+          <p>{infoLabel(lang, 'progress')}: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
         </div>
       )}
       {vehicle && route && (
