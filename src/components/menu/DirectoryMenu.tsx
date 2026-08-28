@@ -68,7 +68,12 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         <div className="section-body muted-body">KMB/LWB normalized routes</div>
       </details>
 
-      {[t.ferries, t.trams, t.flights].map(label => (
+      <details open className="menu-section">
+        <summary>{t.ferries}<span>{vehicles.filter(vehicle => vehicle.type === 'ferry').length}</span></summary>
+        <div className="section-body muted-body">{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
+      </details>
+
+      {[t.trams, t.flights].map(label => (
         <details key={label} className="menu-section planned-section">
           <summary>{label}<span>{t.planned}</span></summary>
           <div className="section-body muted-body">{t.source}: {t.dataGov}</div>
@@ -78,7 +83,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
       <details open className="menu-section">
         <summary>{t.dataStatus}<span>{t.active}</span></summary>
         <div className="section-body status-list">
-          <p>{t.simulation}: MTR + Light Rail</p>
+          <p>{t.simulation}: MTR + Light Rail + Buses + Ferries</p>
           <p>KMB ETA: {kmbFreshness}</p>
           <p>{t.source}: {t.dataGov} seed-ready contracts</p>
         </div>
