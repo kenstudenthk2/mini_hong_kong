@@ -176,3 +176,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Performance policy: ferry and tram schedule files are fetched once after the initial transit state resolves; failures remain optional and do not invalidate rail/bus data.
 - Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `d057b7c`.
 - Known limitation: `MapView` and the directory menu still need explicit tram vehicle visibility/count treatment; tram source geometry is already rendered.
+
+## Compact handoff: tram visibility and directory activation
+- Complete: tram vehicles are always visible in MapLibre/schematic views, and Trams are promoted from Planned to an active directory section with route and vehicle counts.
+- Scope: visibility and menu state only; flight mode remains planned.
+- Evidence: full suite has 41 passing tests, lint/build/diff checks pass. Commit: `5225867`.
