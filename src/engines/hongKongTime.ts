@@ -23,6 +23,23 @@ export function hongKongYmd(instant: Date): string {
   return `${y}-${m}-${d}`
 }
 
+export function hongKongDateTimeInputValue(instant: Date): string {
+  const hk = shifted(instant)
+  const date = hongKongYmd(instant)
+  const hour = String(hk.getUTCHours()).padStart(2, '0')
+  const minute = String(hk.getUTCMinutes()).padStart(2, '0')
+  return `${date}T${hour}:${minute}`
+}
+
+export function hongKongDateTimeInputToInstant(value: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value)
+  if (!match) return null
+  const [, year, month, day, hour, minute] = match.map(Number)
+  if (month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59) return null
+  const instant = hongKongWallToInstant(year, month - 1, day, hour, minute)
+  return hongKongDateTimeInputValue(instant) === value ? instant : null
+}
+
 export function hongKongWallToInstant(
   year: number,
   month: number,

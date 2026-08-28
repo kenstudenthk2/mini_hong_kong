@@ -1,5 +1,6 @@
 import type { Lang, SimulationClock } from '../../types'
 import { useI18n } from '../../i18n'
+import { hongKongDateTimeInputToInstant, hongKongDateTimeInputValue } from '../../engines/hongKongTime'
 
 interface Props {
   clock: SimulationClock
@@ -20,6 +21,17 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch }: Props) {
   return (
     <div className="control-panel">
       <div className="time-readout">{formatted}</div>
+      <label className="select-row">
+        <span>{t.simulation}</span>
+        <input
+          type="datetime-local"
+          value={hongKongDateTimeInputValue(clock.currentTime)}
+          onChange={event => {
+            const next = hongKongDateTimeInputToInstant(event.target.value)
+            if (next) clock.setTime(next)
+          }}
+        />
+      </label>
       <div className="control-row">
         <button type="button" onClick={() => clock.setPaused(!clock.paused)}>
           {clock.paused ? t.play : t.pause}
