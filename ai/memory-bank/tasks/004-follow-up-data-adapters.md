@@ -582,3 +582,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `0c40879`.
 - Known limitation: browser menu interaction, responsive layout, and locale rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate the full HKIA directory and map selection workflow in a working browser.
+
+## Compact handoff: feed status markers
+- Complete: Data Status now renders pending, ready, and unavailable feed values with semantic, color-coded markers while retaining their text labels and trilingual status wording.
+- Scope: presentation only; progressive loading, feed phases, and source links are unchanged.
+- Evidence: full suite has 78 passing tests, lint/build/diff checks pass. Commit: `a31e761`.
+- Known limitation: browser color contrast, hydration transitions, and responsive layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate feed status transitions and directory readability in a working browser.
