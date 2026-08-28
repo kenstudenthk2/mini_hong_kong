@@ -455,3 +455,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 68 passing tests, lint/build/diff checks pass. Commit: `2234f4b`.
 - Known limitation: browser select interaction, map recentering, touch behavior, and three-locale layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate station search and selection in a working browser before adding route search.
+
+## Compact handoff: Portuguese HKIA map label
+- Complete: HKIA facility data now includes an explicit Portuguese name, MapLibre GeoJSON carries it, and the map label selector uses it for the Portuguese locale.
+- Scope: airport label localization only; AIP geometry, ground context, flight replay, and selection behavior are unchanged.
+- Evidence: `src/dataAdapters/airport.test.ts` asserts the Portuguese facility name; full suite has 68 passing tests, lint/build/diff checks pass. Commit: `8c77518`.
+- Known limitation: browser locale switching and Portuguese map-label rendering remain unverified because the integrated browser harness is unavailable.
+- Next task: validate all three locale map labels and station search in a working browser.
