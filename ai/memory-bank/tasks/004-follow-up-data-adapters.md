@@ -71,3 +71,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Scope: pure helper only; KMB timestamp propagation and menu labeling are the next separate wiring task.
 - Evidence: `src/dataAdapters/freshness.test.ts` covers fresh, stale, and malformed timestamps; focused test and lint pass.
 - Clear context: no network fetch behavior or generated data output changed in this slice.
+
+## Compact handoff: KMB freshness status wiring
+- Complete: the KMB ETA envelope timestamp is retained as `TransitData.busDataTimestamp` and shown in the Data Status menu.
+- Policy: the one-minute ETA cadence is used as the freshness window; failed or empty ETA loads retain the existing replay fallback and show `invalid`.
+- Evidence: full suite has 27 passing tests; lint, build, and `git diff --check` pass. Commit: `121a2f3`.
+- Next task: expand ETA coverage beyond route 1 or add another operator as a separate adapter slice; connected visual QA remains blocked by unavailable browser tooling.
