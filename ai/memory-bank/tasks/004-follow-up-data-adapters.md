@@ -249,3 +249,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 50 passing tests, lint/build/diff checks pass. Commit: `55330e0`.
 - Known limitation: browser visual and interaction verification is still pending because the local browser harness is unavailable.
 - Next task: approve a pinned terminal/stand geometry artifact or continue improving the trilingual aviation information surface without claiming live telemetry.
+
+## Compact handoff: pinned HKIA ground context
+- Complete: a pinned Overpass snapshot adds Terminal 1, Terminal 2, and eight representative tagged gate points; MapLibre and schematic renderers show terminals and gates as a dedicated ground-context layer.
+- Provenance: every feature carries the Overpass query URL, OSM base timestamp `2026-08-28T03:58:21Z`, and ODbL attribution boundary. The snapshot is static and is not refreshed at runtime.
+- Semantics: points are airport context only; they do not assign flights to gates, replace AIP runway geometry, or drive aircraft movement.
+- Evidence: `src/dataAdapters/airportGround.test.ts` covers feature kinds, source metadata, and HKIA bounds; full suite has 52 passing tests, lint/build/diff checks pass. Commits: `051fe5c`, `f642d91`.
+- Known risk: OSM geometry can change and must be re-pinned deliberately; browser visual verification remains pending because the local browser harness is unavailable.
+- Next task: add a documented snapshot refresh procedure or improve terminal/gate localization before connecting any aircraft records to ground features.
