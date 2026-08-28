@@ -491,3 +491,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/MapView.test.ts` covers selected, missing, and cleared route IDs; full suite has 73 passing tests, lint/build/diff checks pass. Commit: `dae606c`.
 - Known limitation: browser route search, map focus, touch behavior, and locale layout remain unverified because the integrated browser harness is unavailable.
 - Next task: validate route search in a working browser before broader route-level filtering.
+
+## Compact handoff: localized simulation clock
+- Complete: the simulation time readout now selects `en-GB`, `zh-HK`, or `pt-PT` from the active locale while retaining the Asia/Hong_Kong timezone.
+- Scope: display formatting only; clock progression, date-time input parsing, and playback controls are unchanged.
+- Evidence: `src/components/map/ControlPanel.test.ts` covers all three locale mappings; full suite has 74 passing tests, lint/build/diff checks pass. Commit: `d11a61b`.
+- Known limitation: browser locale switching and rendered date formatting remain unverified because the integrated browser harness is unavailable.
+- Next task: validate locale switching and route-search interactions in a working browser.
