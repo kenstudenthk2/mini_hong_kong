@@ -242,3 +242,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrail: keep AIP runway context and the explicitly labeled runway movement replay; do not convert an unpinned OSM query or map tile into airport operational truth.
 - Sources reviewed: `https://wiki.openstreetmap.org/wiki/API`, `https://wiki.openstreetmap.org/wiki/Tag:aeroway%3Dterminal`, and `https://wiki.openstreetmap.org/wiki/Aeroway`.
 - Next task: choose and approve a pinned static geometry artifact or an explicit Overpass ingestion contract before adding terminal/stand rendering.
+
+## Compact handoff: flight directory movement status
+- Complete: the Flights directory now separates the historical AAHK record count from the active HKIA runway movement replay count.
+- Localization: the active-movement label is available in English, Traditional Chinese, and Portuguese; README scope now matches the implemented modes.
+- Evidence: full suite has 50 passing tests, lint/build/diff checks pass. Commit: `55330e0`.
+- Known limitation: browser visual and interaction verification is still pending because the local browser harness is unavailable.
+- Next task: approve a pinned terminal/stand geometry artifact or continue improving the trilingual aviation information surface without claiming live telemetry.
