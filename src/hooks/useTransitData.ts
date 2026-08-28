@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
+import { normalizeCitybusRoutes, selectCitybusRoutes, type CitybusRouteSnapshot } from '../dataAdapters/citybus'
 import { normalizeKmbEta, normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
@@ -25,6 +26,28 @@ interface KmbArrivalFeed {
   generatedAt: string
 }
 
+interface CitybusEnvelope {
+  generated_timestamp: string
+  data: Record<string, unknown>[]
+}
+
+interface CitybusStopResponse {
+  data: Record<string, unknown>
+}
+
+async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = []
+  let nextIndex = 0
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++
+      results[index] = await mapper(items[index])
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, () => worker()))
+  return results
+}
+
 async function loadKmbRoutes(): Promise<TransitData['busRoutes']> {
   const [rawRoutes, rawRouteStops, rawStops] = await Promise.all([
     loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route/') as Promise<KmbEnvelope>,
@@ -47,6 +70,31 @@ async function loadKmbArrivals(): Promise<KmbArrivalFeed> {
   }
 }
 
+async function loadCitybusRoutes(): Promise<TransitData['busRoutes']> {
+  const rawRoutes = await loadJson('https://rt.data.gov.hk/v2/transport/citybus/route/CTB') as CitybusEnvelope
+  const routes = selectCitybusRoutes(rawRoutes.data as CitybusRouteSnapshot['routes'])
+  const routeStops = (await mapWithConcurrency(
+    routes.flatMap(route => ['inbound', 'outbound'].map(direction => ({ route: route.route, direction }))),
+    4,
+    async ({ route, direction }) => {
+      const response = await loadJson(`https://rt.data.gov.hk/v2/transport/citybus/route-stop/CTB/${route}/${direction}`) as CitybusEnvelope
+      return response.data
+    },
+  )).flat() as CitybusRouteSnapshot['routeStops']
+  const stopIds = [...new Set(routeStops.map(stop => String(stop.stop)))]
+  const stops = (await mapWithConcurrency(stopIds, 8, async stopId => {
+    const response = await loadJson(`https://rt.data.gov.hk/v2/transport/citybus/stop/${stopId}`) as CitybusStopResponse
+    return response.data
+  })) as CitybusRouteSnapshot['stops']
+
+  return normalizeCitybusRoutes({
+    generatedAt: rawRoutes.generated_timestamp,
+    routes,
+    routeStops,
+    stops,
+  })
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -54,12 +102,13 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes, busFeed] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, kmbRoutes, citybusRoutes, busFeed] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
           loadKmbRoutes().catch(() => []),
+          loadCitybusRoutes().catch(() => []),
           loadKmbArrivals().catch(() => ({ arrivals: [], generatedAt: '' })),
         ])
         if (cancelled) return
@@ -70,7 +119,7 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekdayTrips, 'trips-weekday.json'),
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
-          busRoutes,
+          busRoutes: [...(kmbRoutes ?? []), ...(citybusRoutes ?? [])],
           busArrivals: busFeed.arrivals,
           busDataTimestamp: busFeed.generatedAt,
         })

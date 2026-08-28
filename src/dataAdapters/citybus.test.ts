@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeCitybusRoutes } from './citybus'
+import { citybusFeaturedRouteNumbers, normalizeCitybusRoutes, selectCitybusRoutes } from './citybus'
+
+describe('selectCitybusRoutes', () => {
+  it('selects the configured representative routes in stable order', () => {
+    const routes = citybusFeaturedRouteNumbers.map(route => ({
+      co: 'CTB' as const, route,
+      orig_en: 'A', orig_tc: '甲', dest_en: 'B', dest_tc: '乙',
+    })).reverse()
+
+    expect(selectCitybusRoutes(routes).map(route => route.route)).toEqual(citybusFeaturedRouteNumbers)
+  })
+})
 
 describe('normalizeCitybusRoutes', () => {
   it('normalizes Citybus route directions, ordered stops, names, and coordinates', () => {

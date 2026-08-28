@@ -34,6 +34,16 @@ export interface CitybusRouteSnapshot {
   stops: z.input<typeof CitybusStopSchema>[]
 }
 
+// Keep the initial live integration bounded while each route requires two API calls and many stop lookups.
+export const citybusFeaturedRouteNumbers = ['1', '10', '101', '102', '118', '260', '969', 'A11'] as const
+
+export function selectCitybusRoutes(routes: CitybusRouteSnapshot['routes']) {
+  const byNumber = new Map(routes.map(route => [route.route, route]))
+  return citybusFeaturedRouteNumbers
+    .map(routeNumber => byNumber.get(routeNumber))
+    .filter((route): route is CitybusRouteSnapshot['routes'][number] => route !== undefined)
+}
+
 export function normalizeCitybusRoutes(snapshot: CitybusRouteSnapshot) {
   z.string().datetime({ offset: true }).parse(snapshot.generatedAt)
   const routes = z.array(CitybusRouteSchema).parse(snapshot.routes)
