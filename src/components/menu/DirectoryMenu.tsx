@@ -59,12 +59,12 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         </div>
       </details>
 
-      {[
-        t.buses,
-        t.ferries,
-        t.trams,
-        t.flights,
-      ].map(label => (
+      <details open className="menu-section">
+        <summary>{t.buses}<span>{data?.busRoutes?.length ?? 0}</span></summary>
+        <div className="section-body muted-body">KMB/LWB normalized routes</div>
+      </details>
+
+      {[t.ferries, t.trams, t.flights].map(label => (
         <details key={label} className="menu-section planned-section">
           <summary>{label}<span>{t.planned}</span></summary>
           <div className="section-body muted-body">{t.source}: {t.dataGov}</div>

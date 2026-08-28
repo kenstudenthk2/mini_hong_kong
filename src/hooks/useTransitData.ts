@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TransitData } from '../types'
+import { normalizeKmbRoutes, type KmbRouteSnapshot } from '../dataAdapters/kmb'
 import { assertValidTransitData, parseData, RailLinesSchema, StationsSchema, TripsSchema } from '../dataSchemas'
 
 interface TransitDataState {
@@ -14,6 +15,25 @@ async function loadJson(path: string): Promise<unknown> {
   return response.json()
 }
 
+interface KmbEnvelope {
+  generated_timestamp: string
+  data: Record<string, unknown>[]
+}
+
+async function loadKmbRoutes(): Promise<TransitData['busRoutes']> {
+  const [rawRoutes, rawRouteStops, rawStops] = await Promise.all([
+    loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route/') as Promise<KmbEnvelope>,
+    loadJson('https://data.etabus.gov.hk/v1/transport/kmb/route-stop/') as Promise<KmbEnvelope>,
+    loadJson('https://data.etabus.gov.hk/v1/transport/kmb/stop/') as Promise<KmbEnvelope>,
+  ])
+  return normalizeKmbRoutes({
+    generatedAt: rawRoutes.generated_timestamp,
+    routes: rawRoutes.data as KmbRouteSnapshot['routes'],
+    routeStops: rawRouteStops.data as KmbRouteSnapshot['routeStops'],
+    stops: rawStops.data as KmbRouteSnapshot['stops'],
+  })
+}
+
 export function useTransitData(): TransitDataState {
   const [state, setState] = useState<TransitDataState>({ data: null, loading: true, error: null })
 
@@ -21,11 +41,12 @@ export function useTransitData(): TransitDataState {
     let cancelled = false
     async function load() {
       try {
-        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips] = await Promise.all([
+        const [rawLines, rawStations, rawWeekdayTrips, rawWeekendTrips, busRoutes] = await Promise.all([
           loadJson('/data/rail-lines.json'),
           loadJson('/data/stations.json'),
           loadJson('/data/trips-weekday.json'),
           loadJson('/data/trips-weekend.json'),
+          loadKmbRoutes().catch(() => []),
         ])
         if (cancelled) return
         const data = assertValidTransitData({
@@ -35,6 +56,7 @@ export function useTransitData(): TransitDataState {
             ...parseData(TripsSchema, rawWeekdayTrips, 'trips-weekday.json'),
             ...parseData(TripsSchema, rawWeekendTrips, 'trips-weekend.json'),
           ],
+          busRoutes,
         })
         setState({
           loading: false,

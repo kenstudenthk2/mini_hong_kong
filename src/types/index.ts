@@ -38,11 +38,20 @@ export interface Trip {
   stopIds: string[]
 }
 
+export interface BusRoute extends LocalizedName {
+  id: string
+  operator: string
+  routeNumber: string
+  color: string
+  stopIds: string[]
+  geometry: Coordinate[]
+}
+
 export interface TransitData {
   railLines: RailLine[]
   stations: Station[]
   trips: Trip[]
-  busRoutes?: unknown[]
+  busRoutes?: BusRoute[]
   ferryRoutes?: unknown[]
   tramRoutes?: unknown[]
   flights?: unknown[]
