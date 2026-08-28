@@ -3,6 +3,7 @@ import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from 'maplibr
 import { useEffect, useMemo, useRef } from 'react'
 import { useI18n } from '../../i18n'
 import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
+import { hkiaGroundFeatures } from '../../dataAdapters/airportGround'
 import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
@@ -118,6 +119,24 @@ function airportRunwaysToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
+function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: hkiaGroundFeatures.map(feature => ({
+      type: 'Feature',
+      id: feature.id,
+      geometry: { type: 'Point', coordinates: feature.coordinates },
+      properties: {
+        id: feature.id,
+        kind: feature.kind,
+        ref: feature.ref,
+        nameEn: feature.nameEn,
+        nameZh: feature.nameZh,
+      },
+    })),
+  }
+}
+
 export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, pitchEnabled, onSelectVehicle }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
@@ -182,6 +201,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.addSource('tram-routes', { type: 'geojson', data: emptyCollection })
       map.addSource('airport-facilities', { type: 'geojson', data: emptyCollection })
       map.addSource('airport-runways', { type: 'geojson', data: emptyCollection })
+      map.addSource('airport-ground', { type: 'geojson', data: emptyCollection })
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
@@ -257,6 +277,35 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           'line-width': 3,
           'line-opacity': 0.65,
           'line-dasharray': [2, 1],
+        },
+      })
+      map.addLayer({
+        id: 'airport-ground',
+        type: 'circle',
+        source: 'airport-ground',
+        paint: {
+          'circle-radius': ['match', ['get', 'kind'], 'terminal', 6, 3],
+          'circle-color': ['match', ['get', 'kind'], 'terminal', '#f59e0b', '#a78bfa'],
+          'circle-stroke-color': '#0f172a',
+          'circle-stroke-width': 1,
+          'circle-opacity': 0.88,
+        },
+      })
+      map.addLayer({
+        id: 'airport-ground-label',
+        type: 'symbol',
+        source: 'airport-ground',
+        minzoom: 11.4,
+        layout: {
+          'text-field': ['get', 'nameEn'],
+          'text-size': 9,
+          'text-offset': [0, 1.1],
+          'text-anchor': 'top',
+        },
+        paint: {
+          'text-color': '#fcd34d',
+          'text-halo-color': '#020617',
+          'text-halo-width': 1,
         },
       })
       map.addLayer({
@@ -356,6 +405,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutesRef.current))
       updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
       updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
+      updateSource(map, 'airport-ground', airportGroundToGeoJson())
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
@@ -379,6 +429,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes))
     updateSource(map, 'airport-facilities', airportFacilitiesToGeoJson())
     updateSource(map, 'airport-runways', airportRunwaysToGeoJson())
+    updateSource(map, 'airport-ground', airportGroundToGeoJson())
   }, [busRoutes, ferryRoutes, lines, selectedLineIds, stations, tramRoutes, visibleVehicles])
 
   useEffect(() => {
@@ -392,6 +443,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     }
     if (map.getLayer('airport-facilities-label')) {
       map.setLayoutProperty('airport-facilities-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : 'nameEn'])
+    }
+    if (map.getLayer('airport-ground-label')) {
+      map.setLayoutProperty('airport-ground-label', 'text-field', ['get', lang === 'zh' ? 'nameZh' : 'nameEn'])
     }
   }, [lang])
 
@@ -490,6 +544,15 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             opacity="0.72"
           />
         ))}
+        {hkiaGroundFeatures.map(feature => {
+          const point = project(feature.coordinates)
+          return (
+            <g key={feature.id}>
+              <circle cx={point.x} cy={point.y} r={feature.kind === 'terminal' ? 9 : 5} fill={feature.kind === 'terminal' ? '#f59e0b' : '#a78bfa'} stroke="#0f172a" strokeWidth="2" />
+              <text x={point.x} y={point.y - (feature.kind === 'terminal' ? 13 : 8)} textAnchor="middle" fill="#fcd34d" fontSize={feature.kind === 'terminal' ? 12 : 8}>{feature.ref}</text>
+            </g>
+          )
+        })}
         {visibleVehicles.map(vehicle => {
           const point = project(vehicle.coordinates)
           return (
