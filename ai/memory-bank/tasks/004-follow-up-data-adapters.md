@@ -278,3 +278,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `fd44a03`.
 - Known limitation: ferry/tram rows are informational rather than individually filterable; browser visual verification remains pending.
 - Next task: add route-level filtering only with a bounded control model that preserves the directory's compact layout.
+
+## Compact handoff: Ferry and Tram route toggles
+- Complete: Ferry and Tram route rows are now toggle controls; selection state is owned by `App` and filters active vehicles, MapLibre GeoJSON, and schematic paths consistently.
+- Scope: all Ferry/Tram routes start enabled; Rail controls remain unchanged; the larger Bus dataset remains summarized to preserve menu density.
+- Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `42cb8b6`.
+- Known limitation: browser interaction verification remains pending; no route-level controls were added for buses or flights in this slice.
+- Next task: add a compact reset-all control or bounded Bus operator filtering only after interaction verification is available.
