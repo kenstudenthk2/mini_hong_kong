@@ -39,4 +39,13 @@ describe('flight info resolution', () => {
     expect(routeForVehicle(data, ferry)?.routeNumber).toBe('1')
     expect(routeForVehicle(data, tram)?.operator).toBe('Tram')
   })
+
+  it('resolves a bus route for a selected bus vehicle', () => {
+    const bus = { id: 'bus-1', type: 'bus', lineId: 'kmb-1-o' } as VehiclePosition
+    const data = {
+      busRoutes: [{ id: 'kmb-1-o', operator: 'KMB/LWB', routeNumber: '1', color: '#0f766e', nameEn: 'Chuk Yuen - Star Ferry', nameZh: '\u7af9\u5712 - \u5929\u661f\u5c0f\u8f2a', geometry: [], stopIds: [] }],
+    } as unknown as TransitData
+    expect(routeForVehicle(data, bus)?.operator).toBe('KMB/LWB')
+    expect(routeForVehicle(data, bus)?.routeNumber).toBe('1')
+  })
 })

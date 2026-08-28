@@ -1,5 +1,5 @@
 import { localName, useI18n } from '../../i18n'
-import type { AirportFlight, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
+import type { AirportFlight, BusRoute, FerryRoute, Lang, Station, TransitData, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
@@ -25,8 +25,9 @@ function flightLabel(lang: Lang, key: 'flight' | 'airline' | 'route' | 'schedule
   return labels[lang][key]
 }
 
-export function routeForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): FerryRoute | undefined {
-  if (!data || (vehicle?.type !== 'ferry' && vehicle?.type !== 'tram')) return undefined
+export function routeForVehicle(data: TransitData | null, vehicle: VehiclePosition | null): BusRoute | FerryRoute | undefined {
+  if (!data || !vehicle || !['bus', 'ferry', 'tram'].includes(vehicle.type)) return undefined
+  if (vehicle.type === 'bus') return data.busRoutes?.find(route => route.id === vehicle.lineId)
   const routes = vehicle.type === 'ferry' ? data.ferryRoutes : data.tramRoutes
   return routes?.find(route => route.id === vehicle.lineId)
 }
@@ -85,7 +86,7 @@ export function InfoPanel({ data, vehicle }: Props) {
           </span>
           <p>{routeLabel(lang, 'operator')}: <strong>{route.operator}</strong></p>
           <p>{routeLabel(lang, 'routeNumber')}: <strong>{route.routeNumber}</strong></p>
-          <p>{routeLabel(lang, 'journey')}: <strong>{route.journeyTimeMinutes} min</strong></p>
+          {'journeyTimeMinutes' in route && <p>{routeLabel(lang, 'journey')}: <strong>{route.journeyTimeMinutes} min</strong></p>}
           <p>{routeLabel(lang, 'progress')}: <strong>{Math.round(vehicle.progress * 100)}%</strong></p>
         </div>
       )}
