@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { BusRoutesSchema } from '../dataSchemas'
-import type { Coordinate } from '../types'
+import type { BusArrival, Coordinate } from '../types'
 
 const NlbRouteSchema = z.object({
   routeId: z.string().min(1),
@@ -17,6 +17,12 @@ const NlbStopSchema = z.object({
   longitude: z.coerce.number().finite(),
 })
 
+const NlbEtaSchema = z.object({
+  estimatedArrivalTime: z.string().min(1),
+  generateTime: z.string().min(1),
+  routeVariantName: z.string().optional().default(''),
+})
+
 export interface NlbRouteSnapshot {
   routes: z.input<typeof NlbRouteSchema>[]
   stopsByRoute: Record<string, z.input<typeof NlbStopSchema>[]>
@@ -24,6 +30,15 @@ export interface NlbRouteSnapshot {
 
 // Keep the first runtime integration bounded; each selected route needs one stop request.
 export const nlbFeaturedRouteIds = ['1', '2', '3', '4'] as const
+
+function nlbTimestamp(value: string): string | null {
+  const iso = `${value.replace(' ', 'T')}+08:00`
+  return Number.isNaN(Date.parse(iso)) ? null : iso
+}
+
+function cleanNlbMessage(message: string): string {
+  return message.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+}
 
 export function normalizeNlbRoutes(snapshot: NlbRouteSnapshot) {
   const routes = z.array(NlbRouteSchema).parse(snapshot.routes)
@@ -45,4 +60,32 @@ export function normalizeNlbRoutes(snapshot: NlbRouteSnapshot) {
   })
 
   return BusRoutesSchema.parse(normalized)
+}
+
+export function normalizeNlbEta(
+  raw: unknown,
+  context: { routeId: string; stopSequence: number; destinationEn: string; destinationZh: string },
+): BusArrival[] {
+  const payload = z.object({
+    estimatedArrivals: z.array(NlbEtaSchema),
+    message: z.string().optional().default(''),
+  }).parse(raw)
+  const remarkEn = cleanNlbMessage(payload.message)
+
+  return payload.estimatedArrivals.flatMap((record, index) => {
+    const eta = nlbTimestamp(record.estimatedArrivalTime)
+    const dataTimestamp = nlbTimestamp(record.generateTime)
+    if (!eta) return []
+    return [{
+      id: `${context.routeId}-eta-${context.stopSequence}-${index + 1}`,
+      routeId: context.routeId,
+      stopSequence: context.stopSequence,
+      arrivalSequence: index + 1,
+      destinationEn: context.destinationEn,
+      destinationZh: context.destinationZh,
+      eta,
+      remarkEn,
+      dataTimestamp: dataTimestamp ?? '',
+    }]
+  })
 }
