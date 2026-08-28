@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { BusRoutesSchema } from '../dataSchemas'
-import type { Coordinate } from '../types'
+import type { BusArrival, Coordinate } from '../types'
 
 export const gmbFeaturedRegion = 'HKI'
 export const gmbFeaturedRouteCode = '1'
@@ -37,10 +37,58 @@ const GmbStopSchema = z.object({
   }),
 })
 
+const GmbEtaSchema = z.object({
+  eta_seq: z.coerce.number().int().positive(),
+  timestamp: z.string().min(1),
+  remarks_en: z.string().optional().default(''),
+  remarks_tc: z.string().optional().default(''),
+})
+
+const GmbEtaRouteSchema = z.object({
+  enabled: z.boolean(),
+  eta: z.array(GmbEtaSchema).optional().default([]),
+})
+
+const GmbEtaResponseSchema = z.object({
+  generated_timestamp: z.string().min(1),
+  data: z.array(GmbEtaRouteSchema),
+})
+
 export interface GmbRouteSnapshot {
   routes: z.input<typeof GmbRouteSchema>[]
   routeStopsByDirection: Record<string, z.input<typeof GmbRouteStopSchema>[]>
   stopsById: Record<string, z.input<typeof GmbStopSchema>>
+}
+
+function validTimestamp(value: string): string | null {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date.toISOString()
+}
+
+export function normalizeGmbEta(
+  raw: unknown,
+  context: { routeId: string; stopSequence: number; destinationEn: string; destinationZh: string },
+): BusArrival[] {
+  const payload = GmbEtaResponseSchema.parse(raw)
+  const dataTimestamp = validTimestamp(payload.generated_timestamp) ?? ''
+  return payload.data.flatMap(record => {
+    if (!record.enabled) return []
+    return record.eta.flatMap(etaRecord => {
+      const eta = validTimestamp(etaRecord.timestamp)
+      if (!eta) return []
+      return [{
+        id: `${context.routeId}-eta-${context.stopSequence}-${etaRecord.eta_seq}`,
+        routeId: context.routeId,
+        stopSequence: context.stopSequence,
+        arrivalSequence: etaRecord.eta_seq,
+        destinationEn: context.destinationEn,
+        destinationZh: context.destinationZh,
+        eta,
+        remarkEn: etaRecord.remarks_en,
+        dataTimestamp,
+      }]
+    })
+  })
 }
 
 type JsonLoader = (path: string) => Promise<unknown>

@@ -1,7 +1,39 @@
 import { describe, expect, it } from 'vitest'
-import { gmbStopLimit, loadGmbRoutes, normalizeGmbRoutes } from './gmb'
+import { gmbStopLimit, loadGmbRoutes, normalizeGmbEta, normalizeGmbRoutes } from './gmb'
 
 describe('GMB route adapter', () => {
+  it('normalizes enabled ETA entries with Hong Kong timestamps and remarks', () => {
+    const arrivals = normalizeGmbEta({
+      generated_timestamp: '2026-08-28T14:10:31+08:00',
+      data: [{
+        enabled: true,
+        eta: [
+          { eta_seq: 1, diff: 4, timestamp: '2026-08-28T14:14:00+08:00', remarks_en: 'At stop', remarks_tc: '\u5373\u5c07\u5230\u7ad9' },
+          { eta_seq: 2, diff: 11, timestamp: '2026-08-28T14:21:00+08:00', remarks_en: '', remarks_tc: '' },
+        ],
+      }],
+    }, { routeId: 'gmb-hki-2006408-1', stopSequence: 2, destinationEn: 'Central', destinationZh: '\u4e2d\u74b0' })
+
+    expect(arrivals).toHaveLength(2)
+    expect(arrivals[0]).toEqual(expect.objectContaining({
+        routeId: 'gmb-hki-2006408-1',
+        stopSequence: 2,
+        arrivalSequence: 1,
+        destinationEn: 'Central',
+        destinationZh: '\u4e2d\u74b0',
+        eta: '2026-08-28T06:14:00.000Z',
+        remarkEn: 'At stop',
+        dataTimestamp: '2026-08-28T06:10:31.000Z',
+    }))
+  })
+
+  it('omits disabled and invalid ETA entries', () => {
+    expect(normalizeGmbEta({
+      generated_timestamp: '2026-08-28T14:10:31+08:00',
+      data: [{ enabled: false, eta: [{ eta_seq: 1, timestamp: '2026-08-28T14:14:00+08:00' }] }, { enabled: true, eta: [{ eta_seq: 1, timestamp: 'invalid' }] }],
+    }, { routeId: 'gmb-hki-2006408-1', stopSequence: 1, destinationEn: 'Central', destinationZh: '\u4e2d\u74b0' })).toEqual([])
+  })
+
   it('loads one bounded route sample from the official endpoint shapes', async () => {
     const calls: string[] = []
     const routes = await loadGmbRoutes(async path => {
