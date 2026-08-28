@@ -84,3 +84,9 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Guardrails: missing coordinates or fewer than two ordered stops omit only the affected direction; no network fetch or generated output was added.
 - Evidence: `src/dataAdapters/citybus.test.ts` covers localized names, coordinate ordering, direction IDs, and incomplete geometry; full suite has 29 passing tests and build passes. Commit: `487bb39`.
 - Next task: add bounded Citybus route/stop loading and ETA integration with explicit request-volume and freshness behavior.
+
+## Compact handoff: bounded Citybus runtime loading
+- Complete: the app loads Citybus v2 route metadata, both directions for eight explicitly configured routes, and deduplicated stop coordinates, then merges them with KMB routes.
+- Request policy: route-stop requests are capped at four concurrent calls and stop lookups at eight concurrent calls; Citybus remains optional and cannot block rail/KMB fallback data.
+- Evidence: live read-only smoke check found 407 published routes, selected all eight configured routes, 16 route-stop requests, and 366 unique stops; full suite has 30 passing tests and build passes. Commit: `307378f`.
+- Known risk: the current eight-route geometry load can add startup latency and may encounter provider rate limits; Citybus ETA and asynchronous post-load hydration are separate follow-up tasks.
