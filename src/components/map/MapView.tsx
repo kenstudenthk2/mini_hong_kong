@@ -20,6 +20,7 @@ interface Props {
   selectedBusOperators: Set<string>
   pitchEnabled: boolean
   onSelectVehicle: (vehicle: VehiclePosition | null) => void
+  selectedVehicleId: string | null
 }
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
@@ -92,6 +93,11 @@ function updateSource(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollect
   source?.setData(data)
 }
 
+export function selectedVehicleCenter(vehicles: VehiclePosition[], selectedVehicleId: string | null): [number, number] | null {
+  const vehicle = vehicles.find(item => item.id === selectedVehicleId)
+  return vehicle ? vehicle.coordinates : null
+}
+
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -141,7 +147,7 @@ function airportGroundToGeoJson(): GeoJSON.FeatureCollection {
   }
 }
 
-export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle }: Props) {
+export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, pitchEnabled, onSelectVehicle, selectedVehicleId }: Props) {
   const mapNode = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const vehiclesRef = useRef<VehiclePosition[]>(vehicles)
@@ -462,6 +468,13 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     if (!map) return
     map.easeTo({ pitch: pitchEnabled ? 58 : 0, bearing: pitchEnabled ? -18 : 0, duration: 450 })
   }, [pitchEnabled])
+
+  useEffect(() => {
+    const map = mapRef.current
+    const center = selectedVehicleCenter(visibleVehicles, selectedVehicleId)
+    if (!map || !center) return
+    map.easeTo({ center, duration: 220 })
+  }, [selectedVehicleId, visibleVehicles])
 
   return (
     <div className="map-frame">

@@ -107,6 +107,7 @@ export default function App() {
           selectedLineIds={selectedLineIds}
           pitchEnabled={pitchEnabled}
           onSelectVehicle={setSelectedVehicle}
+          selectedVehicleId={selectedVehicle?.id ?? null}
           selectedRouteIds={selectedRouteIds}
           selectedBusOperators={selectedBusOperators}
         />
