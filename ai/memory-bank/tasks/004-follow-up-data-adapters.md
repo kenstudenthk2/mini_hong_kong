@@ -620,3 +620,12 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/nlb.test.ts` covers valid/invalid timestamps, message cleanup, sequence IDs, and destination context; full suite has 81 passing tests, lint/build/diff checks pass. Commit: `187a761`.
 - Known limitation: runtime NLB ETA loading and live vehicle visualization remain pending.
 - Next task: add one bounded NLB ETA loader for the approved featured route/stop sample and measure request volume before wiring movement.
+
+## Compact handoff: staged NLB ETA sample
+- Complete: optional hydration now loads NLB ETA data for featured route `1` and its first six ordered stops, normalizes arrivals, and merges them into the shared bus-arrival feed used by the live ETA simulation mode.
+- Request budget: one NLB route catalog request, four featured-route stop requests, and at most six ETA requests; stop and ETA fan-out are each capped at concurrency two.
+- Semantics: NLB route geometry remains browseable for four featured routes; moving NLB markers appear only when adjacent-stop ETA predictions share route, destination, and arrival sequence.
+- Scope: bounded ETA sample only; no timetable headway was inferred and GMB remains unimplemented.
+- Evidence: full suite has 81 passing tests, lint/build/diff checks pass. Commit: `e4e330b`.
+- Known limitation: live network hydration and NLB marker rendering remain unverified in a browser; Portuguese names use the shared English fallback.
+- Next task: validate NLB runtime requests and marker behavior in a working browser before expanding route or operator coverage.
