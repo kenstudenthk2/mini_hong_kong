@@ -264,3 +264,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/dataAdapters/airportGround.test.ts` asserts the complete Portuguese label set; full suite has 52 passing tests, lint/build/diff checks pass. Commit: `4ab6a3d`.
 - Known limitation: schematic gate labels use universal gate references and browser visual verification remains pending.
 - Next task: document the snapshot refresh/review procedure before connecting any aircraft record to a terminal or gate.
+
+## Compact handoff: active bus directory count
+- Complete: the Buses directory header now reports the number of simulated `bus` vehicles, matching Rail, Ferries, Trams, and Flights; the body retains the normalized route total.
+- Semantics: the count is clock-dependent vehicle state, while route count remains a static data-shape indicator.
+- Evidence: full suite has 52 passing tests, lint/build/diff checks pass. Commit: `71eed0a`.
+- Known limitation: browser visual verification remains pending; bus route rows are not individually selectable yet.
+- Next task: add per-operator or route-level bus controls only if the directory can remain compact and consistent.
