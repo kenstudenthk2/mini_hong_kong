@@ -99,6 +99,7 @@ export interface TransitData {
   busArrivals?: BusArrival[]
   busDataTimestamp?: string
   ferryRoutes?: FerryRoute[]
+  ferrySchedules?: FerrySchedule[]
   tramRoutes?: unknown[]
   flights?: unknown[]
 }
