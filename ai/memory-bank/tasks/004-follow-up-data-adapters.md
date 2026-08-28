@@ -314,3 +314,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/app/vehicleVisibility.test.ts` passes; full suite has 54 passing tests, lint/build/diff checks pass. Commit: `1948211`.
 - Known limitation: browser interaction verification remains unavailable because the integrated browser connection failed; no UI harness package was added.
 - Next task: verify filter/reset/selection workflows in a working browser harness before expanding route controls.
+
+## Compact handoff: replay flight identity labels
+- Complete: each HKIA runway replay marker now prefixes its normalized AAHK flight number in English, Traditional Chinese, and Portuguese labels, linking the moving marker to the flight-board record.
+- Scope: identity presentation only; runway selection, six-minute timing, static replay wording, and no-live-telemetry boundary are unchanged.
+- Evidence: `src/dataAdapters/airportReplay.test.ts` asserts the localized `HX246` labels; full suite has 54 passing tests, lint/build/diff checks pass. Commit: `2bcdbee`.
+- Known limitation: browser visual/interaction verification remains pending because the integrated browser connection is unavailable.
+- Next task: verify localized aircraft selection in a working browser harness.
