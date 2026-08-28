@@ -1,15 +1,19 @@
 import { localName, useI18n } from '../../i18n'
 import { classifyFreshness } from '../../dataAdapters/freshness'
-import type { AirportFlight, Lang, RailLine, TransitData, VehiclePosition } from '../../types'
+import type { AirportFlight, FerryRoute, Lang, RailLine, TransitData, TramRoute, VehiclePosition } from '../../types'
 
 interface Props {
   data: TransitData | null
   vehicles: VehiclePosition[]
   selectedLineIds: Set<string>
   onToggleLine: (lineId: string) => void
+  selectedRouteIds: Set<string>
+  onToggleRoute: (routeId: string) => void
 }
 
-function LineRow({ line, enabled, onToggle }: { line: RailLine; enabled: boolean; onToggle: () => void }) {
+type DirectoryRoute = RailLine | FerryRoute | TramRoute
+
+function LineRow({ line, enabled, onToggle }: { line: DirectoryRoute; enabled: boolean; onToggle: () => void }) {
   const { lang } = useI18n()
   return (
     <button className="line-row" type="button" onClick={onToggle} aria-pressed={enabled}>
@@ -41,8 +45,8 @@ function FlightRow({ flight }: { flight: AirportFlight }) {
   )
 }
 
-export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }: Props) {
-  const { lang, t } = useI18n()
+export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, selectedRouteIds, onToggleRoute }: Props) {
+  const { t } = useI18n()
   const mtrLines = data?.railLines.filter(line => line.mode === 'mtr') ?? []
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
@@ -99,7 +103,14 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         <summary>{t.ferries}<span>{vehicles.filter(vehicle => vehicle.type === 'ferry').length}</span></summary>
         <div className="section-body muted-body">
           <div>{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
-          {(data?.ferryRoutes ?? []).map(route => <div key={route.id}>{route.routeNumber} · {localName(route, lang)}</div>)}
+          {(data?.ferryRoutes ?? []).map(route => (
+            <LineRow
+              key={route.id}
+              line={route}
+              enabled={selectedRouteIds.has(route.id)}
+              onToggle={() => onToggleRoute(route.id)}
+            />
+          ))}
         </div>
       </details>
 
@@ -107,7 +118,14 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine }:
         <summary>{t.trams}<span>{vehicles.filter(vehicle => vehicle.type === 'tram').length}</span></summary>
         <div className="section-body muted-body">
           <div>{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
-          {(data?.tramRoutes ?? []).map(route => <div key={route.id}>{route.routeNumber} · {localName(route, lang)}</div>)}
+          {(data?.tramRoutes ?? []).map(route => (
+            <LineRow
+              key={route.id}
+              line={route}
+              enabled={selectedRouteIds.has(route.id)}
+              onToggle={() => onToggleRoute(route.id)}
+            />
+          ))}
         </div>
       </details>
 

@@ -21,6 +21,15 @@ export default function App() {
   )
   const [manualLineIds, setManualLineIds] = useState<Set<string> | null>(null)
   const selectedLineIds = manualLineIds ?? allLineIds
+  const allRouteIds = useMemo(
+    () => new Set([
+      ...(transitData.data?.ferryRoutes?.map(route => route.id) ?? []),
+      ...(transitData.data?.tramRoutes?.map(route => route.id) ?? []),
+    ]),
+    [transitData.data],
+  )
+  const [manualRouteIds, setManualRouteIds] = useState<Set<string> | null>(null)
+  const selectedRouteIds = manualRouteIds ?? allRouteIds
 
   const vehicles = useMemo(
     () => transitData.data ? [
@@ -42,6 +51,13 @@ export default function App() {
     setManualLineIds(next)
   }
 
+  function toggleRoute(routeId: string) {
+    const next = new Set(selectedRouteIds)
+    if (next.has(routeId)) next.delete(routeId)
+    else next.add(routeId)
+    setManualRouteIds(next)
+  }
+
   return (
     <main className="app-shell">
       <DirectoryMenu
@@ -49,6 +65,8 @@ export default function App() {
         vehicles={vehicles}
         selectedLineIds={selectedLineIds}
         onToggleLine={toggleLine}
+        selectedRouteIds={selectedRouteIds}
+        onToggleRoute={toggleRoute}
       />
       <section className="map-shell">
         {transitData.error && <div className="load-error">{transitData.error}</div>}
@@ -63,6 +81,7 @@ export default function App() {
           selectedLineIds={selectedLineIds}
           pitchEnabled={pitchEnabled}
           onSelectVehicle={setSelectedVehicle}
+          selectedRouteIds={selectedRouteIds}
         />
         <ControlPanel
           clock={clock}
