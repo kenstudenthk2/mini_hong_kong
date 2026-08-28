@@ -208,3 +208,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Geometry decision: the reviewed official DATA.GOV.HK, AAHK, CAD, and CSDI results expose flight schedule/status or general airport documentation, but no authoritative machine-readable flight route-coordinate feed was found for this task. Do not invent aircraft paths.
 - Evidence: full suite has 45 passing tests, lint/build/diff checks pass. Commit: `6d3eba0`.
 - Next task: if aircraft visualization is required, add a clearly labeled static HKIA hub/airport geometry source or an approved external route dataset, then build a separate animation model with explicit provenance.
+
+## Compact handoff: sourced HKIA facility contract
+- Complete: added the typed `hkiaFacility` aerodrome reference point for HKG/VHHH, with English and Traditional Chinese names plus the official source URL.
+- Coordinate provenance: `[113.9147222, 22.3088889]` is the WGS-84 conversion of the Hong Kong AIP AD 2.2 ARP value `221832N 1135453E`; this is a static airport context point, not a flight position.
+- Scope: no runway, taxiway, terminal footprint, destination coordinate, or aircraft motion was inferred from this single point.
+- Evidence: `src/dataAdapters/airport.test.ts` validates identity, coordinate, and map extent; focused tests, lint/build/diff checks pass. Commit: `4d6dfb2`.
+- Next task: wire the facility into MapLibre and schematic rendering, then separately evaluate an approved runway/terminal geometry extract.
