@@ -379,3 +379,11 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: `src/components/map/MapView.test.ts` covers empty and occupied feature counts; full suite has 62 passing tests, lint/build/diff checks pass. Commit: `2024c81`.
 - Known limitation: actual MapLibre event ordering, touch taps, and camera ergonomics remain unverified because the integrated browser harness is unavailable.
 - Next task: run browser interaction checks before deciding whether automatic focus needs an explicit follow toggle.
+
+## Compact handoff: selected flight details
+- Complete: the selected-flight panel now resolves the replay vehicle to its normalized AAHK record and shows flight numbers, airline code, localized route, scheduled time, localized status, cargo marker, and movement progress.
+- Semantics: the panel remains a replay information surface; it does not imply live aircraft telemetry or add en-route flight paths.
+- Resilience: if a replay vehicle has no matching source record, the existing localized marker and progress remain available without a render failure.
+- Evidence: `src/components/map/InfoPanel.test.ts` covers record resolution and missing records; full suite has 64 passing tests, lint/build/diff checks pass. Commit: `99d50ec`.
+- Known limitation: browser selection, locale switching, and information-panel layout remain unverified because the integrated browser harness is unavailable.
+- Next task: validate flight selection in a working browser, then continue remaining reference-derived controls such as explicit follow mode or live/simulated bus mode.
