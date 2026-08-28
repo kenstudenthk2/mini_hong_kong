@@ -43,3 +43,8 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Complete: KMB routes are passed into `MapView` and rendered through a dedicated dashed MapLibre layer and schematic fallback.
 - Evidence: full test, lint, and build gates pass after this task; bus vehicle simulation and route filtering remain separate.
 - Clear context: KMB route loading remains optional and does not block the rail experience.
+
+## Compact handoff: bus replay vehicle scaffold
+- Complete: KMB route 1 has an explicitly labelled weekday replay schedule and its vehicles share the simulation clock.
+- Approximation: KMB route APIs expose topology and realtime ETA, not headway/timetable fields; the replay schedule is not an operator timetable.
+- Evidence: full test and build gates passed in the implementation task; official timetable/ETA-driven movement remains follow-up work.
