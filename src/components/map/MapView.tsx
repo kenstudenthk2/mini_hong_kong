@@ -8,7 +8,7 @@ import { activeBusRouteIds, isVehicleVisible } from '../../app/vehicleVisibility
 import type { SearchableRoute } from '../../app/routeSearch'
 import type { TransportTool } from '../menu/DirectoryMenu'
 import type { AirportFacility, BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
-import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
+import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson, vehiclesToTrailGeoJson } from '../../layers/vehicleShapes'
 
 interface Props {
   lines: RailLine[]
@@ -351,6 +351,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       map.addSource('stations', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicles', { type: 'geojson', data: emptyCollection })
       map.addSource('vehicle-extrusions', { type: 'geojson', data: emptyCollection })
+      map.addSource('vehicle-trails', { type: 'geojson', data: emptyCollection })
       map.addSource('route-focus', { type: 'geojson', data: emptyCollection })
 
       map.addLayer({
@@ -540,6 +541,17 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         },
       })
       map.addLayer({
+        id: 'vehicle-trails',
+        type: 'line',
+        source: 'vehicle-trails',
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': ['case', ['==', ['get', 'mode'], 'flight'], 2.5, 1.8],
+          'line-opacity': ['case', ['==', ['get', 'mode'], 'flight'], 0.7, 0.45],
+          'line-dasharray': [1, 2],
+        },
+      })
+      map.addLayer({
         id: 'vehicle-extrusions',
         type: 'fill-extrusion',
         source: 'vehicle-extrusions',
@@ -635,6 +647,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
       updateSource(map, 'stations', stationsToGeoJson(stationsRef.current))
       updateSource(map, 'vehicles', vehiclesToPointGeoJson(vehiclesRef.current))
       updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(vehiclesRef.current))
+      updateSource(map, 'vehicle-trails', vehiclesToTrailGeoJson(vehiclesRef.current, [...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current, ...hkiaRunways]))
       updateSource(map, 'route-focus', routeFocusToGeoJson([...linesRef.current, ...busRoutesRef.current, ...ferryRoutesRef.current, ...tramRoutesRef.current], selectedRouteSearchIdRef.current))
     })
     mapRef.current = map
@@ -651,6 +664,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
     updateSource(map, 'stations', stationsToGeoJson(stations))
     updateSource(map, 'vehicles', vehiclesToPointGeoJson(visibleVehicles))
     updateSource(map, 'vehicle-extrusions', vehiclesToExtrusionGeoJson(visibleVehicles))
+    updateSource(map, 'vehicle-trails', vehiclesToTrailGeoJson(visibleVehicles, [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes, ...hkiaRunways]))
     updateSource(map, 'bus-routes', busRoutesToGeoJson(busRoutes.filter(route => selectedBusOperators.has(route.operator) && (visibleBusRouteIds.has(route.id) || selectedRouteSearchId === route.id))))
     updateSource(map, 'ferry-routes', ferryRoutesToGeoJson(ferryRoutes.filter(route => selectedRouteIds.has(route.id))))
     updateSource(map, 'tram-routes', tramRoutesToGeoJson(tramRoutes.filter(route => selectedRouteIds.has(route.id))))

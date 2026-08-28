@@ -129,3 +129,26 @@ export function vehiclesToExtrusionGeoJson(vehicles: VehiclePosition[]): Feature
     features: vehicles.map(vehiclePolygon),
   }
 }
+
+interface TrailRoute {
+  id: string
+  geometry: [number, number][]
+}
+
+export function vehiclesToTrailGeoJson(vehicles: VehiclePosition[], routes: TrailRoute[]): FeatureCollection<LineString> {
+  const routesById = new Map(routes.map(route => [route.id, route]))
+  return {
+    type: 'FeatureCollection',
+    features: vehicles.flatMap(vehicle => {
+      const route = routesById.get(vehicle.lineId)
+      if (!route || route.geometry.length < 2) return []
+      const endIndex = Math.min(route.geometry.length - 1, Math.max(1, Math.floor(vehicle.progress * (route.geometry.length - 1))))
+      return [{
+        type: 'Feature' as const,
+        id: `trail-${vehicle.id}`,
+        geometry: { type: 'LineString' as const, coordinates: [...route.geometry.slice(0, endIndex + 1), vehicle.coordinates] },
+        properties: { id: vehicle.id, color: vehicle.color, mode: vehicle.type },
+      }]
+    }),
+  }
+}
