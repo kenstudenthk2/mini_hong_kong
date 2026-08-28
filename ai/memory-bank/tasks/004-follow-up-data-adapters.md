@@ -537,3 +537,10 @@ KMB adapter slice complete; generated output, browser wiring, and other bus oper
 - Evidence: full suite has 76 passing tests, lint/build/diff checks pass. Commit: `f6e75cb`.
 - Known limitation: browser hit testing, panel layout, and locale rendering remain unverified because the integrated browser harness is unavailable.
 - Next task: validate HKIA and aircraft selection workflows in a working browser before adding more airport controls.
+
+## Compact handoff: selected airport highlight
+- Complete: the selected HKIA facility now receives a larger, heavier-stroked marker in both the MapLibre layer and SVG schematic, driven by the shared selected facility ID.
+- Scope: selection feedback only; AIP facility data, airport geometry, and flight replay semantics are unchanged.
+- Evidence: full suite has 76 passing tests, lint/build/diff checks pass. Commit: `a47893a`.
+- Known limitation: browser visual confirmation of the highlight and three-locale layout remains unverified because the integrated browser harness is unavailable.
+- Next task: validate HKIA and aircraft selection workflows in a working browser before adding more airport controls.
