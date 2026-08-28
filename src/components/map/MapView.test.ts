@@ -4,8 +4,8 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
-import type { VehiclePosition } from '../../types'
+import { selectedRouteCenter, selectedVehicleCenter, shouldClearVehicleSelection } from './MapView'
+import type { RailLine, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
   id: 'mtr-1',
@@ -36,5 +36,12 @@ describe('selected vehicle map focus', () => {
   it('clears selection only when empty map space was clicked', () => {
     expect(shouldClearVehicleSelection(0)).toBe(true)
     expect(shouldClearVehicleSelection(1)).toBe(false)
+  })
+
+  it('returns the first geometry point for a selected route', () => {
+    const route: RailLine = { id: 'mtr-east', geometry: [[114.1, 22.3]], nameEn: 'East Rail', nameZh: '\u6771\u9435', mode: 'mtr', color: '#38bdf8', operator: 'MTR', stationIds: [] }
+    expect(selectedRouteCenter([route], 'mtr-east')).toEqual([114.1, 22.3])
+    expect(selectedRouteCenter([route], 'missing')).toBeNull()
+    expect(selectedRouteCenter([route], null)).toBeNull()
   })
 })

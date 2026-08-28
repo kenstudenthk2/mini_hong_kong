@@ -5,6 +5,7 @@ import { useI18n } from '../../i18n'
 import { hkiaFacility, hkiaRunways } from '../../dataAdapters/airport'
 import { hkiaGroundFeatures } from '../../dataAdapters/airportGround'
 import { isVehicleVisible } from '../../app/vehicleVisibility'
+import type { SearchableRoute } from '../../app/routeSearch'
 import type { BusRoute, FerryRoute, RailLine, Station, TramRoute, VehiclePosition } from '../../types'
 import { busRoutesToGeoJson, linesToGeoJson, stationsToGeoJson, vehiclesToExtrusionGeoJson, vehiclesToPointGeoJson } from '../../layers/vehicleShapes'
 
@@ -103,6 +104,11 @@ export function selectedVehicleCenter(vehicles: VehiclePosition[], selectedVehic
 
 export function shouldClearVehicleSelection(vehicleFeatureCount: number): boolean {
   return vehicleFeatureCount === 0
+}
+
+export function selectedRouteCenter(routes: SearchableRoute[], selectedRouteId: string | null): [number, number] | null {
+  const route = routes.find(item => item.id === selectedRouteId)
+  return route?.geometry[0] ?? null
 }
 
 function airportFacilitiesToGeoJson(): GeoJSON.FeatureCollection {
@@ -513,8 +519,7 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
 
   useEffect(() => {
     const map = mapRef.current
-    const route = [...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes].find(item => item.id === selectedRouteSearchId)
-    const center = route?.geometry[0]
+    const center = selectedRouteCenter([...lines, ...busRoutes, ...ferryRoutes, ...tramRoutes], selectedRouteSearchId)
     if (!map || !center) return
     map.easeTo({ center, duration: 220 })
   }, [busRoutes, ferryRoutes, lines, selectedRouteSearchId, tramRoutes])
