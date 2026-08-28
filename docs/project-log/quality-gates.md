@@ -30,3 +30,11 @@
 - HTTP smoke: local Vite served `/` and `/data/rail-lines.json` with HTTP 200 on port 5180.
 - Remote: `origin` is configured, but the feature branch and `origin/main` diverge; integration requires an approved merge/rebase decision.
 - Browser: current browser/WebGL interaction remains unverified; prior screenshots are historical evidence only.
+
+## Current Gate Update (latest, 2026-08-28)
+- The historical snapshots above are retained for traceability; this section is authoritative for the current state.
+- Automated gates: 25 test files and 98 tests pass; lint, build, and diff check pass.
+- HTTP smoke: Vite returned HTTP 200 for the app shell, module entrypoint, rail lines, stations, and both trip snapshots on port 5184.
+- Remote: `origin/feature/mini-hong-kong-mvp` and `origin/main` are synchronized through `e743a5a`.
+- Renderer: MapLibre is the sole renderer; the SVG schematic fallback has been removed.
+- Browser: Pencil failed before page creation on the latest controlled attempt; no rendered pass is claimed.

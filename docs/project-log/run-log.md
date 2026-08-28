@@ -160,3 +160,7 @@
 - Reset now restores all transport filters and clears selected vehicle, station, route, HKIA facility, and airport ground feature state.
 - Evidence: 25 test files and 98 tests pass, lint, build, and diff checks pass.
 - Browser limitation: reset interaction remains unverified because the browser runtime cannot create a tab.
+
+### R-031: Quality-gate record reconciliation (2026-08-28)
+- Added an authoritative current gate section while preserving older snapshots for history.
+- Current record includes 98 passing tests, HTTP smoke evidence, synchronized remote branches, MapLibre-only rendering, and the latest browser blocker.
