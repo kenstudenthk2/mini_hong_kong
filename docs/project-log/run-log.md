@@ -119,7 +119,7 @@
 ### R-023: Directory collapse and schematic overlay disable (2026-08-28)
 - Added a collapse/expand control to the transport directory so the map can use the full viewport when the menu is not needed.
 - Disabled the legacy SVG schematic overlay. MapLibre OSM raster, vector buildings, transit routes, vehicles, and trails are now the authoritative visible layers.
-- The schematic JSX remains in place as a fallback implementation, but CSS prevents it from obscuring or diverging from the map.
+- At this point the schematic JSX was still retained but hidden as a temporary fallback; it was removed in R-025 after MapLibre verification gates passed.
 - Evidence: 25 test files and 96 tests pass, lint passes, production build passes, and `git diff --check` passes.
 - Browser limitation: live visual confirmation remains unavailable because the browser runtime fails before tab creation with an OS path error.
 
