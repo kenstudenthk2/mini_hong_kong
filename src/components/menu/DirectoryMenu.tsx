@@ -44,16 +44,14 @@ export type TransportTool = 'rail' | 'lightRail' | 'buses' | 'ferries' | 'trams'
 function ToolToggle({ label, tool, enabled, onToggle }: { label: string; tool: TransportTool; enabled: boolean; onToggle: (tool: TransportTool) => void }) {
   return (
     <button
-      className="tool-toggle"
+      className="tool-card"
       type="button"
       aria-label={`${label} ${enabled ? 'ON' : 'OFF'}`}
       aria-pressed={enabled}
-      onClick={event => {
-        event.stopPropagation()
-        onToggle(tool)
-      }}
+      onClick={() => onToggle(tool)}
     >
-      {enabled ? 'ON' : 'OFF'}
+      <span>{label}</span>
+      <strong>{enabled ? 'ON' : 'OFF'}</strong>
     </button>
   )
 }
@@ -107,6 +105,7 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
   const lightRailLines = data?.railLines.filter(line => line.mode === 'light_rail') ?? []
   const flights = data?.flights ?? []
   const activeFlightMovements = vehicles.filter(vehicle => vehicle.type === 'flight').length
+  const activeModeCount = activeTools.size
   const visibleBusCount = visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'bus')
   const flightDate = flights[0]?.date
   const kmbFreshness = data?.busDataTimestamp
@@ -121,13 +120,30 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
     <aside className={`directory-menu${collapsed ? ' directory-menu-collapsed' : ''}`} aria-label="Transit directory">
       <button className="directory-collapse" type="button" aria-label={collapsed ? 'Expand transit directory' : 'Collapse transit directory'} aria-expanded={!collapsed} onClick={() => setCollapsed(value => !value)}>{collapsed ? '+' : '\u2261'}</button>
       <header className="brand-block">
-        <div className="brand-title">{t.appName}</div>
-        <div className="brand-subtitle">{t.subtitle}</div>
+        <div>
+          <div className="brand-title">{t.appName}</div>
+          <div className="brand-subtitle">{t.subtitle}</div>
+        </div>
         <button className="menu-reset" type="button" onClick={onResetFilters}>{t.reset}</button>
       </header>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.rail}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'mtr')}</span><ToolToggle label={t.rail} tool="rail" enabled={activeTools.has('rail')} onToggle={onToggleTool} /></span></summary>
+      <section className="transport-filter-panel" aria-label={lang === 'zh' ? '\u4ea4\u901a\u7be9\u9078' : lang === 'pt' ? 'Filtros de transporte' : 'Transport filters'}>
+        <div className="filter-panel-head">
+          <span>{lang === 'zh' ? '\u986f\u793a\u4ea4\u901a' : lang === 'pt' ? 'Mostrar transporte' : 'Show transport'}</span>
+          <strong>{activeModeCount}/6</strong>
+        </div>
+        <div className="tool-grid">
+          <ToolToggle label={t.rail} tool="rail" enabled={activeTools.has('rail')} onToggle={onToggleTool} />
+          <ToolToggle label={t.lightRail} tool="lightRail" enabled={activeTools.has('lightRail')} onToggle={onToggleTool} />
+          <ToolToggle label={t.buses} tool="buses" enabled={activeTools.has('buses')} onToggle={onToggleTool} />
+          <ToolToggle label={t.ferries} tool="ferries" enabled={activeTools.has('ferries')} onToggle={onToggleTool} />
+          <ToolToggle label={t.trams} tool="trams" enabled={activeTools.has('trams')} onToggle={onToggleTool} />
+          <ToolToggle label={t.flights} tool="flights" enabled={activeTools.has('flights')} onToggle={onToggleTool} />
+        </div>
+      </section>
+
+      <details open className={`menu-section${activeTools.has('rail') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.rail}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'mtr')}</span><span>{activeTools.has('rail') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body">
           {mtrLines.map(line => (
             <LineRow
@@ -140,8 +156,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         </div>
       </details>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.lightRail}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'light_rail')}</span><ToolToggle label={t.lightRail} tool="lightRail" enabled={activeTools.has('lightRail')} onToggle={onToggleTool} /></span></summary>
+      <details open className={`menu-section${activeTools.has('lightRail') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.lightRail}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'light_rail')}</span><span>{activeTools.has('lightRail') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body">
           {lightRailLines.map(line => (
             <LineRow
@@ -154,8 +170,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         </div>
       </details>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.buses}</span><span className="summary-meta"><span>{visibleBusCount}</span><ToolToggle label={t.buses} tool="buses" enabled={activeTools.has('buses')} onToggle={onToggleTool} /></span></summary>
+      <details open className={`menu-section${activeTools.has('buses') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.buses}</span><span className="summary-meta"><span>{visibleBusCount}</span><span>{activeTools.has('buses') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body muted-body">
           <div>{visibleBusCount} {t.vehicles}</div>
           <div>{(data?.busRoutes ?? []).filter(route => selectedBusOperators.has(route.operator)).length} normalized routes</div>
@@ -168,8 +184,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         </div>
       </details>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.ferries}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'ferry')}</span><ToolToggle label={t.ferries} tool="ferries" enabled={activeTools.has('ferries')} onToggle={onToggleTool} /></span></summary>
+      <details open className={`menu-section${activeTools.has('ferries') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.ferries}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'ferry')}</span><span>{activeTools.has('ferries') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body muted-body">
           <div>{data?.ferryRoutes?.length ?? 0} scheduled route geometries</div>
           {(data?.ferryRoutes ?? []).map(route => (
@@ -183,8 +199,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         </div>
       </details>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.trams}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'tram')}</span><ToolToggle label={t.trams} tool="trams" enabled={activeTools.has('trams')} onToggle={onToggleTool} /></span></summary>
+      <details open className={`menu-section${activeTools.has('trams') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.trams}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'tram')}</span><span>{activeTools.has('trams') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body muted-body">
           <div>{data?.tramRoutes?.length ?? 0} scheduled route geometries</div>
           {(data?.tramRoutes ?? []).map(route => (
@@ -198,8 +214,8 @@ export function DirectoryMenu({ data, vehicles, selectedLineIds, onToggleLine, s
         </div>
       </details>
 
-      <details open className="menu-section">
-        <summary><span className="summary-label">{t.flights}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'flight')}</span><ToolToggle label={t.flights} tool="flights" enabled={activeTools.has('flights')} onToggle={onToggleTool} /></span></summary>
+      <details open className={`menu-section${activeTools.has('flights') ? '' : ' menu-section-muted'}`}>
+        <summary><span className="summary-label">{t.flights}</span><span className="summary-meta"><span>{visibleVehicleCount(vehicles, selectedLineIds, selectedRouteIds, selectedBusOperators, 'flight')}</span><span>{activeTools.has('flights') ? t.active : 'OFF'}</span></span></summary>
         <div className="section-body muted-body">
           <div>{flights.length ? `${flights.length} ${t.flightRecords}` : t.noFlightData}</div>
           <div>{activeFlightMovements} {t.activeMovements}</div>

@@ -191,3 +191,38 @@
 ### R-036: Current route-selection gate record (2026-08-28)
 - Updated the authoritative quality-gate record to the latest 100-test state and synchronized remote commit.
 - Historical gate snapshots remain unchanged for traceability.
+
+### R-037: Mong Kok default camera (2026-08-31)
+- Updated the default MapLibre camera to start on the existing Mong Kok station marker.
+- The default startup view now uses zoom 14, pitch 60, and north-up bearing 0 to match the Mini Tokyo 3D default camera style.
+- Evidence: focused MapView test passed; full suite, lint, build, and diff checks pass. The existing Vite large-bundle warning remains.
+
+### R-038: Mini Tokyo-like map color pass (2026-08-31)
+- Added a Mini Tokyo 3D-inspired map palette for the pitched Hong Kong view.
+- The pass warms the basemap, adds more saturated 3D building colors, and uses warmer station and label styling while preserving existing transit route colors.
+- Evidence: focused MapView palette test passed; full suite, lint, build, and diff checks pass. The existing Vite large-bundle warning remains.
+- Browser evidence: desktop Chrome smoke at `http://127.0.0.1:5187/` loaded a nonblank MapLibre canvas with no console warnings or errors; mobile screenshot capture timed out after a viewport reset and retry.
+
+### R-039: Full MTR and Light Rail network seed (2026-09-01)
+- Expanded the rail seed data from 3 MTR lines + 1 Light Rail route to the full
+  network: all 10 MTR heavy rail lines and all 12 Light Rail routes.
+- Added 7 MTR lines (East Rail, Kwun Tong, South Island, Tung Chung, Tseung Kwan
+  O, Disneyland Resort, Airport Express) and 11 Light Rail routes (505, 507,
+  614, 614P, 615, 615P, 705, 706, 751, 751P, 761P) with real station
+  coordinates and official MTR line colors.
+- Seed files are now generated from a single source of truth:
+  `scripts/generate-rail-seed.py` (22 lines, 67 stations, 88 trips committed to
+  `public/data/`).
+- Evidence: 104 tests pass (including cross-file referential integrity), lint
+  passes, build passes with the existing chunk-size warning.
+
+### R-040: Mini Tokyo source repo technical reference (2026-09-01)
+- Added the Mini Tokyo 3D source code mirror
+  (https://github.com/buntarou20050825-wq/minitokyo3dcopy) as a technical
+  reference to `docs/data-sources/design-reference.md`.
+- Extracted the actual stack from the repo package.json (v4.0.0-beta.1):
+  mapbox-gl ^3.9.3, deck.gl ^8.9.36, three ^0.172.0, turf ^5.1.5,
+  gtfs-realtime-bindings, comlink workers, suncalc.
+- Documented architecture patterns worth copying: deck.gl-over-mapbox style
+  composition, worker-based GTFS-RT data assembly, turf-based vehicle geometry,
+  and style-driven light/dark theming.

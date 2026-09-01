@@ -38,10 +38,21 @@ interface Props {
 
 const emptyCollection = { type: 'FeatureCollection' as const, features: [] }
 export const DEFAULT_MAP_VIEW = {
-  center: [114.16, 22.32] as [number, number],
-  zoom: 12.4,
-  pitch: 58,
-  bearing: -18,
+  center: [114.1694, 22.3193] as [number, number],
+  zoom: 14,
+  pitch: 60,
+  bearing: 0,
+}
+
+export const MINI_TOKYO_MAP_COLORS = {
+  land: '#d8d2c6',
+  water: '#8fb7d8',
+  buildingLow: '#f5d49a',
+  buildingMid: '#f08a5d',
+  buildingHigh: '#8f5fbf',
+  station: '#fff7e6',
+  label: '#fff7e6',
+  labelHalo: '#1f2937',
 }
 
 export function basemapVisibilityForPitch(pitchEnabled: boolean): { light: 'visible' | 'none'; dark: 'visible' | 'none' } {
@@ -324,17 +335,35 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           },
         },
         layers: [
-          { id: 'base-light', type: 'raster', source: 'carto', layout: { visibility: basemapVisibilityForPitch(initialPitchEnabledRef.current).light } },
+          {
+            id: 'map-tone',
+            type: 'background',
+            paint: {
+              'background-color': MINI_TOKYO_MAP_COLORS.land,
+            },
+          },
+          {
+            id: 'base-light',
+            type: 'raster',
+            source: 'carto',
+            layout: { visibility: basemapVisibilityForPitch(initialPitchEnabledRef.current).light },
+            paint: {
+              'raster-saturation': 0.22,
+              'raster-contrast': 0.08,
+              'raster-brightness-min': 0.08,
+              'raster-brightness-max': 0.96,
+            },
+          },
           {
             id: 'base-dark',
             type: 'raster',
             source: 'carto',
             layout: { visibility: basemapVisibilityForPitch(initialPitchEnabledRef.current).dark },
             paint: {
-              'raster-brightness-min': 0.05,
-              'raster-brightness-max': 0.3,
-              'raster-saturation': -1,
-              'raster-contrast': 0.25,
+              'raster-brightness-min': 0.14,
+              'raster-brightness-max': 0.82,
+              'raster-saturation': 0.32,
+              'raster-contrast': 0.12,
             },
           },
         ],
@@ -368,9 +397,9 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
             'interpolate',
             ['linear'],
             ['coalesce', ['get', 'render_height'], ['get', 'height'], 0],
-            0, '#cbd5e1',
-            80, '#94a3b8',
-            220, '#64748b',
+            0, MINI_TOKYO_MAP_COLORS.buildingLow,
+            80, MINI_TOKYO_MAP_COLORS.buildingMid,
+            220, MINI_TOKYO_MAP_COLORS.buildingHigh,
           ],
           'fill-extrusion-height': [
             'interpolate',
@@ -520,8 +549,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
         source: 'stations',
         paint: {
           'circle-radius': 5,
-          'circle-color': '#f8fafc',
-          'circle-stroke-color': '#0f172a',
+          'circle-color': MINI_TOKYO_MAP_COLORS.station,
+          'circle-stroke-color': '#213047',
           'circle-stroke-width': 1.5,
         },
       })
@@ -537,8 +566,8 @@ export function MapView({ lines, busRoutes, ferryRoutes, tramRoutes, stations, v
           'text-anchor': 'top',
         },
         paint: {
-          'text-color': '#e2e8f0',
-          'text-halo-color': '#020617',
+          'text-color': MINI_TOKYO_MAP_COLORS.label,
+          'text-halo-color': MINI_TOKYO_MAP_COLORS.labelHalo,
           'text-halo-width': 1,
         },
       })

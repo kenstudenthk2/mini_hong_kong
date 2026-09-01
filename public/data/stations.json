@@ -1,22 +1,929 @@
 [
-  { "id": "kennedy-town", "nameEn": "Kennedy Town", "nameZh": "堅尼地城", "namePt": "Kennedy Town", "coordinates": [114.1281, 22.2810], "lineIds": ["island"] },
-  { "id": "central", "nameEn": "Central", "nameZh": "中環", "namePt": "Central", "coordinates": [114.1581, 22.2819], "lineIds": ["island", "tsuen-wan"] },
-  { "id": "admiralty", "nameEn": "Admiralty", "nameZh": "金鐘", "namePt": "Admiralty", "coordinates": [114.1646, 22.2796], "lineIds": ["island", "tsuen-wan"] },
-  { "id": "causeway-bay", "nameEn": "Causeway Bay", "nameZh": "銅鑼灣", "namePt": "Causeway Bay", "coordinates": [114.1869, 22.2803], "lineIds": ["island"] },
-  { "id": "quarry-bay", "nameEn": "Quarry Bay", "nameZh": "鰂魚涌", "namePt": "Quarry Bay", "coordinates": [114.2124, 22.2887], "lineIds": ["island"] },
-  { "id": "chai-wan", "nameEn": "Chai Wan", "nameZh": "柴灣", "namePt": "Chai Wan", "coordinates": [114.2371, 22.2647], "lineIds": ["island"] },
-  { "id": "tsim-sha-tsui", "nameEn": "Tsim Sha Tsui", "nameZh": "尖沙咀", "namePt": "Tsim Sha Tsui", "coordinates": [114.1722, 22.2973], "lineIds": ["tsuen-wan"] },
-  { "id": "mong-kok", "nameEn": "Mong Kok", "nameZh": "旺角", "namePt": "Mong Kok", "coordinates": [114.1694, 22.3193], "lineIds": ["tsuen-wan"] },
-  { "id": "lai-king", "nameEn": "Lai King", "nameZh": "荔景", "namePt": "Lai King", "coordinates": [114.1266, 22.3481], "lineIds": ["tsuen-wan"] },
-  { "id": "tsuen-wan", "nameEn": "Tsuen Wan", "nameZh": "荃灣", "namePt": "Tsuen Wan", "coordinates": [114.1161, 22.3730], "lineIds": ["tsuen-wan"] },
-  { "id": "wu-kai-sha", "nameEn": "Wu Kai Sha", "nameZh": "烏溪沙", "namePt": "Wu Kai Sha", "coordinates": [114.2435, 22.4292], "lineIds": ["tuen-ma"] },
-  { "id": "sha-tin", "nameEn": "Sha Tin", "nameZh": "沙田", "namePt": "Sha Tin", "coordinates": [114.1915, 22.3828], "lineIds": ["tuen-ma"] },
-  { "id": "hung-hom", "nameEn": "Hung Hom", "nameZh": "紅磡", "namePt": "Hung Hom", "coordinates": [114.1822, 22.3032], "lineIds": ["tuen-ma"] },
-  { "id": "east-tsim-sha-tsui", "nameEn": "East Tsim Sha Tsui", "nameZh": "尖東", "namePt": "East Tsim Sha Tsui", "coordinates": [114.1750, 22.2959], "lineIds": ["tuen-ma"] },
-  { "id": "yuen-long", "nameEn": "Yuen Long", "nameZh": "元朗", "namePt": "Yuen Long", "coordinates": [114.0349, 22.4460], "lineIds": ["tuen-ma", "light-rail-610"] },
-  { "id": "tuen-mun", "nameEn": "Tuen Mun", "nameZh": "屯門", "namePt": "Tuen Mun", "coordinates": [113.9739, 22.3953], "lineIds": ["tuen-ma"] },
-  { "id": "tuen-mun-ferry-pier", "nameEn": "Tuen Mun Ferry Pier", "nameZh": "屯門碼頭", "namePt": "Cais de Ferry de Tuen Mun", "coordinates": [113.9663, 22.3718], "lineIds": ["light-rail-610"] },
-  { "id": "town-centre", "nameEn": "Town Centre", "nameZh": "市中心", "namePt": "Centro da Cidade", "coordinates": [113.9766, 22.3934], "lineIds": ["light-rail-610"] },
-  { "id": "siu-hong", "nameEn": "Siu Hong", "nameZh": "兆康", "namePt": "Siu Hong", "coordinates": [113.9788, 22.4119], "lineIds": ["light-rail-610"] },
-  { "id": "tin-shui-wai", "nameEn": "Tin Shui Wai", "nameZh": "天水圍", "namePt": "Tin Shui Wai", "coordinates": [114.0016, 22.4605], "lineIds": ["light-rail-610"] }
+  {
+    "id": "kennedy-town",
+    "nameEn": "Kennedy Town",
+    "nameZh": "堅尼地城",
+    "namePt": "Kennedy Town",
+    "coordinates": [
+      114.1281,
+      22.281
+    ],
+    "lineIds": [
+      "island"
+    ]
+  },
+  {
+    "id": "central",
+    "nameEn": "Central",
+    "nameZh": "中環",
+    "namePt": "Central",
+    "coordinates": [
+      114.1581,
+      22.2819
+    ],
+    "lineIds": [
+      "island",
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "admiralty",
+    "nameEn": "Admiralty",
+    "nameZh": "金鐘",
+    "namePt": "Admiralty",
+    "coordinates": [
+      114.1646,
+      22.2796
+    ],
+    "lineIds": [
+      "east-rail",
+      "island",
+      "south-island",
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "causeway-bay",
+    "nameEn": "Causeway Bay",
+    "nameZh": "銅鑼灣",
+    "namePt": "Causeway Bay",
+    "coordinates": [
+      114.1869,
+      22.2803
+    ],
+    "lineIds": [
+      "island"
+    ]
+  },
+  {
+    "id": "quarry-bay",
+    "nameEn": "Quarry Bay",
+    "nameZh": "鰂魚涌",
+    "namePt": "Quarry Bay",
+    "coordinates": [
+      114.2124,
+      22.2887
+    ],
+    "lineIds": [
+      "island",
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "chai-wan",
+    "nameEn": "Chai Wan",
+    "nameZh": "柴灣",
+    "namePt": "Chai Wan",
+    "coordinates": [
+      114.2371,
+      22.2647
+    ],
+    "lineIds": [
+      "island"
+    ]
+  },
+  {
+    "id": "tsim-sha-tsui",
+    "nameEn": "Tsim Sha Tsui",
+    "nameZh": "尖沙咀",
+    "namePt": "Tsim Sha Tsui",
+    "coordinates": [
+      114.1722,
+      22.2973
+    ],
+    "lineIds": [
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "mong-kok",
+    "nameEn": "Mong Kok",
+    "nameZh": "旺角",
+    "namePt": "Mong Kok",
+    "coordinates": [
+      114.1694,
+      22.3193
+    ],
+    "lineIds": [
+      "kwun-tong",
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "lai-king",
+    "nameEn": "Lai King",
+    "nameZh": "荔景",
+    "namePt": "Lai King",
+    "coordinates": [
+      114.1266,
+      22.3481
+    ],
+    "lineIds": [
+      "tsuen-wan",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "tsuen-wan",
+    "nameEn": "Tsuen Wan",
+    "nameZh": "荃灣",
+    "namePt": "Tsuen Wan",
+    "coordinates": [
+      114.1161,
+      22.373
+    ],
+    "lineIds": [
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "wu-kai-sha",
+    "nameEn": "Wu Kai Sha",
+    "nameZh": "烏溪沙",
+    "namePt": "Wu Kai Sha",
+    "coordinates": [
+      114.2435,
+      22.4292
+    ],
+    "lineIds": [
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "sha-tin",
+    "nameEn": "Sha Tin",
+    "nameZh": "沙田",
+    "namePt": "Sha Tin",
+    "coordinates": [
+      114.1915,
+      22.3828
+    ],
+    "lineIds": [
+      "east-rail",
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "hung-hom",
+    "nameEn": "Hung Hom",
+    "nameZh": "紅磡",
+    "namePt": "Hung Hom",
+    "coordinates": [
+      114.1822,
+      22.3032
+    ],
+    "lineIds": [
+      "east-rail",
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "east-tsim-sha-tsui",
+    "nameEn": "East Tsim Sha Tsui",
+    "nameZh": "尖東",
+    "namePt": "East Tsim Sha Tsui",
+    "coordinates": [
+      114.175,
+      22.2959
+    ],
+    "lineIds": [
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "yuen-long",
+    "nameEn": "Yuen Long",
+    "nameZh": "元朗",
+    "namePt": "Yuen Long",
+    "coordinates": [
+      114.0349,
+      22.446
+    ],
+    "lineIds": [
+      "light-rail-610",
+      "light-rail-614",
+      "light-rail-615",
+      "light-rail-761p",
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "siu-hong",
+    "nameEn": "Siu Hong",
+    "nameZh": "兆康",
+    "namePt": "Siu Hong",
+    "coordinates": [
+      113.9788,
+      22.4119
+    ],
+    "lineIds": [
+      "light-rail-505",
+      "light-rail-507",
+      "light-rail-610",
+      "light-rail-614",
+      "light-rail-614p",
+      "light-rail-615",
+      "light-rail-615p",
+      "light-rail-751",
+      "light-rail-761p",
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "tuen-mun",
+    "nameEn": "Tuen Mun",
+    "nameZh": "屯門",
+    "namePt": "Tuen Mun",
+    "coordinates": [
+      113.9739,
+      22.3953
+    ],
+    "lineIds": [
+      "light-rail-761p",
+      "tuen-ma"
+    ]
+  },
+  {
+    "id": "exhibition-centre",
+    "nameEn": "Exhibition Centre",
+    "nameZh": "會展",
+    "namePt": "Exhibition Centre",
+    "coordinates": [
+      114.1775,
+      22.2847
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "mong-kok-east",
+    "nameEn": "Mong Kok East",
+    "nameZh": "旺角東",
+    "namePt": "Mong Kok East",
+    "coordinates": [
+      114.1715,
+      22.3206
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "kowloon-tong",
+    "nameEn": "Kowloon Tong",
+    "nameZh": "九龍塘",
+    "namePt": "Kowloon Tong",
+    "coordinates": [
+      114.1743,
+      22.338
+    ],
+    "lineIds": [
+      "east-rail",
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "tai-wai",
+    "nameEn": "Tai Wai",
+    "nameZh": "大圍",
+    "namePt": "Tai Wai",
+    "coordinates": [
+      114.179,
+      22.369
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "university",
+    "nameEn": "University",
+    "nameZh": "大學",
+    "namePt": "University",
+    "coordinates": [
+      114.2106,
+      22.4136
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "tai-po-market",
+    "nameEn": "Tai Po Market",
+    "nameZh": "大埔墟",
+    "namePt": "Tai Po Market",
+    "coordinates": [
+      114.1696,
+      22.4451
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "fanling",
+    "nameEn": "Fanling",
+    "nameZh": "粉嶺",
+    "namePt": "Fanling",
+    "coordinates": [
+      114.1378,
+      22.4925
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "sheung-shui",
+    "nameEn": "Sheung Shui",
+    "nameZh": "上水",
+    "namePt": "Sheung Shui",
+    "coordinates": [
+      114.128,
+      22.5043
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "lo-wu",
+    "nameEn": "Lo Wu",
+    "nameZh": "羅湖",
+    "namePt": "Lo Wu",
+    "coordinates": [
+      114.1145,
+      22.5036
+    ],
+    "lineIds": [
+      "east-rail"
+    ]
+  },
+  {
+    "id": "whampoa",
+    "nameEn": "Whampoa",
+    "nameZh": "黃埔",
+    "namePt": "Whampoa",
+    "coordinates": [
+      114.1862,
+      22.3047
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "ho-man-tin",
+    "nameEn": "Ho Man Tin",
+    "nameZh": "何文田",
+    "namePt": "Ho Man Tin",
+    "coordinates": [
+      114.1817,
+      22.3094
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "yau-ma-tei",
+    "nameEn": "Yau Ma Tei",
+    "nameZh": "油麻地",
+    "namePt": "Yau Ma Tei",
+    "coordinates": [
+      114.1711,
+      22.3112
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "prince-edward",
+    "nameEn": "Prince Edward",
+    "nameZh": "太子",
+    "namePt": "Prince Edward",
+    "coordinates": [
+      114.168,
+      22.325
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "shek-kip-mei",
+    "nameEn": "Shek Kip Mei",
+    "nameZh": "石硤尾",
+    "namePt": "Shek Kip Mei",
+    "coordinates": [
+      114.165,
+      22.3302
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "lok-fu",
+    "nameEn": "Lok Fu",
+    "nameZh": "樂富",
+    "namePt": "Lok Fu",
+    "coordinates": [
+      114.184,
+      22.3365
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "wong-tai-sin",
+    "nameEn": "Wong Tai Sin",
+    "nameZh": "黃大仙",
+    "namePt": "Wong Tai Sin",
+    "coordinates": [
+      114.1925,
+      22.3426
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "diamond-hill",
+    "nameEn": "Diamond Hill",
+    "nameZh": "鑽石山",
+    "namePt": "Diamond Hill",
+    "coordinates": [
+      114.202,
+      22.3424
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "choi-hung",
+    "nameEn": "Choi Hung",
+    "nameZh": "彩虹",
+    "namePt": "Choi Hung",
+    "coordinates": [
+      114.2094,
+      22.3337
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "kowloon-bay",
+    "nameEn": "Kowloon Bay",
+    "nameZh": "九龍灣",
+    "namePt": "Kowloon Bay",
+    "coordinates": [
+      114.215,
+      22.324
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "ngau-tau-kok",
+    "nameEn": "Ngau Tau Kok",
+    "nameZh": "牛頭角",
+    "namePt": "Ngau Tau Kok",
+    "coordinates": [
+      114.2183,
+      22.317
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "kwun-tong",
+    "nameEn": "Kwun Tong",
+    "nameZh": "觀塘",
+    "namePt": "Kwun Tong",
+    "coordinates": [
+      114.226,
+      22.3117
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "lam-tin",
+    "nameEn": "Lam Tin",
+    "nameZh": "藍田",
+    "namePt": "Lam Tin",
+    "coordinates": [
+      114.2345,
+      22.3113
+    ],
+    "lineIds": [
+      "kwun-tong"
+    ]
+  },
+  {
+    "id": "yau-tong",
+    "nameEn": "Yau Tong",
+    "nameZh": "油塘",
+    "namePt": "Yau Tong",
+    "coordinates": [
+      114.2358,
+      22.2968
+    ],
+    "lineIds": [
+      "kwun-tong",
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "tiu-keng-leng",
+    "nameEn": "Tiu Keng Leng",
+    "nameZh": "調景嶺",
+    "namePt": "Tiu Keng Leng",
+    "coordinates": [
+      114.252,
+      22.304
+    ],
+    "lineIds": [
+      "kwun-tong",
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "ocean-park",
+    "nameEn": "Ocean Park",
+    "nameZh": "海洋公園",
+    "namePt": "Ocean Park",
+    "coordinates": [
+      114.175,
+      22.2466
+    ],
+    "lineIds": [
+      "south-island"
+    ]
+  },
+  {
+    "id": "wong-chuk-hang",
+    "nameEn": "Wong Chuk Hang",
+    "nameZh": "黃竹坑",
+    "namePt": "Wong Chuk Hang",
+    "coordinates": [
+      114.1759,
+      22.248
+    ],
+    "lineIds": [
+      "south-island"
+    ]
+  },
+  {
+    "id": "lei-tung",
+    "nameEn": "Lei Tung",
+    "nameZh": "利東",
+    "namePt": "Lei Tung",
+    "coordinates": [
+      114.178,
+      22.2405
+    ],
+    "lineIds": [
+      "south-island"
+    ]
+  },
+  {
+    "id": "south-horizons",
+    "nameEn": "South Horizons",
+    "nameZh": "海怡半島",
+    "namePt": "South Horizons",
+    "coordinates": [
+      114.177,
+      22.241
+    ],
+    "lineIds": [
+      "south-island"
+    ]
+  },
+  {
+    "id": "hong-kong",
+    "nameEn": "Hong Kong",
+    "nameZh": "香港",
+    "namePt": "Hong Kong",
+    "coordinates": [
+      114.1652,
+      22.285
+    ],
+    "lineIds": [
+      "airport-express",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "kowloon",
+    "nameEn": "Kowloon",
+    "nameZh": "九龍",
+    "namePt": "Kowloon",
+    "coordinates": [
+      114.1655,
+      22.3065
+    ],
+    "lineIds": [
+      "airport-express",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "olympic",
+    "nameEn": "Olympic",
+    "nameZh": "奧運",
+    "namePt": "Olympic",
+    "coordinates": [
+      114.16,
+      22.3172
+    ],
+    "lineIds": [
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "nam-cheong",
+    "nameEn": "Nam Cheong",
+    "nameZh": "南昌",
+    "namePt": "Nam Cheong",
+    "coordinates": [
+      114.152,
+      22.326
+    ],
+    "lineIds": [
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "tsing-yi",
+    "nameEn": "Tsing Yi",
+    "nameZh": "青衣",
+    "namePt": "Tsing Yi",
+    "coordinates": [
+      114.1025,
+      22.355
+    ],
+    "lineIds": [
+      "airport-express",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "sunny-bay",
+    "nameEn": "Sunny Bay",
+    "nameZh": "欣澳",
+    "namePt": "Sunny Bay",
+    "coordinates": [
+      114.043,
+      22.329
+    ],
+    "lineIds": [
+      "disneyland-resort",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "tung-chung",
+    "nameEn": "Tung Chung",
+    "nameZh": "東涌",
+    "namePt": "Tung Chung",
+    "coordinates": [
+      113.942,
+      22.289
+    ],
+    "lineIds": [
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "airport",
+    "nameEn": "Airport",
+    "nameZh": "機場",
+    "namePt": "Aeroporto",
+    "coordinates": [
+      113.9357,
+      22.3086
+    ],
+    "lineIds": [
+      "airport-express"
+    ]
+  },
+  {
+    "id": "asiaworld-expo",
+    "nameEn": "AsiaWorld-Expo",
+    "nameZh": "博覽館",
+    "namePt": "AsiaWorld-Expo",
+    "coordinates": [
+      113.941,
+      22.321
+    ],
+    "lineIds": [
+      "airport-express"
+    ]
+  },
+  {
+    "id": "north-point",
+    "nameEn": "North Point",
+    "nameZh": "北角",
+    "namePt": "North Point",
+    "coordinates": [
+      114.2009,
+      22.2876
+    ],
+    "lineIds": [
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "tseung-kwan-o",
+    "nameEn": "Tseung Kwan O",
+    "nameZh": "將軍澳",
+    "namePt": "Tseung Kwan O",
+    "coordinates": [
+      114.2586,
+      22.3069
+    ],
+    "lineIds": [
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "hang-hau",
+    "nameEn": "Hang Hau",
+    "nameZh": "坑口",
+    "namePt": "Hang Hau",
+    "coordinates": [
+      114.262,
+      22.314
+    ],
+    "lineIds": [
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "po-lam",
+    "nameEn": "Po Lam",
+    "nameZh": "寶琳",
+    "namePt": "Po Lam",
+    "coordinates": [
+      114.256,
+      22.322
+    ],
+    "lineIds": [
+      "tseung-kwan-o"
+    ]
+  },
+  {
+    "id": "disneyland-resort",
+    "nameEn": "Disneyland Resort",
+    "nameZh": "迪士尼",
+    "namePt": "Disneyland Resort",
+    "coordinates": [
+      114.04,
+      22.3125
+    ],
+    "lineIds": [
+      "disneyland-resort"
+    ]
+  },
+  {
+    "id": "tuen-mun-ferry-pier",
+    "nameEn": "Tuen Mun Ferry Pier",
+    "nameZh": "屯門碼頭",
+    "namePt": "Cais de Ferry de Tuen Mun",
+    "coordinates": [
+      113.9663,
+      22.3718
+    ],
+    "lineIds": [
+      "light-rail-507",
+      "light-rail-610",
+      "light-rail-614",
+      "light-rail-614p",
+      "light-rail-615",
+      "light-rail-615p"
+    ]
+  },
+  {
+    "id": "town-centre",
+    "nameEn": "Town Centre",
+    "nameZh": "市中心",
+    "namePt": "Centro da Cidade",
+    "coordinates": [
+      113.9766,
+      22.3934
+    ],
+    "lineIds": [
+      "light-rail-505",
+      "light-rail-507",
+      "light-rail-610",
+      "light-rail-614",
+      "light-rail-614p",
+      "light-rail-615",
+      "light-rail-615p",
+      "light-rail-751",
+      "light-rail-761p"
+    ]
+  },
+  {
+    "id": "tin-shui-wai",
+    "nameEn": "Tin Shui Wai",
+    "nameZh": "天水圍",
+    "namePt": "Tin Shui Wai",
+    "coordinates": [
+      114.0016,
+      22.4605
+    ],
+    "lineIds": [
+      "light-rail-610",
+      "light-rail-614",
+      "light-rail-615",
+      "light-rail-705",
+      "light-rail-706",
+      "light-rail-751",
+      "light-rail-751p",
+      "light-rail-761p"
+    ]
+  },
+  {
+    "id": "sam-shing",
+    "nameEn": "Sam Shing",
+    "nameZh": "三聖",
+    "namePt": "Sam Shing",
+    "coordinates": [
+      113.9722,
+      22.3844
+    ],
+    "lineIds": [
+      "light-rail-505"
+    ]
+  },
+  {
+    "id": "on-ting",
+    "nameEn": "On Ting",
+    "nameZh": "安定",
+    "namePt": "On Ting",
+    "coordinates": [
+      113.9747,
+      22.387
+    ],
+    "lineIds": [
+      "light-rail-614",
+      "light-rail-614p"
+    ]
+  },
+  {
+    "id": "yau-oi",
+    "nameEn": "Yau Oi",
+    "nameZh": "友愛",
+    "namePt": "Yau Oi",
+    "coordinates": [
+      113.9735,
+      22.3805
+    ],
+    "lineIds": [
+      "light-rail-751"
+    ]
+  },
+  {
+    "id": "tin-wing",
+    "nameEn": "Tin Wing",
+    "nameZh": "天榮",
+    "namePt": "Tin Wing",
+    "coordinates": [
+      114.0075,
+      22.4575
+    ],
+    "lineIds": [
+      "light-rail-705",
+      "light-rail-706",
+      "light-rail-751p"
+    ]
+  },
+  {
+    "id": "tin-yat",
+    "nameEn": "Tin Yat",
+    "nameZh": "天逸",
+    "namePt": "Tin Yat",
+    "coordinates": [
+      114.006,
+      22.462
+    ],
+    "lineIds": [
+      "light-rail-705",
+      "light-rail-706",
+      "light-rail-751",
+      "light-rail-751p"
+    ]
+  }
 ]

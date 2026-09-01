@@ -7,14 +7,39 @@
     "namePt": "Linha da Ilha",
     "color": "#007dc5",
     "operator": "MTR",
-    "stationIds": ["kennedy-town", "central", "admiralty", "causeway-bay", "quarry-bay", "chai-wan"],
+    "stationIds": [
+      "kennedy-town",
+      "central",
+      "admiralty",
+      "causeway-bay",
+      "quarry-bay",
+      "chai-wan"
+    ],
     "geometry": [
-      [114.1281, 22.2810],
-      [114.1581, 22.2819],
-      [114.1646, 22.2796],
-      [114.1869, 22.2803],
-      [114.2124, 22.2887],
-      [114.2371, 22.2647]
+      [
+        114.1281,
+        22.281
+      ],
+      [
+        114.1581,
+        22.2819
+      ],
+      [
+        114.1646,
+        22.2796
+      ],
+      [
+        114.1869,
+        22.2803
+      ],
+      [
+        114.2124,
+        22.2887
+      ],
+      [
+        114.2371,
+        22.2647
+      ]
     ]
   },
   {
@@ -25,14 +50,39 @@
     "namePt": "Linha Tsuen Wan",
     "color": "#e2231a",
     "operator": "MTR",
-    "stationIds": ["central", "admiralty", "tsim-sha-tsui", "mong-kok", "lai-king", "tsuen-wan"],
+    "stationIds": [
+      "central",
+      "admiralty",
+      "tsim-sha-tsui",
+      "mong-kok",
+      "lai-king",
+      "tsuen-wan"
+    ],
     "geometry": [
-      [114.1581, 22.2819],
-      [114.1646, 22.2796],
-      [114.1722, 22.2973],
-      [114.1694, 22.3193],
-      [114.1266, 22.3481],
-      [114.1161, 22.3730]
+      [
+        114.1581,
+        22.2819
+      ],
+      [
+        114.1646,
+        22.2796
+      ],
+      [
+        114.1722,
+        22.2973
+      ],
+      [
+        114.1694,
+        22.3193
+      ],
+      [
+        114.1266,
+        22.3481
+      ],
+      [
+        114.1161,
+        22.373
+      ]
     ]
   },
   {
@@ -43,14 +93,471 @@
     "namePt": "Linha Tuen Ma",
     "color": "#9a3b26",
     "operator": "MTR",
-    "stationIds": ["wu-kai-sha", "sha-tin", "hung-hom", "east-tsim-sha-tsui", "yuen-long", "tuen-mun"],
+    "stationIds": [
+      "wu-kai-sha",
+      "sha-tin",
+      "hung-hom",
+      "east-tsim-sha-tsui",
+      "yuen-long",
+      "siu-hong",
+      "tuen-mun"
+    ],
     "geometry": [
-      [114.2435, 22.4292],
-      [114.1915, 22.3828],
-      [114.1822, 22.3032],
-      [114.1750, 22.2959],
-      [114.0349, 22.4460],
-      [113.9739, 22.3953]
+      [
+        114.2435,
+        22.4292
+      ],
+      [
+        114.1915,
+        22.3828
+      ],
+      [
+        114.1822,
+        22.3032
+      ],
+      [
+        114.175,
+        22.2959
+      ],
+      [
+        114.0349,
+        22.446
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        113.9739,
+        22.3953
+      ]
+    ]
+  },
+  {
+    "id": "east-rail",
+    "mode": "mtr",
+    "nameEn": "East Rail Line",
+    "nameZh": "東鐵綫",
+    "namePt": "Linha East Rail",
+    "color": "#54b7e8",
+    "operator": "MTR",
+    "stationIds": [
+      "admiralty",
+      "exhibition-centre",
+      "hung-hom",
+      "mong-kok-east",
+      "kowloon-tong",
+      "tai-wai",
+      "sha-tin",
+      "university",
+      "tai-po-market",
+      "fanling",
+      "sheung-shui",
+      "lo-wu"
+    ],
+    "geometry": [
+      [
+        114.1646,
+        22.2796
+      ],
+      [
+        114.1775,
+        22.2847
+      ],
+      [
+        114.1822,
+        22.3032
+      ],
+      [
+        114.1715,
+        22.3206
+      ],
+      [
+        114.1743,
+        22.338
+      ],
+      [
+        114.179,
+        22.369
+      ],
+      [
+        114.1915,
+        22.3828
+      ],
+      [
+        114.2106,
+        22.4136
+      ],
+      [
+        114.1696,
+        22.4451
+      ],
+      [
+        114.1378,
+        22.4925
+      ],
+      [
+        114.128,
+        22.5043
+      ],
+      [
+        114.1145,
+        22.5036
+      ]
+    ]
+  },
+  {
+    "id": "kwun-tong",
+    "mode": "mtr",
+    "nameEn": "Kwun Tong Line",
+    "nameZh": "觀塘綫",
+    "namePt": "Linha Kwun Tong",
+    "color": "#00a4a7",
+    "operator": "MTR",
+    "stationIds": [
+      "whampoa",
+      "ho-man-tin",
+      "yau-ma-tei",
+      "mong-kok",
+      "prince-edward",
+      "shek-kip-mei",
+      "kowloon-tong",
+      "lok-fu",
+      "wong-tai-sin",
+      "diamond-hill",
+      "choi-hung",
+      "kowloon-bay",
+      "ngau-tau-kok",
+      "kwun-tong",
+      "lam-tin",
+      "yau-tong",
+      "tiu-keng-leng"
+    ],
+    "geometry": [
+      [
+        114.1862,
+        22.3047
+      ],
+      [
+        114.1817,
+        22.3094
+      ],
+      [
+        114.1711,
+        22.3112
+      ],
+      [
+        114.1694,
+        22.3193
+      ],
+      [
+        114.168,
+        22.325
+      ],
+      [
+        114.165,
+        22.3302
+      ],
+      [
+        114.1743,
+        22.338
+      ],
+      [
+        114.184,
+        22.3365
+      ],
+      [
+        114.1925,
+        22.3426
+      ],
+      [
+        114.202,
+        22.3424
+      ],
+      [
+        114.2094,
+        22.3337
+      ],
+      [
+        114.215,
+        22.324
+      ],
+      [
+        114.2183,
+        22.317
+      ],
+      [
+        114.226,
+        22.3117
+      ],
+      [
+        114.2345,
+        22.3113
+      ],
+      [
+        114.2358,
+        22.2968
+      ],
+      [
+        114.252,
+        22.304
+      ]
+    ]
+  },
+  {
+    "id": "south-island",
+    "mode": "mtr",
+    "nameEn": "South Island Line",
+    "nameZh": "南港島綫",
+    "namePt": "Linha da Ilha do Sul",
+    "color": "#b5bd00",
+    "operator": "MTR",
+    "stationIds": [
+      "admiralty",
+      "ocean-park",
+      "wong-chuk-hang",
+      "lei-tung",
+      "south-horizons"
+    ],
+    "geometry": [
+      [
+        114.1646,
+        22.2796
+      ],
+      [
+        114.175,
+        22.2466
+      ],
+      [
+        114.1759,
+        22.248
+      ],
+      [
+        114.178,
+        22.2405
+      ],
+      [
+        114.177,
+        22.241
+      ]
+    ]
+  },
+  {
+    "id": "tung-chung",
+    "mode": "mtr",
+    "nameEn": "Tung Chung Line",
+    "nameZh": "東涌綫",
+    "namePt": "Linha Tung Chung",
+    "color": "#f38b00",
+    "operator": "MTR",
+    "stationIds": [
+      "hong-kong",
+      "kowloon",
+      "olympic",
+      "nam-cheong",
+      "lai-king",
+      "tsing-yi",
+      "sunny-bay",
+      "tung-chung"
+    ],
+    "geometry": [
+      [
+        114.1652,
+        22.285
+      ],
+      [
+        114.1655,
+        22.3065
+      ],
+      [
+        114.16,
+        22.3172
+      ],
+      [
+        114.152,
+        22.326
+      ],
+      [
+        114.1266,
+        22.3481
+      ],
+      [
+        114.1025,
+        22.355
+      ],
+      [
+        114.043,
+        22.329
+      ],
+      [
+        113.942,
+        22.289
+      ]
+    ]
+  },
+  {
+    "id": "tseung-kwan-o",
+    "mode": "mtr",
+    "nameEn": "Tseung Kwan O Line",
+    "nameZh": "將軍澳綫",
+    "namePt": "Linha Tseung Kwan O",
+    "color": "#7b3f97",
+    "operator": "MTR",
+    "stationIds": [
+      "north-point",
+      "quarry-bay",
+      "yau-tong",
+      "tiu-keng-leng",
+      "tseung-kwan-o",
+      "hang-hau",
+      "po-lam"
+    ],
+    "geometry": [
+      [
+        114.2009,
+        22.2876
+      ],
+      [
+        114.2124,
+        22.2887
+      ],
+      [
+        114.2358,
+        22.2968
+      ],
+      [
+        114.252,
+        22.304
+      ],
+      [
+        114.2586,
+        22.3069
+      ],
+      [
+        114.262,
+        22.314
+      ],
+      [
+        114.256,
+        22.322
+      ]
+    ]
+  },
+  {
+    "id": "disneyland-resort",
+    "mode": "mtr",
+    "nameEn": "Disneyland Resort Line",
+    "nameZh": "迪士尼綫",
+    "namePt": "Linha Disneyland Resort",
+    "color": "#f5009a",
+    "operator": "MTR",
+    "stationIds": [
+      "sunny-bay",
+      "disneyland-resort"
+    ],
+    "geometry": [
+      [
+        114.043,
+        22.329
+      ],
+      [
+        114.04,
+        22.3125
+      ]
+    ]
+  },
+  {
+    "id": "airport-express",
+    "mode": "mtr",
+    "nameEn": "Airport Express",
+    "nameZh": "機場快綫",
+    "namePt": "Expresso do Aeroporto",
+    "color": "#00888f",
+    "operator": "MTR",
+    "stationIds": [
+      "hong-kong",
+      "kowloon",
+      "tsing-yi",
+      "airport",
+      "asiaworld-expo"
+    ],
+    "geometry": [
+      [
+        114.1652,
+        22.285
+      ],
+      [
+        114.1655,
+        22.3065
+      ],
+      [
+        114.1025,
+        22.355
+      ],
+      [
+        113.9357,
+        22.3086
+      ],
+      [
+        113.941,
+        22.321
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-505",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 505",
+    "nameZh": "輕鐵 505",
+    "namePt": "Metro Ligeiro 505",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "sam-shing",
+      "town-centre",
+      "siu-hong"
+    ],
+    "geometry": [
+      [
+        113.9722,
+        22.3844
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-507",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 507",
+    "nameZh": "輕鐵 507",
+    "namePt": "Metro Ligeiro 507",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong"
+    ],
+    "geometry": [
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ]
     ]
   },
   {
@@ -61,13 +568,336 @@
     "namePt": "Metro Ligeiro 610",
     "color": "#f6a800",
     "operator": "MTR Light Rail",
-    "stationIds": ["tuen-mun-ferry-pier", "town-centre", "siu-hong", "tin-shui-wai", "yuen-long"],
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ],
     "geometry": [
-      [113.9663, 22.3718],
-      [113.9766, 22.3934],
-      [113.9788, 22.4119],
-      [114.0016, 22.4605],
-      [114.0349, 22.4460]
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0349,
+        22.446
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-614",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 614",
+    "nameZh": "輕鐵 614",
+    "namePt": "Metro Ligeiro 614",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "on-ting",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ],
+    "geometry": [
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9747,
+        22.387
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0349,
+        22.446
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-614p",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 614P",
+    "nameZh": "輕鐵 614P",
+    "namePt": "Metro Ligeiro 614P",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "on-ting",
+      "town-centre",
+      "siu-hong"
+    ],
+    "geometry": [
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9747,
+        22.387
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-615",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 615",
+    "nameZh": "輕鐵 615",
+    "namePt": "Metro Ligeiro 615",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ],
+    "geometry": [
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0349,
+        22.446
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-615p",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 615P",
+    "nameZh": "輕鐵 615P",
+    "namePt": "Metro Ligeiro 615P",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong"
+    ],
+    "geometry": [
+      [
+        113.9663,
+        22.3718
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-705",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 705",
+    "nameZh": "輕鐵 705",
+    "namePt": "Metro Ligeiro 705",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ],
+    "geometry": [
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0075,
+        22.4575
+      ],
+      [
+        114.006,
+        22.462
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-706",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 706",
+    "nameZh": "輕鐵 706",
+    "namePt": "Metro Ligeiro 706",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ],
+    "geometry": [
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0075,
+        22.4575
+      ],
+      [
+        114.006,
+        22.462
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-751",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 751",
+    "nameZh": "輕鐵 751",
+    "namePt": "Metro Ligeiro 751",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "yau-oi",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "tin-yat"
+    ],
+    "geometry": [
+      [
+        113.9735,
+        22.3805
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.006,
+        22.462
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-751p",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 751P",
+    "nameZh": "輕鐵 751P",
+    "namePt": "Metro Ligeiro 751P",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ],
+    "geometry": [
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0075,
+        22.4575
+      ],
+      [
+        114.006,
+        22.462
+      ]
+    ]
+  },
+  {
+    "id": "light-rail-761p",
+    "mode": "light_rail",
+    "nameEn": "Light Rail 761P",
+    "nameZh": "輕鐵 761P",
+    "namePt": "Metro Ligeiro 761P",
+    "color": "#f6a800",
+    "operator": "MTR Light Rail",
+    "stationIds": [
+      "tuen-mun",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ],
+    "geometry": [
+      [
+        113.9739,
+        22.3953
+      ],
+      [
+        113.9766,
+        22.3934
+      ],
+      [
+        113.9788,
+        22.4119
+      ],
+      [
+        114.0016,
+        22.4605
+      ],
+      [
+        114.0349,
+        22.446
+      ]
     ]
   }
 ]

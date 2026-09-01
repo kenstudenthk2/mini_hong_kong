@@ -4,7 +4,7 @@ vi.hoisted(() => {
   Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:test', configurable: true })
 })
 
-import { DEFAULT_MAP_VIEW, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, routeFocusToGeoJson, routeFromMapFeatureId, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection, visibleStationsForTools } from './MapView'
+import { DEFAULT_MAP_VIEW, MINI_TOKYO_MAP_COLORS, airportLayersVisible, basemapVisibilityForPitch, isClearSelectionShortcut, routeFocusToGeoJson, routeFromMapFeatureId, selectedRouteBounds, selectedRouteCenter, selectedRouteGeometry, selectedVehicleCenter, shouldClearVehicleSelection, visibleStationsForTools } from './MapView'
 import type { RailLine, Station, VehiclePosition } from '../../types'
 
 const vehicle: VehiclePosition = {
@@ -60,8 +60,20 @@ describe('selected vehicle map focus', () => {
     expect(basemapVisibilityForPitch(false)).toEqual({ light: 'visible', dark: 'none' })
   })
 
-  it('starts over the dense urban transit area for the 3D city view', () => {
-    expect(DEFAULT_MAP_VIEW).toMatchObject({ center: [114.16, 22.32], zoom: 12.4, pitch: 58 })
+  it('starts over Mong Kok with the Mini Tokyo 3D-style camera distance', () => {
+    expect(DEFAULT_MAP_VIEW).toMatchObject({ center: [114.1694, 22.3193], zoom: 14, pitch: 60, bearing: 0 })
+  })
+
+  it('uses a Mini Tokyo 3D-like map color palette', () => {
+    expect(MINI_TOKYO_MAP_COLORS).toMatchObject({
+      land: '#d8d2c6',
+      water: '#8fb7d8',
+      buildingLow: '#f5d49a',
+      buildingMid: '#f08a5d',
+      buildingHigh: '#8f5fbf',
+      station: '#fff7e6',
+      label: '#fff7e6',
+    })
   })
 
   it('returns the selected vehicle center', () => {

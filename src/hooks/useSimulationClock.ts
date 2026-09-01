@@ -9,7 +9,7 @@ export function isPlaybackShortcut(event: Pick<KeyboardEvent, 'code' | 'repeat' 
 
 export function useSimulationClock(): SimulationClock {
   const [currentTime, setCurrentTime] = useState(() => new Date())
-  const [speed, setSpeedState] = useState(10)
+  const [speed, setSpeedState] = useState(1)
   const [paused, setPausedState] = useState(false)
   const baseWall = useRef(Date.now())
   const baseSim = useRef(currentTime.getTime())

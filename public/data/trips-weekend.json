@@ -1,10 +1,820 @@
 [
-  { "id": "island-eastbound-weekend", "lineId": "island", "direction": "outbound", "scheduleType": "weekend", "startMinutes": 340, "endMinutes": 1500, "headwayMinutes": 7, "durationMinutes": 35, "dwellMinutes": 0.5, "stopIds": ["kennedy-town", "central", "admiralty", "causeway-bay", "quarry-bay", "chai-wan"] },
-  { "id": "island-westbound-weekend", "lineId": "island", "direction": "inbound", "scheduleType": "weekend", "startMinutes": 344, "endMinutes": 1500, "headwayMinutes": 7, "durationMinutes": 35, "dwellMinutes": 0.5, "stopIds": ["chai-wan", "quarry-bay", "causeway-bay", "admiralty", "central", "kennedy-town"] },
-  { "id": "tsuen-wan-northbound-weekend", "lineId": "tsuen-wan", "direction": "outbound", "scheduleType": "weekend", "startMinutes": 340, "endMinutes": 1490, "headwayMinutes": 8, "durationMinutes": 39, "dwellMinutes": 0.5, "stopIds": ["central", "admiralty", "tsim-sha-tsui", "mong-kok", "lai-king", "tsuen-wan"] },
-  { "id": "tsuen-wan-southbound-weekend", "lineId": "tsuen-wan", "direction": "inbound", "scheduleType": "weekend", "startMinutes": 344, "endMinutes": 1490, "headwayMinutes": 8, "durationMinutes": 39, "dwellMinutes": 0.5, "stopIds": ["tsuen-wan", "lai-king", "mong-kok", "tsim-sha-tsui", "admiralty", "central"] },
-  { "id": "tuen-ma-westbound-weekend", "lineId": "tuen-ma", "direction": "outbound", "scheduleType": "weekend", "startMinutes": 335, "endMinutes": 1480, "headwayMinutes": 9, "durationMinutes": 64, "dwellMinutes": 0.5, "stopIds": ["wu-kai-sha", "sha-tin", "hung-hom", "east-tsim-sha-tsui", "yuen-long", "tuen-mun"] },
-  { "id": "tuen-ma-eastbound-weekend", "lineId": "tuen-ma", "direction": "inbound", "scheduleType": "weekend", "startMinutes": 339, "endMinutes": 1480, "headwayMinutes": 9, "durationMinutes": 64, "dwellMinutes": 0.5, "stopIds": ["tuen-mun", "yuen-long", "east-tsim-sha-tsui", "hung-hom", "sha-tin", "wu-kai-sha"] },
-  { "id": "light-rail-610-northbound-weekend", "lineId": "light-rail-610", "direction": "outbound", "scheduleType": "weekend", "startMinutes": 330, "endMinutes": 1460, "headwayMinutes": 10, "durationMinutes": 38, "dwellMinutes": 0.75, "stopIds": ["tuen-mun-ferry-pier", "town-centre", "siu-hong", "tin-shui-wai", "yuen-long"] },
-  { "id": "light-rail-610-southbound-weekend", "lineId": "light-rail-610", "direction": "inbound", "scheduleType": "weekend", "startMinutes": 335, "endMinutes": 1460, "headwayMinutes": 10, "durationMinutes": 38, "dwellMinutes": 0.75, "stopIds": ["yuen-long", "tin-shui-wai", "siu-hong", "town-centre", "tuen-mun-ferry-pier"] }
+  {
+    "id": "island-eastbound-weekend",
+    "lineId": "island",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 330,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 35,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "kennedy-town",
+      "central",
+      "admiralty",
+      "causeway-bay",
+      "quarry-bay",
+      "chai-wan"
+    ]
+  },
+  {
+    "id": "island-westbound-weekend",
+    "lineId": "island",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 333,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 35,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "chai-wan",
+      "quarry-bay",
+      "causeway-bay",
+      "admiralty",
+      "central",
+      "kennedy-town"
+    ]
+  },
+  {
+    "id": "tsuen-wan-northbound-weekend",
+    "lineId": "tsuen-wan",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 330,
+    "endMinutes": 1490,
+    "headwayMinutes": 8,
+    "durationMinutes": 39,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "central",
+      "admiralty",
+      "tsim-sha-tsui",
+      "mong-kok",
+      "lai-king",
+      "tsuen-wan"
+    ]
+  },
+  {
+    "id": "tsuen-wan-southbound-weekend",
+    "lineId": "tsuen-wan",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 333,
+    "endMinutes": 1490,
+    "headwayMinutes": 8,
+    "durationMinutes": 39,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "tsuen-wan",
+      "lai-king",
+      "mong-kok",
+      "tsim-sha-tsui",
+      "admiralty",
+      "central"
+    ]
+  },
+  {
+    "id": "tuen-ma-westbound-weekend",
+    "lineId": "tuen-ma",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1480,
+    "headwayMinutes": 9,
+    "durationMinutes": 64,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "wu-kai-sha",
+      "sha-tin",
+      "hung-hom",
+      "east-tsim-sha-tsui",
+      "yuen-long",
+      "siu-hong",
+      "tuen-mun"
+    ]
+  },
+  {
+    "id": "tuen-ma-eastbound-weekend",
+    "lineId": "tuen-ma",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1480,
+    "headwayMinutes": 9,
+    "durationMinutes": 64,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "tuen-mun",
+      "siu-hong",
+      "yuen-long",
+      "east-tsim-sha-tsui",
+      "hung-hom",
+      "sha-tin",
+      "wu-kai-sha"
+    ]
+  },
+  {
+    "id": "east-rail-northbound-weekend",
+    "lineId": "east-rail",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1495,
+    "headwayMinutes": 7,
+    "durationMinutes": 48,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "admiralty",
+      "exhibition-centre",
+      "hung-hom",
+      "mong-kok-east",
+      "kowloon-tong",
+      "tai-wai",
+      "sha-tin",
+      "university",
+      "tai-po-market",
+      "fanling",
+      "sheung-shui",
+      "lo-wu"
+    ]
+  },
+  {
+    "id": "east-rail-southbound-weekend",
+    "lineId": "east-rail",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1495,
+    "headwayMinutes": 7,
+    "durationMinutes": 48,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "lo-wu",
+      "sheung-shui",
+      "fanling",
+      "tai-po-market",
+      "university",
+      "sha-tin",
+      "tai-wai",
+      "kowloon-tong",
+      "mong-kok-east",
+      "hung-hom",
+      "exhibition-centre",
+      "admiralty"
+    ]
+  },
+  {
+    "id": "kwun-tong-eastbound-weekend",
+    "lineId": "kwun-tong",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 325,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 37,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "whampoa",
+      "ho-man-tin",
+      "yau-ma-tei",
+      "mong-kok",
+      "prince-edward",
+      "shek-kip-mei",
+      "kowloon-tong",
+      "lok-fu",
+      "wong-tai-sin",
+      "diamond-hill",
+      "choi-hung",
+      "kowloon-bay",
+      "ngau-tau-kok",
+      "kwun-tong",
+      "lam-tin",
+      "yau-tong",
+      "tiu-keng-leng"
+    ]
+  },
+  {
+    "id": "kwun-tong-westbound-weekend",
+    "lineId": "kwun-tong",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 328,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 37,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "tiu-keng-leng",
+      "yau-tong",
+      "lam-tin",
+      "kwun-tong",
+      "ngau-tau-kok",
+      "kowloon-bay",
+      "choi-hung",
+      "diamond-hill",
+      "wong-tai-sin",
+      "lok-fu",
+      "kowloon-tong",
+      "shek-kip-mei",
+      "prince-edward",
+      "mong-kok",
+      "yau-ma-tei",
+      "ho-man-tin",
+      "whampoa"
+    ]
+  },
+  {
+    "id": "south-island-southbound-weekend",
+    "lineId": "south-island",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 345,
+    "endMinutes": 1480,
+    "headwayMinutes": 7,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "admiralty",
+      "ocean-park",
+      "wong-chuk-hang",
+      "lei-tung",
+      "south-horizons"
+    ]
+  },
+  {
+    "id": "south-island-northbound-weekend",
+    "lineId": "south-island",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 348,
+    "endMinutes": 1480,
+    "headwayMinutes": 7,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "south-horizons",
+      "lei-tung",
+      "wong-chuk-hang",
+      "ocean-park",
+      "admiralty"
+    ]
+  },
+  {
+    "id": "tung-chung-westbound-weekend",
+    "lineId": "tung-chung",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 335,
+    "endMinutes": 1470,
+    "headwayMinutes": 10,
+    "durationMinutes": 32,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "hong-kong",
+      "kowloon",
+      "olympic",
+      "nam-cheong",
+      "lai-king",
+      "tsing-yi",
+      "sunny-bay",
+      "tung-chung"
+    ]
+  },
+  {
+    "id": "tung-chung-eastbound-weekend",
+    "lineId": "tung-chung",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 338,
+    "endMinutes": 1470,
+    "headwayMinutes": 10,
+    "durationMinutes": 32,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "tung-chung",
+      "sunny-bay",
+      "tsing-yi",
+      "lai-king",
+      "nam-cheong",
+      "olympic",
+      "kowloon",
+      "hong-kong"
+    ]
+  },
+  {
+    "id": "tseung-kwan-o-eastbound-weekend",
+    "lineId": "tseung-kwan-o",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 330,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 22,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "north-point",
+      "quarry-bay",
+      "yau-tong",
+      "tiu-keng-leng",
+      "tseung-kwan-o",
+      "hang-hau",
+      "po-lam"
+    ]
+  },
+  {
+    "id": "tseung-kwan-o-westbound-weekend",
+    "lineId": "tseung-kwan-o",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 333,
+    "endMinutes": 1500,
+    "headwayMinutes": 7,
+    "durationMinutes": 22,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "po-lam",
+      "hang-hau",
+      "tseung-kwan-o",
+      "tiu-keng-leng",
+      "yau-tong",
+      "quarry-bay",
+      "north-point"
+    ]
+  },
+  {
+    "id": "disneyland-resort-southbound-weekend",
+    "lineId": "disneyland-resort",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 370,
+    "endMinutes": 1420,
+    "headwayMinutes": 10,
+    "durationMinutes": 5,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "sunny-bay",
+      "disneyland-resort"
+    ]
+  },
+  {
+    "id": "disneyland-resort-northbound-weekend",
+    "lineId": "disneyland-resort",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 373,
+    "endMinutes": 1420,
+    "headwayMinutes": 10,
+    "durationMinutes": 5,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "disneyland-resort",
+      "sunny-bay"
+    ]
+  },
+  {
+    "id": "airport-express-westbound-weekend",
+    "lineId": "airport-express",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 340,
+    "endMinutes": 1440,
+    "headwayMinutes": 10,
+    "durationMinutes": 28,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "hong-kong",
+      "kowloon",
+      "tsing-yi",
+      "airport",
+      "asiaworld-expo"
+    ]
+  },
+  {
+    "id": "airport-express-eastbound-weekend",
+    "lineId": "airport-express",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 343,
+    "endMinutes": 1440,
+    "headwayMinutes": 10,
+    "durationMinutes": 28,
+    "dwellMinutes": 0.5,
+    "stopIds": [
+      "asiaworld-expo",
+      "airport",
+      "tsing-yi",
+      "kowloon",
+      "hong-kong"
+    ]
+  },
+  {
+    "id": "light-rail-505-northbound-weekend",
+    "lineId": "light-rail-505",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 315,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "sam-shing",
+      "town-centre",
+      "siu-hong"
+    ]
+  },
+  {
+    "id": "light-rail-505-southbound-weekend",
+    "lineId": "light-rail-505",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 318,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "siu-hong",
+      "town-centre",
+      "sam-shing"
+    ]
+  },
+  {
+    "id": "light-rail-507-northbound-weekend",
+    "lineId": "light-rail-507",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 315,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong"
+    ]
+  },
+  {
+    "id": "light-rail-507-southbound-weekend",
+    "lineId": "light-rail-507",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 318,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "siu-hong",
+      "town-centre",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-610-northbound-weekend",
+    "lineId": "light-rail-610",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 315,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 38,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ]
+  },
+  {
+    "id": "light-rail-610-southbound-weekend",
+    "lineId": "light-rail-610",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 318,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 38,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "yuen-long",
+      "tin-shui-wai",
+      "siu-hong",
+      "town-centre",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-614-northbound-weekend",
+    "lineId": "light-rail-614",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1455,
+    "headwayMinutes": 11,
+    "durationMinutes": 40,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "on-ting",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ]
+  },
+  {
+    "id": "light-rail-614-southbound-weekend",
+    "lineId": "light-rail-614",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1455,
+    "headwayMinutes": 11,
+    "durationMinutes": 40,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "yuen-long",
+      "tin-shui-wai",
+      "siu-hong",
+      "town-centre",
+      "on-ting",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-614p-northbound-weekend",
+    "lineId": "light-rail-614p",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 335,
+    "endMinutes": 1420,
+    "headwayMinutes": 12,
+    "durationMinutes": 16,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "on-ting",
+      "town-centre",
+      "siu-hong"
+    ]
+  },
+  {
+    "id": "light-rail-614p-southbound-weekend",
+    "lineId": "light-rail-614p",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 338,
+    "endMinutes": 1420,
+    "headwayMinutes": 12,
+    "durationMinutes": 16,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "siu-hong",
+      "town-centre",
+      "on-ting",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-615-northbound-weekend",
+    "lineId": "light-rail-615",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1455,
+    "headwayMinutes": 11,
+    "durationMinutes": 40,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ]
+  },
+  {
+    "id": "light-rail-615-southbound-weekend",
+    "lineId": "light-rail-615",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1455,
+    "headwayMinutes": 11,
+    "durationMinutes": 40,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "yuen-long",
+      "tin-shui-wai",
+      "siu-hong",
+      "town-centre",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-615p-northbound-weekend",
+    "lineId": "light-rail-615p",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 335,
+    "endMinutes": 1420,
+    "headwayMinutes": 12,
+    "durationMinutes": 16,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun-ferry-pier",
+      "town-centre",
+      "siu-hong"
+    ]
+  },
+  {
+    "id": "light-rail-615p-southbound-weekend",
+    "lineId": "light-rail-615p",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 338,
+    "endMinutes": 1420,
+    "headwayMinutes": 12,
+    "durationMinutes": 16,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "siu-hong",
+      "town-centre",
+      "tuen-mun-ferry-pier"
+    ]
+  },
+  {
+    "id": "light-rail-705-eastbound-weekend",
+    "lineId": "light-rail-705",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 325,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ]
+  },
+  {
+    "id": "light-rail-705-westbound-weekend",
+    "lineId": "light-rail-705",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 328,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-yat",
+      "tin-wing",
+      "tin-shui-wai"
+    ]
+  },
+  {
+    "id": "light-rail-706-eastbound-weekend",
+    "lineId": "light-rail-706",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 325,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ]
+  },
+  {
+    "id": "light-rail-706-westbound-weekend",
+    "lineId": "light-rail-706",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 328,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 13,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-yat",
+      "tin-wing",
+      "tin-shui-wai"
+    ]
+  },
+  {
+    "id": "light-rail-751-northbound-weekend",
+    "lineId": "light-rail-751",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 34,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "yau-oi",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "tin-yat"
+    ]
+  },
+  {
+    "id": "light-rail-751-southbound-weekend",
+    "lineId": "light-rail-751",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1460,
+    "headwayMinutes": 10,
+    "durationMinutes": 34,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-yat",
+      "tin-shui-wai",
+      "siu-hong",
+      "town-centre",
+      "yau-oi"
+    ]
+  },
+  {
+    "id": "light-rail-751p-northbound-weekend",
+    "lineId": "light-rail-751p",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 340,
+    "endMinutes": 1430,
+    "headwayMinutes": 12,
+    "durationMinutes": 10,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-shui-wai",
+      "tin-wing",
+      "tin-yat"
+    ]
+  },
+  {
+    "id": "light-rail-751p-southbound-weekend",
+    "lineId": "light-rail-751p",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 343,
+    "endMinutes": 1430,
+    "headwayMinutes": 12,
+    "durationMinutes": 10,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tin-yat",
+      "tin-wing",
+      "tin-shui-wai"
+    ]
+  },
+  {
+    "id": "light-rail-761p-northbound-weekend",
+    "lineId": "light-rail-761p",
+    "direction": "outbound",
+    "scheduleType": "weekend",
+    "startMinutes": 320,
+    "endMinutes": 1460,
+    "headwayMinutes": 11,
+    "durationMinutes": 36,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "tuen-mun",
+      "town-centre",
+      "siu-hong",
+      "tin-shui-wai",
+      "yuen-long"
+    ]
+  },
+  {
+    "id": "light-rail-761p-southbound-weekend",
+    "lineId": "light-rail-761p",
+    "direction": "inbound",
+    "scheduleType": "weekend",
+    "startMinutes": 323,
+    "endMinutes": 1460,
+    "headwayMinutes": 11,
+    "durationMinutes": 36,
+    "dwellMinutes": 0.75,
+    "stopIds": [
+      "yuen-long",
+      "tin-shui-wai",
+      "siu-hong",
+      "town-centre",
+      "tuen-mun"
+    ]
+  }
 ]

@@ -1,6 +1,6 @@
 import type { Lang, SimulationClock } from '../../types'
 import { useI18n } from '../../i18n'
-import { hongKongDateTimeInputToInstant, hongKongDateTimeInputValue, hongKongMinutesOfDay, hongKongWallToInstant, hongKongYmd } from '../../engines/hongKongTime'
+import { hongKongDateTimeInputToInstant, hongKongDateTimeInputValue, hongKongWallToInstant, hongKongYmd } from '../../engines/hongKongTime'
 
 interface Props {
   clock: SimulationClock
@@ -31,15 +31,17 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
     second: '2-digit',
     weekday: 'short',
   }).format(clock.currentTime)
-  const timelineMinute = Math.floor(hongKongMinutesOfDay(clock.currentTime))
-
-  return <>
+  return (
     <div className="control-panel">
-      <div className="time-readout">{formatted}</div>
-      <label className="select-row">
-        <span>{t.simulation}</span>
+      <div className="time-control-head">
+        <div className="time-readout">{formatted}</div>
+        <button type="button" onClick={clock.syncToNow}>{t.now}</button>
+      </div>
+      <label className="select-row time-picker-row">
+        <span>{lang === 'zh' ? '\u6aa2\u8996\u6642\u9593' : lang === 'pt' ? 'Ver hora' : 'View time'}</span>
         <input
           type="datetime-local"
+          aria-label={t.simulation}
           value={hongKongDateTimeInputValue(clock.currentTime)}
           onChange={event => {
             const next = hongKongDateTimeInputToInstant(event.target.value)
@@ -48,10 +50,6 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
         />
       </label>
       <div className="control-row">
-        <button type="button" onClick={() => clock.setPaused(!clock.paused)}>
-          {clock.paused ? t.play : t.pause}
-        </button>
-        <button type="button" onClick={clock.syncToNow}>{t.now}</button>
         <button type="button" onClick={onTogglePitch}>{pitchEnabled ? t.mode3d : t.mode2d}</button>
       </div>
       <label className="toggle-row">
@@ -64,17 +62,6 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
         <span>{lang === 'zh' ? '\u8ddf\u96a8\u73ed\u8eca' : lang === 'pt' ? 'Seguir veiculo' : 'Follow vehicle'}</span>
         <strong>{followSelectedVehicle ? 'ON' : 'OFF'}</strong>
       </label>
-      <label className="slider-row">
-        <span>{t.speed}</span>
-        <input
-          type="range"
-          min="1"
-          max="60"
-          value={clock.speed}
-          onChange={event => clock.setSpeed(Number(event.target.value))}
-        />
-        <strong>{clock.speed}x</strong>
-      </label>
       <label className="select-row">
         <span>{t.language}</span>
         <select value={lang} onChange={event => setLang(event.target.value as Lang)}>
@@ -84,13 +71,5 @@ export function ControlPanel({ clock, pitchEnabled, onTogglePitch, liveBusMode, 
         </select>
       </label>
     </div>
-    <div className="timeline-panel" aria-label="Simulation timeline">
-      <div className="timeline-head">
-        <span>{t.simulation}</span>
-        <strong>{String(Math.floor(timelineMinute / 60)).padStart(2, '0')}:{String(timelineMinute % 60).padStart(2, '0')}</strong>
-      </div>
-      <input type="range" min="0" max="1439" value={timelineMinute} aria-label="Simulation time of day" onChange={event => clock.setTime(timelineTimeFromMinute(clock.currentTime, Number(event.target.value)))} />
-      <div className="timeline-scale" aria-hidden="true"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
-    </div>
-  </>
+  )
 }

@@ -59,6 +59,22 @@ describe('committed data files', () => {
     expect(validateTransitData(data)).toEqual([])
   })
 
+  it('keeps Siu Hong on the Tuen Ma Line in line, station, and trip data', () => {
+    const parsedRailLines = RailLinesSchema.parse(railLines)
+    const parsedStations = StationsSchema.parse(stations)
+    const parsedTrips = [...TripsSchema.parse(trips), ...TripsSchema.parse(weekendTrips)]
+    const tuenMaLine = parsedRailLines.find(line => line.id === 'tuen-ma')
+    const siuHongStation = parsedStations.find(station => station.id === 'siu-hong')
+    const tuenMaTrips = parsedTrips.filter(trip => trip.lineId === 'tuen-ma')
+
+    expect(tuenMaLine?.stationIds).toContain('siu-hong')
+    expect(siuHongStation?.lineIds).toContain('tuen-ma')
+    expect(tuenMaTrips).not.toHaveLength(0)
+    for (const trip of tuenMaTrips) {
+      expect(trip.stopIds).toContain('siu-hong')
+    }
+  })
+
   it('rejects unknown trip line references', () => {
     const data = {
       railLines: RailLinesSchema.parse(railLines),
